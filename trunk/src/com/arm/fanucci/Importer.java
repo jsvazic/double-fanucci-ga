@@ -33,8 +33,8 @@ public class Importer extends DefaultHandler {
 			Attributes attr) throws SAXException {
 		
 		if ("card".equals(qName)) {
-			Card c = new Card(FanucciUtil.getSuitCode(attr.getValue("suit")), 
-					FanucciUtil.getValueCode(attr.getValue("value")));
+			Card c = new Card(FanucciUtil.getSuitId(attr.getValue("suit")), 
+					FanucciUtil.getValue(attr.getValue("value")));
 			
 			cards.add(c);
 		}

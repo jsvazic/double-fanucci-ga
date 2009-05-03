@@ -11,6 +11,7 @@ public class Card implements Comparable<Card>, IFanucci {
 
 	private short suit;
 	private short value;
+	private short group;
 	
 	/**
 	 * Default constructor
@@ -21,6 +22,7 @@ public class Card implements Comparable<Card>, IFanucci {
 	public Card(short suit, short value) {
 		this.suit = suit;
 		this.value = value;
+		this.group = FanucciUtil.getGroupId(suit);
 	}
 	
 	/**
@@ -39,6 +41,15 @@ public class Card implements Comparable<Card>, IFanucci {
 	 */
 	public short getValue() {
 		return value;
+	}
+	
+	/**
+	 * Method used to return the group this card belongs to.
+	 * 
+	 * @return The group the card belongs to.
+	 */
+	public short getGroup() {
+		return group;
 	}
 
 	@Override
