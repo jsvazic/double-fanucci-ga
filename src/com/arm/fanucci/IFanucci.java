@@ -86,4 +86,28 @@ public interface IFanucci {
 	
 	/** Power associated with an Infinity of <i>X</i> card. */
 	public final short POWER_INFINITY = 50;
+	
+	/** Power associated with an unknown card. */
+	public final short POWER_UNKNOWN = 0;
+	
+	/** Constant for the first group: Bugs, Time. */
+	public final short GROUP_1 = 0;
+
+	/** Constant for the first group: Lamps, Fromps. */
+	public final short GROUP_2 = 1;
+	
+	/** Constant for the first group: Hives, Inkblots. */
+	public final short GROUP_3 = 2;
+	
+	/** Constant for the first group: Mazes, Ears, Scythes. */
+	public final short GROUP_4 = 3;
+	
+	/** Constant for the first group: Zurfs, Books, Plungers. */
+	public final short GROUP_5 = 4;
+	
+	/** Constant for the first group: Tops, Rain, Faces. */
+	public final short GROUP_6 = 5;
+	
+	/** Constant for the unknown group. */
+	public final short GROUP_UNKNOWN = -1;
 }

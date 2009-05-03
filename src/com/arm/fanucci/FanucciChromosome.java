@@ -112,7 +112,9 @@ public class FanucciChromosome extends Chromosome {
 			totalCards += hand.get(suit).size();
 			double modifier = 0.0;
 			if (suit != dominantSuit) {
-				modifier = FanucciUtil.getModifier(dominantSuit, suit);
+				modifier = FanucciUtil.getModifier(
+						FanucciUtil.getGroupId(dominantSuit), 
+						FanucciUtil.getGroupId(suit));
 			}
 			double suitValue = 0.0;
 			Iterator<Card> it = hand.get(suit).iterator();
