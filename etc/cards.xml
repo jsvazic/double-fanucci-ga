@@ -17,6 +17,7 @@
 
     <card suit="Ears" value="Naught" />
     <card suit="Ears" value="1" />
+    <card suit="Ears" value="2" />
 
     <card suit="Time" value="Naught" />
     <card suit="Time" value="1" />
@@ -29,6 +30,7 @@
     <card suit="Books" value="1" />
     
     <card suit="Plungers" value="Naught" />
+    <card suit="Plungers" value="1" />
 
     <card suit="Tops" value="Naught" />
     <card suit="Tops" value="1" />
@@ -38,5 +40,5 @@
     <card suit="Rain" value="Naught" />
     <card suit="Rain" value="1" />
     
-    <card suit="Plungers" value="Faces" />
+    <card suit="Faces" value="Naught" />
 </cards>

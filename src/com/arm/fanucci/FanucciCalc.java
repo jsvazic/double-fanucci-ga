@@ -11,7 +11,7 @@ import com.arm.genetic.Chromosome;
  */
 public class FanucciCalc {
 	/** The default size for the population. */
-	private static final int POPULATION_SIZE = 2048;
+	private static final int POPULATION_SIZE = 1024;
 
 	/** The elitism rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
 	private static final float ELITISM_RATE = 0.1f;
@@ -20,7 +20,7 @@ public class FanucciCalc {
 	private static final float MUTATION_RATE = 0.15f;
 	
 	/** Maximum number of iterations for the simulation. */
-	private static final int MAX_ITERATION = 256;
+	private static final int MAX_ITERATION = 1024;
 	
 	private static final int MAX_HANDS = 4;
 
