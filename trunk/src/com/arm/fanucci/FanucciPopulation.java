@@ -2,6 +2,7 @@ package com.arm.fanucci;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,9 +38,40 @@ public class FanucciPopulation extends Population {
 			Card[] allCards = importer.getAllCards().toArray(new Card[0]);
 			for (int i = 0; i < populationSize; i++) {							
 				Set<Card> hand = new TreeSet<Card>();
-				for (int j = 0; j < 4; j++) {
+				
+				// Randomly pick a suit.
+				int idx = rand.nextInt(allCards.length);
+				short suit = allCards[idx].getSuit();
+				
+				// Add the top two cards for the suit.
+				Iterator<Card> it = importer.getCardsForSuit(suit).iterator();
+				for (int j = 0; j < 2 && it.hasNext(); j++) {
+					hand.add(it.next());
+				}
+				
+				// Add the top two cards for any other cards from the same 
+				// group
+				short group   = FanucciUtil.getGroupId(suit);
+				short[] suits = FanucciUtil.getSuitsForGroup(group);
+				for (short suitId : suits) {
+					if (suitId == suit) {
+						continue;
+					}
+					it = importer.getCardsForSuit(suitId).iterator();
+					for (int j = 0; j < 2 && it.hasNext() && 
+							hand.size() < 4; j++) {
+						
+						hand.add(it.next());
+					}
+					if (hand.size() == 4) {
+						break;
+					}
+				}
+				
+				// Randomly add any remaining cards as required.
+				for (int j = 0; j < (3 - hand.size()); j++) {
 					// Randomly add cards
-					int idx = rand.nextInt(allCards.length);
+					idx = rand.nextInt(allCards.length);
 					hand.add(allCards[idx]);
 				}
 				
