@@ -36,7 +36,7 @@ public class FanucciPopulation extends Population {
 		try {
 			Card[] allCards = importer.getAllCards().toArray(new Card[0]);
 			for (int i = 0; i < populationSize; i++) {							
-				Set<Card> hand  = new TreeSet<Card>();
+				Set<Card> hand = new TreeSet<Card>();
 				for (int j = 0; j < 4; j++) {
 					// Randomly add cards
 					int idx = rand.nextInt(allCards.length);
