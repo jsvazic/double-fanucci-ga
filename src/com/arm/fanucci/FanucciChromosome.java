@@ -126,12 +126,7 @@ public class FanucciChromosome extends Chromosome {
 			
 			value += suitValue - (suitValue * modifier);
 		}
-		
-		if (totalCards > 4) {
-			// We can't have more than 4 cards in a given hand.
-			return Double.MAX_VALUE;
-		}
-		
+				
 		// Remember, there is a maximum value of 100 for any given hand.
 		return (value > 100.0) ? 0.0 : (100 - value);
 	}
@@ -140,8 +135,8 @@ public class FanucciChromosome extends Chromosome {
 	public Chromosome mate(Chromosome mate) {
 		Card[] parent1   = getCards();
 		Card[] parent2 = ((FanucciChromosome) mate).getCards();
-		int idx1 = rand.nextInt(parent1.length);
-		int idx2 = rand.nextInt(parent2.length);
+		int idx1 = (int) (parent1.length / 2);
+		int idx2 = (int) (parent2.length / 2);
 		
 		// Take a random sample from each parent, and merge them into a 
 		// new set.
@@ -154,6 +149,18 @@ public class FanucciChromosome extends Chromosome {
 			cards.add(parent2[i]);
 		}
 		
+		if (cards.size() > 4) {
+			Iterator<Card> it = cards.iterator();
+			int idx = 0;
+			while (it.hasNext()) {
+				it.next();
+				if (idx > 3) {
+					it.remove();
+				}
+				++idx;
+			}
+		}
+		
 		return new FanucciChromosome(cards, importer);
 	}
 
@@ -163,7 +170,7 @@ public class FanucciChromosome extends Chromosome {
 		// it with a new card.
 		Card[] myArr = getCards();
 		Card[] oArr  = importer.getDifference(myArr).toArray(new Card[0]);
-				
+		
 		Card toRemove = myArr[rand.nextInt(myArr.length)];
 		Card toAdd = oArr[rand.nextInt(oArr.length)];
 		

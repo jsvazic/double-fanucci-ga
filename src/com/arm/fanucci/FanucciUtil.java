@@ -115,6 +115,32 @@ public class FanucciUtil implements IFanucci {
 				return GROUP_UNKNOWN;
 		}
 	}
+
+	/**
+	 * Method used to retrieve all suits belonging to a specific group.
+	 * 
+	 * @param groupId The ID of the group to retrieve the suit IDs for.
+	 * 
+	 * @return An array of suit IDs belonging to the specified group.
+	 */
+	public static short[] getSuitsForGroup(short groupId) {
+		switch (groupId) {
+			case GROUP_1:
+				return new short[] { SUIT_BUGS, SUIT_TIME };
+			case GROUP_2:
+				return new short[] { SUIT_LAMPS, SUIT_FROMPS };
+			case GROUP_3:
+				return new short[] { SUIT_HIVES,  SUIT_INKBLOTS };
+			case GROUP_4:
+				return new short[] { SUIT_MAZES, SUIT_EARS, SUIT_SCYTHES };
+			case GROUP_5:
+				return new short[] { SUIT_ZURFS, SUIT_BOOKS, SUIT_PLUNGERS };
+			case GROUP_6:
+				return new short[] { SUIT_TOPS, SUIT_RAIN, SUIT_FACES };
+			default:
+				return new short[0];
+		}
+	}
 	
 	/**
 	 * Method to return the suit ID for a given suit plain-text name.

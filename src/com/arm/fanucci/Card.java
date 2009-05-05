@@ -19,10 +19,10 @@ public class Card implements Comparable<Card>, IFanucci {
 	 * @param suit The suite of the card.
 	 * @param value The value of the card.
 	 */
-	public Card(short suit, short value) {
+	public Card(short group, short suit, short value) {
 		this.suit = suit;
 		this.value = value;
-		this.group = FanucciUtil.getGroupId(suit);
+		this.group = group;
 	}
 	
 	/**
@@ -55,18 +55,25 @@ public class Card implements Comparable<Card>, IFanucci {
 	@Override
 	public int compareTo(Card o) {
 		// Sort first by suite, then by value (descending) for each suite
-		if (suit < o.suit) {
+		if (group < o.group) {
 			return -1;
-		} else if (suit > o.suit) {
+		} else if (group > o.group) {
 			return 1;
 		} else {
 			if (value > o.value) {
 				return -1;
 			} else if (value < o.value) {
 				return 1;
-			}
+			} else {
+				if (suit < o.suit) {
+					return -1;
+				} else if (suit > o.suit) {
+					return 1;
+				}
 		
-			return 0;
+				// Group, value and suit are all the same, i.e. the same card.
+				return 0;
+			}
 		}
 	}
 	
@@ -81,7 +88,8 @@ public class Card implements Comparable<Card>, IFanucci {
 	
 	@Override
 	public int hashCode() {
-		return (new StringBuffer(suit).append(value)).toString().hashCode();
+		return (new StringBuffer(group).append(suit).append(value))
+				.toString().hashCode();
 	}
 	
 	@Override
