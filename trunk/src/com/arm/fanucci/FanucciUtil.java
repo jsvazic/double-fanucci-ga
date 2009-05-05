@@ -6,41 +6,6 @@ package com.arm.fanucci;
  * @author jsvazic
  */
 public class FanucciUtil implements IFanucci {
-	
-	/*
-	 6 Sets (0%):
-		Ears, Mazes, Scythes
-		Hives, Inkblots
-		Plungers, Books, Zurfs
-		Tops, Rain, Faces
-		Bugs, Time
-		Lamps, Fromps
-
-	 2 Allied Factions (-50%):
-		Bugs, Time – Plungers, Books, Zurfs
-		Hives, Inkblots – Bugs, Time
-		Plungers, Books, Zurfs – Hives, Inkblots
-
-		Ears, Mazes, Scythes – Tops, Rain, Faces
-		Lamps, Fromps – Ears, Mazes, Scythes
-		Tops, Rain, Faces – Lamps, Fromps
-
-	3 Neutral Groups (-100%):
-		Hives, Inkblots – Tops, Rain, Faces
-		Ears, Mazes, Scythes – Bugs, Time
-		Plungers, Books, Zurfs – Lamps, Fromps
-
-	3 Enemy Factions (-150%):
-		Bugs, Time – Tops, Rain, Faces
-		Bugs, Time – Lamps, Fromps
-
-		Plungers, Books, Zurfs – Tops, Rain, Faces
-		Plungers, Books, Zurfs – Ears, Mazes, Scythes
-
-		Hives, Inkblots – Ears, Mazes, Scythes
-		Hives, Inkblots – Lamps, Fromps
-
-	 */
 
 	/**
 	 * Method to retrieve the weight-modifier for a given pair of suits.  The
