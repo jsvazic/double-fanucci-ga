@@ -8,7 +8,7 @@ package com.arm.fanucci;
 public class FanucciUtil implements IFanucci {
 
 	/**
-	 * Method to retrieve the weight-modifier for a given pair of suits.  The
+	 * Method to retrieve the weight-modifier for a given pair of groups.  The
 	 * modifiers will be one of:
 	 * <ul>
 	 *    <li>0.0</li>
@@ -16,11 +16,11 @@ public class FanucciUtil implements IFanucci {
 	 *    <li>1.0</li>
 	 *    <li>1.5</li>
 	 * </ul>
-	 * depending on whether or not the two suits are from the same family, 
+	 * depending on whether or not the two group IDs are from the same family,
 	 * are allies, neutral or enemies respectively.
 	 * 
-	 * @param firstCard The first suite to compare.
-	 * @param secondCard The second suite to compare.
+	 * @param firstGroupId The first group ID to compare.
+	 * @param secondGroupId The second group ID to compare.
 	 * 
 	 * @return The modifier for the given pair of suits. 
 	 */
@@ -31,15 +31,15 @@ public class FanucciUtil implements IFanucci {
 		
 		int idx = Math.abs(firstGroupId - secondGroupId) % 4;
 		switch (idx) {
-			case 0:	// Allies
+			case 0:	
 			case 2:
-				return 0.5;
-			case 1: // Enemies
-				return 1.5;
-			case 3: // Neutral
-				return 1.0;
+				return 0.5; // Allies
+			case 1: 
+				return 1.5; // Enemies
+			case 3: 
+				return 1.0; // Neutral
 			default:
-				return 0.0;
+				return 0.0; // Unknown
 		}
 	}
 
@@ -78,32 +78,6 @@ public class FanucciUtil implements IFanucci {
 				return GROUP_6;
 			default:
 				return GROUP_UNKNOWN;
-		}
-	}
-
-	/**
-	 * Method used to retrieve all suits belonging to a specific group.
-	 * 
-	 * @param groupId The ID of the group to retrieve the suit IDs for.
-	 * 
-	 * @return An array of suit IDs belonging to the specified group.
-	 */
-	public static short[] getSuitsForGroup(short groupId) {
-		switch (groupId) {
-			case GROUP_1:
-				return new short[] { SUIT_BUGS, SUIT_TIME };
-			case GROUP_2:
-				return new short[] { SUIT_LAMPS, SUIT_FROMPS };
-			case GROUP_3:
-				return new short[] { SUIT_HIVES,  SUIT_INKBLOTS };
-			case GROUP_4:
-				return new short[] { SUIT_MAZES, SUIT_EARS, SUIT_SCYTHES };
-			case GROUP_5:
-				return new short[] { SUIT_ZURFS, SUIT_BOOKS, SUIT_PLUNGERS };
-			case GROUP_6:
-				return new short[] { SUIT_TOPS, SUIT_RAIN, SUIT_FACES };
-			default:
-				return new short[0];
 		}
 	}
 	
