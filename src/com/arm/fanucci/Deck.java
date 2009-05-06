@@ -68,6 +68,19 @@ public class Deck {
 	}
 	
 	/**
+	 * Method used to check to see if a given <code>Card</code> already 
+	 * exists in this deck or not.
+	 * 
+	 * @param c The card to check.
+	 * 
+	 * @return <code>true</code> if the <code>Card</code> is in this deck; 
+	 * <code>false</code> otherwise.
+	 */
+	public boolean hasCard(Card c) {
+		return cards.contains(c);
+	}
+	
+	/**
 	 * Method to get all loaded cards that are not already part of a given 
 	 * set.
 	 * 
