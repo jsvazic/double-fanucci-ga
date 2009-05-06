@@ -25,15 +25,33 @@ public class FanucciCalc {
 	private static final int MAX_HANDS = 4;
 
 	/**
-	 * Main entry point for the application.
+	 * Main entry point for the application from the command-line.
 	 * 
 	 * @param args Command line argument (ignored).
 	 */
 	public static void main(String[] args) throws Exception {
+		File cardFile;
+		if (args.length > 0) {
+			cardFile = new File(args[0]);
+			if (!cardFile.isFile() || !cardFile.canRead()) {
+				System.out.println("Unable to read file: " + args[0]);
+				System.exit(1);
+			}
+		} else {
+			cardFile = new File("etc/cards.xml");
+		}
 		long startTime = System.currentTimeMillis();
 		Importer importer = new Importer();
-		importer.importCards(new File("etc/cards.xml"));
-		Chromosome[] arr = new Chromosome[4];
+		try {
+			importer.importCards(cardFile);
+		} catch (Exception ex) {
+			System.out.println("Failed to import the Fanucci cards from: " + 
+					cardFile);
+			
+			System.out.println(ex.getMessage());
+		}
+		
+		Chromosome[] arr = new Chromosome[MAX_HANDS];
 		for (int j = 0; j < MAX_HANDS; j++) {
 			FanucciPopulation population = new FanucciPopulation(
 					POPULATION_SIZE, importer);
