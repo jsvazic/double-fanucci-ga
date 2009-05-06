@@ -11,7 +11,7 @@ import com.arm.genetic.Chromosome;
  */
 public class FanucciCalc {
 	/** The default size for the population. */
-	private static final int POPULATION_SIZE = 64;
+	private static final int POPULATION_SIZE = 128;
 
 	/** The elitism rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
 	private static final float ELITISM_RATE = 0.1f;
@@ -20,9 +20,13 @@ public class FanucciCalc {
 	private static final float MUTATION_RATE = 0.15f;
 	
 	/** Maximum number of iterations for the simulation. */
-	private static final int MAX_ITERATION = 64;
+	private static final int MAX_ITERATION = 128;
 	
+	/** Maximum number of hands to generate. */
 	private static final int MAX_HANDS = 4;
+	
+	/** Maximum repeat count for a best fit before exiting. */
+	private static final int MAX_BEST_COUNT = 32;
 
 	/**
 	 * Main entry point for the application from the command-line.
@@ -52,17 +56,27 @@ public class FanucciCalc {
 		}
 		
 		Chromosome[] arr = new Chromosome[MAX_HANDS];
-		for (int j = 0; j < MAX_HANDS; j++) {
+		for (int i = 0; i < MAX_HANDS; i++) {
 			FanucciPopulation population = new FanucciPopulation(
 					POPULATION_SIZE, importer);
 
-			for (int i = 0; i < MAX_ITERATION; i++) {
+			Chromosome best = population.getBestChromosome();
+			double lastFitness = best.getFitness(); 
+			int count = 1;
+			for (int j = 0; j < MAX_ITERATION && count < MAX_BEST_COUNT; j++) {
 				// Evolve the population
 				population.evolve(ELITISM_RATE, MUTATION_RATE);
+				best = population.getBestChromosome();
+				if (best.getFitness() == lastFitness) {
+					++count;
+				} else {
+					lastFitness = best.getFitness();
+					count = 1;
+				}
 			}
 			
-			arr[j] = population.getBestChromosome();
-			for (Card c : ((FanucciChromosome) arr[j]).getCards()) {
+			arr[i] = population.getBestChromosome();
+			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
 				importer.removeCard(c);
 			}
 		}
