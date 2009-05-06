@@ -149,18 +149,23 @@ public class FanucciChromosome extends Chromosome {
 			cards.add(parent2[i]);
 		}
 		
+		// Trim the number of cards if necessary.  We're already sorting 
+		// based on group, value and suit so just remove the last few
+		// items from the set.
 		if (cards.size() > 4) {
 			Iterator<Card> it = cards.iterator();
 			int idx = 0;
 			while (it.hasNext()) {
 				it.next();
-				if (idx > 3) {
+				// Fancy logic here.  Increment the counter after
+				// comparing it to the remove condition.
+				if (idx++ > 3) {
 					it.remove();
 				}
-				++idx;
 			}
 		}
 		
+		// Return the new "child" from the mated chromosomes.
 		return new FanucciChromosome(cards, importer);
 	}
 

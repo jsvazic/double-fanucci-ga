@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class used for importing a data file containing Fanucci card details.
+ * Class used for importing an XML document containing Fanucci card details.
  * 
  * @author jsvazic
  */
@@ -26,9 +26,8 @@ public class Importer extends DefaultHandler {
 	public Importer() {
 		cards = new TreeSet<Card>();
 	}
-	
-	/**
-	 */
+
+	@Override
 	public void startElement(String uri, String lName, String qName, 
 			Attributes attr) throws SAXException {
 		
@@ -43,7 +42,7 @@ public class Importer extends DefaultHandler {
 	/**
 	 * Method to remove a given card.
 	 * 
-	 * @param c
+	 * @param c The card to remove from the imported set.
 	 */
 	public void removeCard(Card c) {
 		cards.remove(c);
@@ -65,7 +64,7 @@ public class Importer extends DefaultHandler {
 	/**
 	 * Method to retrieve all the cards that were imported.
 	 * 
-	 * @return The set of all cards imported.
+	 * @return The set of all imported cards.
 	 */
 	public Set<Card> getAllCards() {
 		return new TreeSet<Card>(cards);
