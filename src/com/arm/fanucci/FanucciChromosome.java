@@ -190,19 +190,21 @@ public class FanucciChromosome extends Chromosome {
 	}
 
 	@Override
-	public void printGene() {
-		System.out.println("-----------------------------------");
-		System.out.println((100 - getFitness()) + ":");
+	public String toString() {
+		StringBuilder sb = new StringBuilder("------------------------------------\n");
+		sb.append((100 - getFitness())).append(':').append('\n');
 		for (Set<Card> cards : hand.values()) {
 			Iterator<Card> it = cards.iterator();
 			if (it.hasNext()) {
-				System.out.print("\t" + it.next());
+				sb.append('\t').append(it.next());
 			}
 			while (it.hasNext()) {
-				System.out.print(", " + it.next());
+				sb.append(", ").append(it.next());
 			}
-			System.out.println();
+			sb.append('\n');
 		}
+		
+		return sb.toString();
 	}
 	
 	/**

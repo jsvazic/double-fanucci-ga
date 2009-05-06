@@ -9,24 +9,56 @@ import com.arm.genetic.Chromosome;
  * 
  * @author jsvazic
  */
-public class FanucciCalc {
-	/** The default size for the population. */
-	private static final int POPULATION_SIZE = 128;
+public class FanucciCalc {	
+	private SimulatorOptions simOptions;
+	
+	public FanucciCalc(SimulatorOptions options) {
+		simOptions = options;
+	}
+	
+	public Chromosome[] execute(Deck deck) {
+		final int maxHands = simOptions.getMaxHands();
+		final int maxIterations = simOptions.getMaxIterations();
+		final float elitismRate = simOptions.getElitismRate();
+		final float mutationRate = simOptions.getMutationRate();
+		final int maxRepeatCount = simOptions.getMaxRepeatCount();
+		
+		Chromosome[] arr = new Chromosome[maxHands];
+		
+		for (int i = 0; i < maxHands; i++) {
+			FanucciPopulation population =  new FanucciPopulation(deck, 
+					simOptions.getPopulationSize());
 
-	/** The elitism rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
-	private static final float ELITISM_RATE = 0.1f;
-
-	/** The mutation rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
-	private static final float MUTATION_RATE = 0.15f;
-	
-	/** Maximum number of iterations for the simulation. */
-	private static final int MAX_ITERATIONS = 128;
-	
-	/** Maximum number of hands to generate. */
-	private static final int MAX_HANDS = 4;
-	
-	/** Maximum repeat count for a best fit before exiting. */
-	private static final int MAX_BEST_COUNT = 32;
+			Chromosome best = population.getBestChromosome();
+			double lastFitness = best.getFitness(); 
+			int count = 1;
+			for (int j = 0; j < maxIterations && count < maxRepeatCount; j++) {
+				
+				// Evolve the population
+				population.evolve(elitismRate, mutationRate);
+				
+				// Get the best chromosome and see how many times this level
+				// of fitness has been encountered.  Break out of the evolution
+				// early if we see the same fitness level more often than not.
+				best = population.getBestChromosome();
+				if (best.getFitness() == lastFitness) {
+					++count;
+				} else {
+					lastFitness = best.getFitness();
+					count = 1;
+				}
+			}
+			
+			// Save the best hand so far and adjust the remaining cards for 
+			// the next hand.
+			arr[i] = population.getBestChromosome();
+			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
+				deck.removeCard(c);
+			}
+		}
+		
+		return arr;
+	}
 
 	/**
 	 * Main entry point for the application from the command-line.
@@ -44,45 +76,28 @@ public class FanucciCalc {
 		} else {
 			cardFile = new File("etc/cards.xml");
 		}
+		
 		long startTime = System.currentTimeMillis();
+		Deck deck = null;
 		try {
-			DeckController.importDeck(cardFile);
+			deck = DeckController.importDeck(cardFile);
 		} catch (Exception ex) {
 			System.out.println("Failed to import the Fanucci cards from: " + 
 					cardFile);
 			
 			System.out.println(ex.getMessage());
+			System.exit(1);
 		}
 		
-		Chromosome[] arr = new Chromosome[MAX_HANDS];
-		for (int i = 0; i < MAX_HANDS; i++) {
-			FanucciPopulation population = new FanucciPopulation(
-					POPULATION_SIZE);
-
-			Chromosome best = population.getBestChromosome();
-			double lastFitness = best.getFitness(); 
-			int count = 1;
-			for (int j = 0; j < MAX_ITERATIONS && count < MAX_BEST_COUNT; j++) {
-				// Evolve the population
-				population.evolve(ELITISM_RATE, MUTATION_RATE);
-				best = population.getBestChromosome();
-				if (best.getFitness() == lastFitness) {
-					++count;
-				} else {
-					lastFitness = best.getFitness();
-					count = 1;
-				}
-			}
-			
-			arr[i] = population.getBestChromosome();
-			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
-				Deck.getInstance().removeCard(c);
-			}
-		}
+		SimulatorOptions simOptions = OptionsController.importOptions();
+		
+		FanucciCalc calc = new FanucciCalc(simOptions);
+		Chromosome[] arr = calc.execute(deck);
 		long endTime = System.currentTimeMillis();
 		
+		// Print out the best hands available for the given deck.
 		for (Chromosome c : arr) {
-			c.printGene();
+			System.out.println(c);
 		}
 		
 		System.out.println();

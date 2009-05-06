@@ -70,9 +70,4 @@ public abstract class Chromosome implements Comparable<Chromosome> {
 		
 		return equalsChromosome((Chromosome) o);
 	}
-	
-	/**
-	 * Method to print the details of the gene.
-	 */
-	public abstract void printGene();
 }
