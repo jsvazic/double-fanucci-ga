@@ -52,8 +52,17 @@ public abstract class Chromosome implements Comparable<Chromosome> {
 		}
 	}
 	
+	/**
+	 * Method used to compare a <code>Chromosome</code> with this one.
+	 * 
+	 * @param c The <code>Chromosome</code> to compare to.
+	 * 
+	 * @return <code>true</code> if the two <code>Chromosome</code>s are 
+	 * equal; <code>false</code> otherwise.
+	 */
 	public abstract boolean equalsChromosome(Chromosome c);
 	
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Chromosome)) {
 			return false;
