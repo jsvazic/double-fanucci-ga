@@ -45,9 +45,8 @@ public class FanucciCalc {
 			cardFile = new File("etc/cards.xml");
 		}
 		long startTime = System.currentTimeMillis();
-		XMLImporter importer = new XMLImporter();
 		try {
-			importer.importCards(cardFile);
+			DeckController.importDeck(cardFile);
 		} catch (Exception ex) {
 			System.out.println("Failed to import the Fanucci cards from: " + 
 					cardFile);

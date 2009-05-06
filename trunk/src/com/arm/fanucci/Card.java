@@ -91,94 +91,11 @@ public class Card implements Comparable<Card>, IFanucci {
 		return (new StringBuffer(group).append(suit).append(value))
 				.toString().hashCode();
 	}
-	
+		
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		switch (value) {
-			case POWER_NAUGHT:
-				sb.append("Naught");
-				break;
-			case POWER_ONE:
-				sb.append('1');
-				break;
-			case POWER_TWO:
-				sb.append('2');
-				break;
-			case POWER_THREE:
-				sb.append('3');
-				break;
-			case POWER_FOUR:
-				sb.append('4');
-				break;
-			case POWER_FIVE:
-				sb.append('5');
-				break;
-			case POWER_SIX:
-				sb.append('6');
-				break;
-			case POWER_SEVEN:
-				sb.append('7');
-				break;
-			case POWER_EIGHT:
-				sb.append('8');
-				break;
-			case POWER_NINE:
-				sb.append('9');
-				break;
-			case POWER_INFINITY:
-				sb.append('\u221E');
-		}
-		sb.append(" of ");
-		switch (suit) {
-			case SUIT_BOOKS:
-				sb.append("Books");
-				break;
-			case SUIT_BUGS:
-				sb.append("Bugs");
-				break;
-			case SUIT_EARS:
-				sb.append("Ears");
-				break;
-			case SUIT_FACES:
-				sb.append("Faces");
-				break;
-			case SUIT_FROMPS:
-				sb.append("Fromps");
-				break;
-			case SUIT_HIVES:
-				sb.append("Hives");
-				break;
-			case SUIT_INKBLOTS:
-				sb.append("Inkblots");
-				break;
-			case SUIT_LAMPS:
-				sb.append("Lamps");
-				break;
-			case SUIT_MAZES:
-				sb.append("Mazes");
-				break;
-			case SUIT_PLUNGERS:
-				sb.append("Plungers");
-				break;
-			case SUIT_RAIN:
-				sb.append("Rain");
-				break;
-			case SUIT_SCYTHES:
-				sb.append("Scythes");
-				break;
-			case SUIT_TIME:
-				sb.append("Time");
-				break;
-			case SUIT_TOPS:
-				sb.append("Tops");
-				break;
-			case SUIT_ZURFS:
-				sb.append("Zurfs");
-				break;
-			default:
-				sb.append("Unknown?");
-		}
+		StringBuffer sb = new StringBuffer(FanucciUtil.getValueString(value));
+		sb.append(" of ").append(FanucciUtil.getSuitName(suit));
 		
 		return sb.toString();
 	}

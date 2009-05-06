@@ -164,4 +164,76 @@ public class FanucciUtil implements IFanucci {
 		
 		return POWER_UNKNOWN;
 	}
+	
+	/**
+	 * Method to retrieve the textual name of the specified suit.
+	 * 
+	 * @return The textual name of the specified suit.
+	 */
+	public static String getSuitName(short suit) {
+		switch (suit) {
+			case SUIT_BOOKS:
+				return "Books";
+			case SUIT_BUGS:
+				return "Bugs";
+			case SUIT_EARS:
+				return "Ears";
+			case SUIT_FACES:
+				return "Faces";
+			case SUIT_FROMPS:
+				return "Fromps";
+			case SUIT_HIVES:
+				return "Hives";
+			case SUIT_INKBLOTS:
+				return "Inkblots";
+			case SUIT_LAMPS:
+				return "Lamps";
+			case SUIT_MAZES:
+				return "Mazes";
+			case SUIT_PLUNGERS:
+				return "Plungers";
+			case SUIT_RAIN:
+				return "Rain";
+			case SUIT_SCYTHES:
+				return "Scythes";
+			case SUIT_TIME:
+				return "Time";
+			case SUIT_TOPS:
+				return "Tops";
+			case SUIT_ZURFS:
+				return "Zurfs";
+			default:
+				return "Unknown";
+		}	
+	}
+	
+	public static String getValueString(short value) {
+		switch (value) {
+			case POWER_NAUGHT:
+				return "Naught";
+			case POWER_ONE:
+				return "1";
+			case POWER_TWO:
+				return "2";
+			case POWER_THREE:
+				return "3";
+			case POWER_FOUR:
+				return "4";
+			case POWER_FIVE:
+				return "5";
+			case POWER_SIX:
+				return "6";
+			case POWER_SEVEN:
+				return "7";
+			case POWER_EIGHT:
+				return "8";
+			case POWER_NINE:
+				return "9";
+			case POWER_INFINITY:
+				return "Infinity";
+			default:
+				return "Unknown";
+		}
+	}
+
 }
