@@ -36,11 +36,13 @@ public class CardPanel extends JPanel {
 	
 	private JList suitList;
 	private JPanel buttonPanel;
+	private Deck deck;
 
 	/**
 	 * Default constructor.
 	 */
-	public CardPanel() {
+	public CardPanel(Deck deck) {
+		this.deck = deck;
 		init();
 	}
 	
@@ -122,7 +124,7 @@ public class CardPanel extends JPanel {
 						short value = FanucciUtil.getValue(button.getText());
 						
 						Card c = new Card(groupId, suitId, value);
-						if (Deck.getInstance().hasCard(c)) {
+						if (deck.hasCard(c)) {
 							button.setSelected(true);
 						} else {
 							button.setSelected(false);
@@ -149,9 +151,9 @@ public class CardPanel extends JPanel {
 		
 		Card c = new Card(groupId, suitId, value);
 		if (button.getModel().isSelected()) {
-			Deck.getInstance().addCard(c);
+			deck.addCard(c);
 		} else {
-			Deck.getInstance().removeCard(c);
+			deck.removeCard(c);
 		}
 	}
 }

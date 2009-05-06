@@ -14,29 +14,39 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.arm.fanucci.Deck;
 import com.arm.fanucci.DeckController;
+import com.arm.fanucci.FanucciCalc;
+import com.arm.fanucci.OptionsController;
+import com.arm.fanucci.SimulatorOptions;
+import com.arm.genetic.Chromosome;
 
 /**
  * Main class for the UI.
  * 
  * @author jsvazic
- *
  */
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
+	private Deck deck;
 	private CardPanel cardPanel;
+	private SimulatorOptions simOptions;
+	private JTextArea outputArea;
 
 	/**
 	 * Default constructor.
 	 */
 	public MainFrame() {
 		super("Yet Another Double Fanucci Calculator");
+		simOptions = OptionsController.importOptions();
+		this.deck  = new Deck();
 		init();
 	}
 	
@@ -66,10 +76,17 @@ public class MainFrame extends JFrame {
 		
 		setJMenuBar(menuBar);
 		
-		cardPanel = new CardPanel();
+		cardPanel = new CardPanel(deck);
+		outputArea = new JTextArea(10, 20);
+		
 		setLayout(new BorderLayout(5, 5));
 		add(cardPanel, BorderLayout.CENTER);
-		setSize(400, 300);
+		add(new JScrollPane(outputArea, 
+					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+				BorderLayout.SOUTH);
+		
+		setSize(400, 500);
 		addListeners();
 	}
 	
@@ -95,6 +112,14 @@ public class MainFrame extends JFrame {
 	 * Method used to terminate the application.
 	 */
 	private void shutdown() {
+		try {
+			OptionsController.exportOptions(simOptions);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, 
+					"Failed to save the options: " + ex.getMessage(),
+					"Error Saving Options", JOptionPane.ERROR_MESSAGE);
+		}
+		
 		dispose();
 		System.exit(0);
 	}
@@ -147,8 +172,7 @@ public class MainFrame extends JFrame {
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File inFile = fc.getSelectedFile();
 				try {
-					Deck.getInstance().reset();
-					DeckController.importDeck(inFile);
+					deck = DeckController.importDeck(inFile);
 					frame.resetSelection();
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
@@ -193,7 +217,7 @@ public class MainFrame extends JFrame {
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File outFile = fc.getSelectedFile();
 				try {
-					DeckController.exportDeck(Deck.getInstance(), outFile);
+					DeckController.exportDeck(deck, outFile);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
 							"Failed to import the deck:\n" + ex.getMessage(), 
@@ -250,6 +274,19 @@ public class MainFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			long startTime = System.currentTimeMillis();
+			FanucciCalc calc = new FanucciCalc(MainFrame.this.simOptions);
+			Chromosome[] arr = calc.execute(MainFrame.this.deck);
+			long endTime = System.currentTimeMillis();
+			
+			// Print out the best hands available for the given deck.
+			for (Chromosome c : arr) {
+				MainFrame.this.outputArea.append(c + "\n");
+			}
+			
+			MainFrame.this.outputArea.append("\nTotal time: " + 
+					(endTime - startTime) + "ms\n");
+
 		}
 	}
 
@@ -274,6 +311,7 @@ public class MainFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			// TODO: Provide a dialog to adjust the options.
 		}
 	}
 }

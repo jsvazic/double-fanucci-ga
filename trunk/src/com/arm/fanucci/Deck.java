@@ -11,12 +11,11 @@ import java.util.TreeSet;
 public class Deck {
 
 	private Set<Card> cards;
-	private static Deck instance;
 	
 	/**
 	 * Default constructor.
 	 */
-	private Deck() {
+	public Deck() {
 		cards = new TreeSet<Card>();
 	}
 	
@@ -30,32 +29,12 @@ public class Deck {
 	}
 	
 	/**
-	 * Method used to retrieve a singleton instance of the deck.
-	 * 
-	 * @return A singleton instance of the deck.
-	 */
-	public static synchronized Deck getInstance() {
-		if (instance == null) {
-			instance = new Deck();
-		}
-		
-		return instance;
-	}
-	
-	/**
 	 * Method to remove a given card.
 	 * 
 	 * @param c The card to remove from the imported set.
 	 */
 	public void removeCard(Card c) {
 		cards.remove(c);
-	}
-	
-	/**
-	 * Method to clear out all cards and reset this deck.
-	 */
-	public void reset() {
-		cards.clear();
 	}
 	
 	/**
