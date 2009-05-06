@@ -76,4 +76,13 @@ public class Deck {
 		
 		return mySet;
 	}
+	
+	/**
+	 * Method to retrieve the size of this deck.
+	 * 
+	 * @return The size of this deck.
+	 */
+	public int size() {
+		return cards.size();
+	}
 }
