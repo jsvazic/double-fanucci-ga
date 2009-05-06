@@ -69,7 +69,7 @@ public class MainFrame extends JFrame {
 		cardPanel = new CardPanel();
 		setLayout(new BorderLayout(5, 5));
 		add(cardPanel, BorderLayout.CENTER);
-		setSize(330, 290);
+		setSize(400, 300);
 		addListeners();
 	}
 	
@@ -119,8 +119,9 @@ public class MainFrame extends JFrame {
 	 */
 	private class LoadAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
-		private MainFrame frame;
 		
+		private MainFrame frame;
+
 		/**
 		 * Default constructor.
 		 * 
