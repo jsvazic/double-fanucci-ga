@@ -198,8 +198,6 @@ public class FanucciChromosome extends Chromosome {
 			}
 			System.out.println();
 		}
-		System.out.println("-----------------------------------");
-		System.out.println();
 	}
 	
 	/**
