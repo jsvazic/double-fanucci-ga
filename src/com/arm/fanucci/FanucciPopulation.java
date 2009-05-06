@@ -17,16 +17,16 @@ import com.arm.genetic.Population;
  */
 public class FanucciPopulation extends Population {
 	private static final Random rand = new Random(System.currentTimeMillis());
-	private Importer importer;
+	private Deck importer;
 	
 	/**
 	 * Default constructor. Used to initialize the simulation.
 	 * 
 	 * @param size The size of the population.
 	 */
-	public FanucciPopulation(int size, Importer importer) {
+	public FanucciPopulation(int size) {
 		this.population = new ArrayList<Chromosome>(size);
-		this.importer = importer;
+		this.importer = Deck.getInstance();
 		generateInitialPopulation(size);
 	}
 	

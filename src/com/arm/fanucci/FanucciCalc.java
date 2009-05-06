@@ -45,7 +45,7 @@ public class FanucciCalc {
 			cardFile = new File("etc/cards.xml");
 		}
 		long startTime = System.currentTimeMillis();
-		Importer importer = new Importer();
+		XMLImporter importer = new XMLImporter();
 		try {
 			importer.importCards(cardFile);
 		} catch (Exception ex) {
@@ -58,7 +58,7 @@ public class FanucciCalc {
 		Chromosome[] arr = new Chromosome[MAX_HANDS];
 		for (int i = 0; i < MAX_HANDS; i++) {
 			FanucciPopulation population = new FanucciPopulation(
-					POPULATION_SIZE, importer);
+					POPULATION_SIZE);
 
 			Chromosome best = population.getBestChromosome();
 			double lastFitness = best.getFitness(); 
@@ -77,7 +77,7 @@ public class FanucciCalc {
 			
 			arr[i] = population.getBestChromosome();
 			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
-				importer.removeCard(c);
+				Deck.getInstance().removeCard(c);
 			}
 		}
 		long endTime = System.currentTimeMillis();

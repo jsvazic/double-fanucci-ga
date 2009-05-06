@@ -19,7 +19,7 @@ import com.arm.genetic.Chromosome;
  */
 public class FanucciChromosome extends Chromosome {
 	private Map<Short, Set<Card>> hand;
-	private final Importer importer;
+	private final Deck importer;
 	
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
@@ -32,7 +32,7 @@ public class FanucciChromosome extends Chromosome {
 	 * @throws NullPointerException Thrown if <code>cards</code> is 
 	 * <code>null</code>.
 	 */
-	public FanucciChromosome(Set<Card> cards, final Importer importer) {
+	public FanucciChromosome(Set<Card> cards, final Deck importer) {
 		if (cards == null) {
 			throw new NullPointerException("'cards' cannot be null.");
 		}
