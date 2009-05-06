@@ -14,6 +14,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
@@ -45,7 +46,7 @@ public class MainFrame extends JFrame {
 	 */
 	public MainFrame() {
 		super("Yet Another Double Fanucci Calculator");
-		simOptions = OptionsController.importOptions();
+		simOptions = OptionsController.loadOptions();
 		this.deck  = new Deck();
 		init();
 	}
@@ -79,13 +80,15 @@ public class MainFrame extends JFrame {
 		cardPanel = new CardPanel(deck);
 		outputArea = new JTextArea(10, 20);
 		
-		setLayout(new BorderLayout(5, 5));
-		add(cardPanel, BorderLayout.CENTER);
-		add(new JScrollPane(outputArea, 
+		JPanel contentPane = new JPanel();
+		contentPane.setLayout(new BorderLayout(5, 5));
+		contentPane.add(cardPanel, BorderLayout.CENTER);
+		contentPane.add(new JScrollPane(outputArea, 
 					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
 				BorderLayout.SOUTH);
 		
+		setContentPane(contentPane);
 		setSize(400, 500);
 		addListeners();
 	}
@@ -113,7 +116,7 @@ public class MainFrame extends JFrame {
 	 */
 	private void shutdown() {
 		try {
-			OptionsController.exportOptions(simOptions);
+			OptionsController.saveOptions(simOptions);
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, 
 					"Failed to save the options: " + ex.getMessage(),
@@ -165,7 +168,7 @@ public class MainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser fc = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			        "Double Fanucci Deck", "dfd");
+			        "Double Fanucci Deck (*.dfd)", "dfd");
 			
 			fc.setFileFilter(filter);
 			int retVal = fc.showOpenDialog(frame);
@@ -176,7 +179,7 @@ public class MainFrame extends JFrame {
 					frame.resetSelection();
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
-							"Failed to import the deck:\n" + ex.getMessage(), 
+							"Failed to load the deck:\n" + ex.getMessage(), 
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -216,11 +219,17 @@ public class MainFrame extends JFrame {
 			int retVal = fc.showSaveDialog(frame);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File outFile = fc.getSelectedFile();
+				
+				// Make sure we have the proper extension on the file.
+				if (!outFile.getAbsolutePath().endsWith(".dfd")) {
+					outFile = new File(outFile.getAbsolutePath() + ".dfd");
+				}
+				
 				try {
 					DeckController.exportDeck(deck, outFile);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
-							"Failed to import the deck:\n" + ex.getMessage(), 
+							"Failed to save the deck:\n" + ex.getMessage(), 
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
@@ -271,7 +280,7 @@ public class MainFrame extends JFrame {
 	
 			putValue(MNEMONIC_KEY, KeyEvent.VK_R);
 		}
-
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			long startTime = System.currentTimeMillis();
@@ -281,6 +290,9 @@ public class MainFrame extends JFrame {
 			
 			// Print out the best hands available for the given deck.
 			for (Chromosome c : arr) {
+				if (c == null) {
+					break;
+				}
 				MainFrame.this.outputArea.append(c + "\n");
 			}
 			

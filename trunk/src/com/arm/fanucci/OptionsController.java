@@ -140,7 +140,7 @@ public class OptionsController extends DefaultHandler {
 	 * @return An imported and/or initialized <code>SimulatorOptions</code> 
 	 * object.
 	 */
-	public static SimulatorOptions importOptions() {
+	public static SimulatorOptions loadOptions() {
 		OptionsController controller = new OptionsController();
 		try {
 			if (CONFIG_FILE.exists() && CONFIG_FILE.canRead()) {			
@@ -163,7 +163,7 @@ public class OptionsController extends DefaultHandler {
 	 * 
 	 * @throws Exception Thrown if the deck could not be exported.
 	 */
-	public static void exportOptions(SimulatorOptions options) 
+	public static void saveOptions(SimulatorOptions options) 
 			throws Exception {
 		
 		// Construct a DOM XML document for export.
@@ -209,6 +209,7 @@ public class OptionsController extends DefaultHandler {
 		// Export the document to the specified file.
 		if (!CONFIG_FILE.exists()) {
 			CONFIG_FILE.mkdirs();
+			CONFIG_FILE.createNewFile();
 		}
 		
 		Transformer trans = TransformerFactory.newInstance().newTransformer();
