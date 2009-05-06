@@ -24,6 +24,8 @@
     <card suit="Time" value="2" />
     <card suit="Time" value="3" />
 
+	<card suit="Scythes" value="Naught" />
+
     <card suit="Zurfs" value="Naught" />
     
     <card suit="Books" value="Naught" />
@@ -31,6 +33,7 @@
     
     <card suit="Plungers" value="Naught" />
     <card suit="Plungers" value="1" />
+    <card suit="Plungers" value="2" />
 
     <card suit="Tops" value="Naught" />
     <card suit="Tops" value="1" />
