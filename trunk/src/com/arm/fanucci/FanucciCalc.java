@@ -20,7 +20,7 @@ public class FanucciCalc {
 	private static final float MUTATION_RATE = 0.15f;
 	
 	/** Maximum number of iterations for the simulation. */
-	private static final int MAX_ITERATION = 128;
+	private static final int MAX_ITERATIONS = 128;
 	
 	/** Maximum number of hands to generate. */
 	private static final int MAX_HANDS = 4;
@@ -63,7 +63,7 @@ public class FanucciCalc {
 			Chromosome best = population.getBestChromosome();
 			double lastFitness = best.getFitness(); 
 			int count = 1;
-			for (int j = 0; j < MAX_ITERATION && count < MAX_BEST_COUNT; j++) {
+			for (int j = 0; j < MAX_ITERATIONS && count < MAX_BEST_COUNT; j++) {
 				// Evolve the population
 				population.evolve(ELITISM_RATE, MUTATION_RATE);
 				best = population.getBestChromosome();
