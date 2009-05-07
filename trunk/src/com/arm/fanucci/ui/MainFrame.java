@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
 				BorderLayout.SOUTH);
 		
 		setContentPane(contentPane);
-		setSize(400, 500);
+		setSize(375, 550);
 				
 		addListeners();
 	}
