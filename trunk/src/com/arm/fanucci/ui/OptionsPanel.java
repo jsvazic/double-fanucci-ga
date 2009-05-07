@@ -1,16 +1,17 @@
 package com.arm.fanucci.ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.text.NumberFormat;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import com.arm.fanucci.SimulatorOptions;
@@ -22,8 +23,8 @@ public class OptionsPanel extends JPanel {
 	private JSlider popSlider;
 	private JSlider elitismSlider;
 	private JSlider mutationSlider;
-	private JTextField iterationField;
-	private JComboBox handComboBox;
+	private JFormattedTextField iterationField;
+	private JComboBox setComboBox;
 	private JSpinner repeatSpinner;
 	
 	public OptionsPanel(SimulatorOptions options) {
@@ -52,31 +53,48 @@ public class OptionsPanel extends JPanel {
 		mutationSlider.setPaintTicks(true);
 		mutationSlider.setPaintLabels(true);
 
-		iterationField = new JTextField(String.valueOf(
-				options.getMaxIterations()));
+		NumberFormat formatter = NumberFormat.getNumberInstance();
+		formatter.setMaximumFractionDigits(0);
+		formatter.setMaximumIntegerDigits(4);
+		iterationField = new JFormattedTextField(formatter);
+		iterationField.setText(String.valueOf(options.getMaxIterations()));
 		
-		handComboBox = new JComboBox(new String[] { "2", "3", "4", "5", "6" });
-		
+		setComboBox = new JComboBox(new String[] { "2", "3", "4", "5", "6" });
 		repeatSpinner = new JSpinner(new SpinnerNumberModel(
 				options.getMaxRepeatCount(), 0, 500, 1));
 		
-		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new GridLayout(2, 2, 5, 5));
-		topPanel.add(popSlider);
-		topPanel.add(iterationField);
-		topPanel.add(elitismSlider);
-		topPanel.add(mutationSlider);
-		
-		topPanel.setBorder(BorderFactory.createTitledBorder(
-				"Simulation Settings"));
-		
-		JPanel bottomPanel = new JPanel();
-		bottomPanel.setLayout(new GridLayout(1, 2, 5, 5));
-		bottomPanel.add(handComboBox);
-		bottomPanel.add(repeatSpinner);
-		
-		setLayout(new BorderLayout(5, 5));
-		add(topPanel, BorderLayout.NORTH);
-		add(bottomPanel, BorderLayout.SOUTH);
+		setLayout(new GridBagLayout());
+		add(new JLabel("Population Size"), new GridBagConstraints(0, 0, 1, 1,
+				0.5, 0.5, GridBagConstraints.SOUTH, 
+				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
+		add(popSlider, new GridBagConstraints(0, 1, 1, 1,
+				0.5, 0.5, GridBagConstraints.NORTH, 
+				GridBagConstraints.HORIZONTAL, new Insets(1, 5, 5, 5), 1, 1));
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(3, 2, 5, 5));
+		panel.add(new JLabel("Number of Iterations"));
+		panel.add(iterationField);
+		panel.add(new JLabel("Number of Sets"));
+		panel.add(setComboBox);
+		panel.add(new JLabel("Local Maxima Count"));
+		panel.add(repeatSpinner);
+		add(panel, new GridBagConstraints(1, 0, 1, 2,
+				0.5, 0.5, GridBagConstraints.NORTH, 
+				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 1, 1));
+
+		add(new JLabel("Elitism Rate"), new GridBagConstraints(0, 2, 1, 1,
+				0.5, 0.5, GridBagConstraints.CENTER, 
+				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
+		add(elitismSlider, new GridBagConstraints(0, 3, 1, 1,
+				0.5, 0.5, GridBagConstraints.NORTH, 
+				GridBagConstraints.HORIZONTAL, new Insets(1, 5, 5, 5), 1, 1));
+
+		add(new JLabel("Mutation Rate"), new GridBagConstraints(1, 2, 1, 1,
+				0.5, 0.5, GridBagConstraints.CENTER, 
+				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
+		add(mutationSlider, new GridBagConstraints(1, 3, 1, 1,
+				0.5, 0.5, GridBagConstraints.NORTH, 
+				GridBagConstraints.HORIZONTAL, new Insets(1, 5, 5, 5), 1, 1));
 	}
 }
