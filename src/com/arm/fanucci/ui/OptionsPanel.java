@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.arm.fanucci.SimulatorOptions;
 
@@ -20,8 +22,11 @@ public class OptionsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private SimulatorOptions options;
+	private JLabel popLabel;
 	private JSlider popSlider;
+	private JLabel elitismLabel;
 	private JSlider elitismSlider;
+	private JLabel mutationLabel;
 	private JSlider mutationSlider;
 	private JFormattedTextField iterationField;
 	private JComboBox setComboBox;
@@ -33,25 +38,59 @@ public class OptionsPanel extends JPanel {
 	}
 	
 	private void init() {
+		popLabel  = new JLabel("Population Size - " + 
+				options.getPopulationSize());
 		popSlider = new JSlider(0, 4096, options.getPopulationSize());
 		popSlider.setMajorTickSpacing(1024);
 		popSlider.setMinorTickSpacing(128);
 		popSlider.setPaintTicks(true);
 		popSlider.setPaintLabels(true);
+		popSlider.setSnapToTicks(true);
+		popSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+			    if (!source.getValueIsAdjusting()) {
+			        int count = (int) source.getValue();
+			        popLabel.setText("Population Size - " + count);
+			    }
+			}			
+		});
 		
-		elitismSlider = new JSlider(0, 100, 
-				(int) (options.getElitismRate() * 100));
+		int elitismRate = (int) (options.getElitismRate() * 100);
+		elitismLabel = new JLabel("Elitism Rate - " + elitismRate + "%");
+		elitismSlider = new JSlider(0, 100, elitismRate);
 		elitismSlider.setMajorTickSpacing(10);
 		elitismSlider.setMinorTickSpacing(1);
 		elitismSlider.setPaintTicks(true);
 		elitismSlider.setPaintLabels(true);
+		elitismSlider.setSnapToTicks(true);
+		elitismSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+			    if (!source.getValueIsAdjusting()) {
+			        int rate = (int) source.getValue();
+			        elitismLabel.setText("Elitism Rate - " + rate + "%");
+			    }
+			}			
+		});
 
-		mutationSlider = new JSlider(0, 100, 
-				(int) (options.getMutationRate() * 100));
+		int mutationRate = (int) (options.getMutationRate() * 100);
+		mutationLabel = new JLabel("Mutation Rate - " + mutationRate + "%");
+		mutationSlider = new JSlider(0, 100, mutationRate);
 		mutationSlider.setMajorTickSpacing(10);
 		mutationSlider.setMinorTickSpacing(1);
 		mutationSlider.setPaintTicks(true);
 		mutationSlider.setPaintLabels(true);
+		mutationSlider.setSnapToTicks(true);
+		mutationSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+			    if (!source.getValueIsAdjusting()) {
+			        int rate = (int) source.getValue();
+			        mutationLabel.setText("Mutation Rate - " + rate + "%");
+			    }
+			}			
+		});
 
 		NumberFormat formatter = NumberFormat.getNumberInstance();
 		formatter.setMaximumFractionDigits(0);
@@ -64,7 +103,7 @@ public class OptionsPanel extends JPanel {
 				options.getMaxRepeatCount(), 0, 500, 1));
 		
 		setLayout(new GridBagLayout());
-		add(new JLabel("Population Size"), new GridBagConstraints(0, 0, 1, 1,
+		add(popLabel, new GridBagConstraints(0, 0, 1, 1,
 				0.5, 0.5, GridBagConstraints.SOUTH, 
 				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
 		add(popSlider, new GridBagConstraints(0, 1, 1, 1,
@@ -83,14 +122,14 @@ public class OptionsPanel extends JPanel {
 				0.5, 0.5, GridBagConstraints.NORTH, 
 				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 1, 1));
 
-		add(new JLabel("Elitism Rate"), new GridBagConstraints(0, 2, 1, 1,
+		add(elitismLabel, new GridBagConstraints(0, 2, 1, 1,
 				0.5, 0.5, GridBagConstraints.CENTER, 
 				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
 		add(elitismSlider, new GridBagConstraints(0, 3, 1, 1,
 				0.5, 0.5, GridBagConstraints.NORTH, 
 				GridBagConstraints.HORIZONTAL, new Insets(1, 5, 5, 5), 1, 1));
 
-		add(new JLabel("Mutation Rate"), new GridBagConstraints(1, 2, 1, 1,
+		add(mutationLabel, new GridBagConstraints(1, 2, 1, 1,
 				0.5, 0.5, GridBagConstraints.CENTER, 
 				GridBagConstraints.NONE, new Insets(5, 5, 1, 5), 1, 1));
 		add(mutationSlider, new GridBagConstraints(1, 3, 1, 1,

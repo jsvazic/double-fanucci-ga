@@ -327,6 +327,9 @@ public class MainFrame extends JFrame {
 					MainFrame.this, simOptions);
 			
 			dialog.setVisible(true);
+			if (dialog.getDialogResult() == JOptionPane.OK_OPTION) {
+				// TODO: Retrieve the settings and update the options
+			}
 		}
 	}
 }
