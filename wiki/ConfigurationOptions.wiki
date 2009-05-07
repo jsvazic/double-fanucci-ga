@@ -1,5 +1,5 @@
 #summary Describes the configuration options available
-#labels Featured,Phase-Support,Phase-Design
+#labels Featured,Phase-Support,Phase-Deploy,Phase-Design
 
 <wiki:toc max_depth="2" />
 
