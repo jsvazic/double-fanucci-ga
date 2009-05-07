@@ -208,7 +208,7 @@ public class OptionsController extends DefaultHandler {
 		
 		// Export the document to the specified file.
 		if (!CONFIG_FILE.exists()) {
-			CONFIG_FILE.mkdirs();
+			CONFIG_FILE.getParentFile().mkdirs();
 			CONFIG_FILE.createNewFile();
 		}
 		

@@ -323,7 +323,10 @@ public class MainFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO: Provide a dialog to adjust the options.
+			OptionsDialog dialog = new OptionsDialog(
+					MainFrame.this, simOptions);
+			
+			dialog.setVisible(true);
 		}
 	}
 }
