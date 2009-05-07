@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,7 +29,7 @@ public class OptionsDialog extends JDialog {
 	 * @param options
 	 */
 	public OptionsDialog(JFrame frame, SimulatorOptions options) {
-		super(frame, "YADFC Options", true);
+		super(frame, "Yet Another Double Fanucci Calculator - Options", true);
 		this.optionsPanel = new OptionsPanel(options);
 		init();
 	}
@@ -69,15 +70,17 @@ public class OptionsDialog extends JDialog {
 			}
 		});
 		
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		buttonPanel.add(okButton);
 		buttonPanel.add(cancelButton);
 		
+		optionsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
+		
 		JPanel contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout());
+		contentPane.setLayout(new BorderLayout(10, 10));
 		contentPane.add(buttonPanel, BorderLayout.SOUTH);
 		contentPane.add(optionsPanel, BorderLayout.CENTER);
 		
