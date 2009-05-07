@@ -1,6 +1,8 @@
 package com.arm.fanucci.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -45,7 +47,7 @@ public class MainFrame extends JFrame {
 	 * Default constructor.
 	 */
 	public MainFrame() {
-		super("Yet Another Double Fanucci Calculator");
+		super("Yet Another Double Fanucci Calculator (YADFC)");
 		simOptions = OptionsController.loadOptions();
 		this.deck  = new Deck();
 		init();
@@ -90,6 +92,7 @@ public class MainFrame extends JFrame {
 		
 		setContentPane(contentPane);
 		setSize(400, 500);
+				
 		addListeners();
 	}
 	
@@ -137,6 +140,14 @@ public class MainFrame extends JFrame {
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		JFrame frame = new MainFrame();
+		
+		// Center the frame.
+		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
+		Dimension screenSize = toolkit.getScreenSize(); 
+		int x = (screenSize.width - frame.getWidth()) / 2; 
+		int y = (screenSize.height - frame.getHeight()) / 2;
+		
+		frame.setLocation(x, y);
 		frame.setVisible(true);
 	}
 
@@ -326,6 +337,13 @@ public class MainFrame extends JFrame {
 			OptionsDialog dialog = new OptionsDialog(
 					MainFrame.this, simOptions);
 			
+			// Center the dialog.
+			Toolkit toolkit = Toolkit.getDefaultToolkit(); 
+			Dimension screenSize = toolkit.getScreenSize(); 
+			int x = (screenSize.width - dialog.getWidth()) / 2; 
+			int y = (screenSize.height - dialog.getHeight()) / 2;
+			
+			dialog.setLocation(x, y);
 			dialog.setVisible(true);
 		}
 	}

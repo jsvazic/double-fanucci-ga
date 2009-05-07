@@ -10,20 +10,37 @@ import com.arm.genetic.Chromosome;
 public class FanucciCalc {	
 	private SimulatorOptions simOptions;
 	
+	/**
+	 * Default constructor.
+	 * 
+	 * @param options The options for the simulation.
+	 */
 	public FanucciCalc(SimulatorOptions options) {
 		simOptions = options;
 	}
 	
+	/**
+	 * Method to execute the genetic algoritm simulation for the given
+	 * <code>Deck</code>.
+	 * 
+	 * @param deck The <code>Deck</code> containing the Fanucci cards to be
+	 * used for the simulation.
+	 * 
+	 * @return The unique optimal solution for each hand.
+	 */
 	public Chromosome[] execute(Deck deck) {
-		final int maxHands = simOptions.getMaxHands();
-		final int maxIterations = simOptions.getMaxIterations();
-		final float elitismRate = simOptions.getElitismRate();
-		final float mutationRate = simOptions.getMutationRate();
-		final int maxRepeatCount = simOptions.getMaxRepeatCount();
+		int maxHands = simOptions.getMaxHands();
+		int maxIterations = simOptions.getMaxIterations();
+		float elitismRate = simOptions.getElitismRate();
+		float mutationRate = simOptions.getMutationRate();
+		int maxRepeatCount = simOptions.getMaxRepeatCount();
+		if (maxRepeatCount < 1 || maxRepeatCount > maxIterations) {
+			maxRepeatCount = maxIterations;
+		}
 		
 		Chromosome[] arr = new Chromosome[maxHands];
 		
-		for (int i = 0; i < maxHands && deck.size() > 0; i++) {
+		for (int i = 0; i < maxHands; i++) {
 			FanucciPopulation population =  new FanucciPopulation(deck, 
 					simOptions.getPopulationSize());
 
