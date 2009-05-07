@@ -218,7 +218,7 @@ public class CardPanel extends JPanel {
 		 */
 		public FanucciCardImageIcon(Image img, String label) {
 			super(img);
-			this.font  = new Font("Verdana", Font.PLAIN, 12);
+			this.font  = new Font("Helvedica", Font.PLAIN, 12);
 			this.label = label;
 		}
 		
