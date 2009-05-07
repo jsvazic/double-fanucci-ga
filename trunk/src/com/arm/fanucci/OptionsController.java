@@ -18,8 +18,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Controller used for importing and exporting a Double Fanucci deck.  The 
- * format of the file is XML and must have the following structure:
+ * Controller used for loading and saving <code>SimulatorOptions</code> 
+ * instances.  The format of the file is XML and must have the following 
+ * structure:
  * 
  * <pre>
  * <fanucci-options>
@@ -36,7 +37,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OptionsController extends DefaultHandler {
 	
-	private final static File CONFIG_FILE = 
+	/** The location where the options file will be saved to. */
+	public final static File OPTIONS_FILE = 
 			new File(System.getProperty("user.home"), "yadfc/options.config");
 
 	/** The default size for the population. */
@@ -143,9 +145,9 @@ public class OptionsController extends DefaultHandler {
 	public static SimulatorOptions loadOptions() {
 		OptionsController controller = new OptionsController();
 		try {
-			if (CONFIG_FILE.exists() && CONFIG_FILE.canRead()) {			
+			if (OPTIONS_FILE.exists() && OPTIONS_FILE.canRead()) {			
 				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-				parser.parse(CONFIG_FILE, controller);
+				parser.parse(OPTIONS_FILE, controller);
 			}
 		} catch (Exception ex) {
 			System.out.println("Failed to load the config file: " +
@@ -156,12 +158,14 @@ public class OptionsController extends DefaultHandler {
 	}
 
 	/**
-	 * Method used to export a deck to a file.
+	 * Method used to save the <code>SimulatorOptions</code> for the user.
+	 * The save location is pre-determined.
 	 * 
-	 * @param deck The deck to export.
-	 * @param f The file to export the deck to.
+	 * @param options The <code>SimulatorOptions</code> object to save.
 	 * 
-	 * @throws Exception Thrown if the deck could not be exported.
+	 * @throws Exception Thrown if the options could not be saved.
+	 * 
+	 * @see #OPTIONS_FILE
 	 */
 	public static void saveOptions(SimulatorOptions options) 
 			throws Exception {
@@ -207,12 +211,12 @@ public class OptionsController extends DefaultHandler {
 		doc.appendChild(root);
 		
 		// Export the document to the specified file.
-		if (!CONFIG_FILE.exists()) {
-			CONFIG_FILE.getParentFile().mkdirs();
-			CONFIG_FILE.createNewFile();
+		if (!OPTIONS_FILE.exists()) {
+			OPTIONS_FILE.getParentFile().mkdirs();
+			OPTIONS_FILE.createNewFile();
 		}
 		
 		Transformer trans = TransformerFactory.newInstance().newTransformer();
-		trans.transform(new DOMSource(doc), new StreamResult(CONFIG_FILE));
+		trans.transform(new DOMSource(doc), new StreamResult(OPTIONS_FILE));
 	}
 }

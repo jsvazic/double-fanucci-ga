@@ -17,17 +17,22 @@ public class CLICalculator {
 	 * @param args Command line argument (ignored).
 	 */
 	public static void main(String[] args) throws Exception {
-		File cardFile;
+		File cardFile = null;
 		if (args.length > 0) {
 			cardFile = new File(args[0]);
 			if (!cardFile.isFile() || !cardFile.canRead()) {
 				System.out.println("Unable to read file: " + args[0]);
 				System.exit(1);
 			}
-		} else {
-			cardFile = new File("etc/cards.xml");
+		} 
+
+		if (cardFile == null) {
+			System.out.println("Syntax: java -jar yadfc.jar " +
+					"com.arm.fanucci.CLICalculator <card file>");
+			
+			System.exit(1);
 		}
-		
+
 		long startTime = System.currentTimeMillis();
 		Deck deck = null;
 		try {
