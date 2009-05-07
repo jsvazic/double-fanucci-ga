@@ -57,7 +57,7 @@
 
 	<!-- Target to create the various JAR files. -->
 	<target name="jar" depends="compile">
-		<jar destfile="${dist.dir}/${ant.project.name}.jar" basedir="${build.dir}" manifest="${build.dir}/manifest.mf" excludes="**/manifest.mf" />
+		<jar destfile="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" basedir="${build.dir}" manifest="${build.dir}/manifest.mf" excludes="**/manifest.mf" />
 	</target>
 
 	<!-- Target to generate the Javadocs. -->
