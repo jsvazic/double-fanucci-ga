@@ -191,8 +191,10 @@ public class FanucciChromosome extends Chromosome {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("------------------------------------\n");
-		sb.append((100 - getFitness())).append(':').append('\n');
+		StringBuilder sb = new StringBuilder();
+		sb.append("------------------------------------\n");
+		sb.append("Hand value - ").append((100 - getFitness())).append(':');
+		sb.append('\n');
 		for (Set<Card> cards : hand.values()) {
 			Iterator<Card> it = cards.iterator();
 			if (it.hasNext()) {
