@@ -19,6 +19,7 @@ import com.arm.genetic.Chromosome;
  */
 public class FanucciChromosome extends Chromosome {
 	private Map<Short, Set<Card>> hand;
+	private FanucciPopulation population;
 	
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
@@ -31,11 +32,12 @@ public class FanucciChromosome extends Chromosome {
 	 * @throws NullPointerException Thrown if <code>cards</code> is 
 	 * <code>null</code>.
 	 */
-	public FanucciChromosome(Set<Card> cards) {
+	public FanucciChromosome(FanucciPopulation population, Set<Card> cards) {
 		if (cards == null) {
 			throw new NullPointerException("'cards' cannot be null.");
 		}
 		
+		this.population = population;
 		// We'll never have more than 4 unique suits, so pre-allocate 
 		// the space.
 		this.hand = new HashMap<Short, Set<Card>>(4);
@@ -163,7 +165,7 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		// Return the new "child" from the mated chromosomes.
-		return new FanucciChromosome(cards);
+		return new FanucciChromosome(population, cards);
 	}
 
 	@Override
@@ -171,8 +173,7 @@ public class FanucciChromosome extends Chromosome {
 		// Randomly mutate a card by removing it from the set and replacing 
 		// it with a new card.
 		Card[] myArr = getCards();
-		Card[] oArr  = Deck.getInstance().getDifference(myArr).toArray(
-				new Card[0]);
+		Card[] oArr  = getDifference(myArr);
 		
 		if (oArr.length < 1) {
 			return;
@@ -253,4 +254,29 @@ public class FanucciChromosome extends Chromosome {
 		
 		return true;
 	}
+	
+	/**
+	 * Method to get all loaded cards that are not already part of a given 
+	 * set.
+	 * 
+	 * @param cardArr The set of cards to differentiate against.
+	 * 
+	 * @return The set of cards that were loaded, minus the cards in the 
+	 * given set.
+	 */
+	private Card[] getDifference(Card[] cardArr) {
+		Set<Card> set = new TreeSet<Card>();
+		
+		// Add all the cards in the current deck to the set
+		for (Card c : population.getDeck()) {
+			set.add(c);
+		}
+		
+		for (Card c : cardArr) {
+			set.remove(c);
+		}
+		
+		return set.toArray(new Card[0]);
+	}
+
 }

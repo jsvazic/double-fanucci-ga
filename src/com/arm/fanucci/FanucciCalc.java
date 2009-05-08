@@ -43,15 +43,14 @@ public class FanucciCalc {
 		Chromosome[] arr = new Chromosome[maxHands];
 		
 		for (int i = 0; i < maxHands && deck.size() > 0; i++) {
+			Card[] cardArr = deck.toArray(new Card[0]);
 			FanucciPopulation population =  new FanucciPopulation(
-					deck.toArray(new Card[0]), 
-					simOptions.getPopulationSize());
+					cardArr, simOptions.getPopulationSize());
 
 			Chromosome best = population.getBestChromosome();
 			double lastFitness = best.getFitness(); 
 			int count = 1;
-			for (int j = 0; j < maxIterations && count < maxRepeatCount; j++) {
-				
+			for (int j = 0; j < maxIterations && count < maxRepeatCount; j++) {				
 				// Evolve the population
 				population.evolve(elitismRate, mutationRate);
 				

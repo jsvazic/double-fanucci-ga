@@ -87,28 +87,7 @@ public class Deck {
 			return cards.contains(c);
 		}
 	}
-	
-	/**
-	 * Method to get all loaded cards that are not already part of a given 
-	 * set.
-	 * 
-	 * @param cards The set of cards to differentiate against.
-	 * 
-	 * @return The set of cards that were loaded, minus the cards in the 
-	 * given set.
-	 */
-	public Set<Card> getDifference(Card[] cards) {
-		Set<Card> mySet;
-		synchronized (this.cards) {
-			mySet = new TreeSet<Card>(this.cards);
-		}
-		for (Card c : cards) {
-			mySet.remove(c);
-		}
 		
-		return mySet;
-	}
-	
 	/**
 	 * Method to retrieve the size of this deck.
 	 * 

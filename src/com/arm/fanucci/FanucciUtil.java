@@ -235,5 +235,4 @@ public class FanucciUtil implements IFanucci {
 				return "Unknown";
 		}
 	}
-
 }

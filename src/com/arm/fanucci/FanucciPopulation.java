@@ -42,11 +42,21 @@ public class FanucciPopulation extends Population {
 					hand.add(allCards[idx]);
 				}
 				
-				population.add(new FanucciChromosome(hand));
+				population.add(new FanucciChromosome(this, hand));
 			}
 			Collections.sort(population);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Method to retrieve all the <code>Card</code>s available to the 
+	 * current population.
+	 * 
+	 * @return The <code>Card</code>s available to the current population.
+	 */
+	public Card[] getDeck() {
+		return allCards;
 	}
 }
