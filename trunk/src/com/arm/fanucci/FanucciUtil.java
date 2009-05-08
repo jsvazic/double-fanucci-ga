@@ -158,7 +158,7 @@ public class FanucciUtil implements IFanucci {
 			return POWER_EIGHT;
 		} else if ("9".equals(value)) {
 			return POWER_NINE;
-		} else if ("Inifinity".equals(value) || "\u221E".equals(value)) {
+		} else if ("Infinity".equals(value) || "\u221E".equals(value)) {
 			return POWER_INFINITY;
 		}
 		

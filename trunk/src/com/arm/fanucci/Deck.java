@@ -63,10 +63,13 @@ public class Deck {
 	 */
 	public Card[] getAllCards() {
 		synchronized(cards) {
-			Set<Card> set = Collections.synchronizedSet(
-					new TreeSet<Card>(cards));
-			
-			return set.toArray(new Card[0]);
+			return cards.toArray(new Card[0]);
+		}
+	}
+	
+	public Set<Card> getCardSet() {
+		synchronized(cards) {
+			return new TreeSet<Card>(cards);
 		}
 	}
 	
@@ -96,8 +99,8 @@ public class Deck {
 	 */
 	public Set<Card> getDifference(Card[] cards) {
 		Set<Card> mySet;
-		synchronized (cards) {
-			mySet = Collections.synchronizedSet(new TreeSet<Card>(this.cards));
+		synchronized (this.cards) {
+			mySet = new TreeSet<Card>(this.cards);
 		}
 		for (Card c : cards) {
 			mySet.remove(c);

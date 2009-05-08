@@ -15,6 +15,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
@@ -51,12 +53,14 @@ public class CardPanel extends JPanel {
 	private JPanel buttonPanel;
 	private CardLayout cardLayout;
 	private Deck deck;
+	private Map<String, JPanel> panelMap;
 
 	/**
 	 * Default constructor.
 	 */
 	public CardPanel() {
 		this.deck = Deck.getInstance();
+		this.panelMap = new HashMap<String, JPanel>(15);
 		init();
 	}
 	
@@ -124,6 +128,14 @@ public class CardPanel extends JPanel {
 						handleButtonToggled(e);
 					}
 				});
+				
+				short suitId = FanucciUtil.getSuitId(suit);
+				short groupId = FanucciUtil.getGroupId(suitId);
+				short value   = FanucciUtil.getValue(label);
+				Card c = new Card(groupId, suitId, value);
+				if (deck.hasCard(c)) {
+					button.setSelected(true);
+				}
 							
 				innerPanel.add(button, new GridBagConstraints(
 						xPos, yPos, 1, 1, 0.5, 0.5, GridBagConstraints.CENTER, 
@@ -135,6 +147,7 @@ public class CardPanel extends JPanel {
 				}
 			}
 			
+			panelMap.put(suit, innerPanel);
 			buttonPanel.add(innerPanel, suit);
 		}
 		
@@ -153,10 +166,27 @@ public class CardPanel extends JPanel {
 	}
 	
 	/**
-	 * Method used to reset the selection.
+	 * Method to retrieve the currently selected index of the list.
+	 * 
+	 * @return The currently selected list index.
 	 */
-	public void resetSelection() {
-		suitList.clearSelection();
+	public int getSelectedIndex() {
+		return suitList.getSelectedIndex();
+	}
+	
+	/**
+	 * Method used to reset the selection.  If -1 is passed in or if the
+	 * selected index is greater than the number of elements in the list,
+	 * then the selection is cleared.
+	 * 
+	 * @param idx The index of the item in the list to select.
+	 */
+	public void setSelection(int idx) {
+		if (idx < 0 || idx > suitList.getModel().getSize()) {
+			suitList.clearSelection();
+		} else {
+			suitList.setSelectedIndex(idx);
+		}
 	}
 	
 	/**
@@ -171,11 +201,42 @@ public class CardPanel extends JPanel {
 				if (suitList.getSelectedIndex() == -1) {
 					cardLayout.show(buttonPanel, BLANK);
 				} else {
-					cardLayout.show(buttonPanel, 
-							(String) suitList.getSelectedValue());
+					String suit = (String) suitList.getSelectedValue();
+					if (panelMap.containsKey(suit)) {
+						updateButtonSelection(panelMap.get(suit));
+					}
+					
+					cardLayout.show(buttonPanel, suit);
 				}
 			}			
 		});		
+	}
+	
+	/**
+	 * Method used to update the button selections.  This method will check
+	 * the buttons on the given panel and then mark them as selected or not
+	 * based on the corresponding card existing in the deck.
+	 * 
+	 * @param panel The panel to update.
+	 */
+	private void updateButtonSelection(JPanel panel) {
+		for (Component component : panel.getComponents()) {
+			AbstractButton button = (AbstractButton) component;
+			short suitId = FanucciUtil.getSuitId(
+					(String) suitList.getSelectedValue());
+			
+			short groupId = FanucciUtil.getGroupId(suitId);
+			String str = ((FanucciCardImageIcon) button.getIcon()).getLabel();
+			short value = FanucciUtil.getValue(str);
+			
+			Card c = new Card(groupId, suitId, value);
+			if (deck.hasCard(c)) {
+				button.setSelected(true);
+			} else {
+				button.setSelected(false);
+			}
+		}
+		
 	}
 
 	/**
