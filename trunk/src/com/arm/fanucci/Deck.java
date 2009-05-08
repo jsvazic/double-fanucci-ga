@@ -11,12 +11,26 @@ import java.util.TreeSet;
 public class Deck {
 
 	private Set<Card> cards;
+	private static Deck instance;
 	
 	/**
 	 * Default constructor.
 	 */
-	public Deck() {
+	private Deck() {
 		cards = new TreeSet<Card>();
+	}
+	
+	/**
+	 * Method to retrieve the singleton instance of this class.
+	 * 
+	 * @return A singleton instance of the <code>Deck</code> class.
+	 */
+	public static synchronized Deck getInstance() {
+		if (instance == null) {
+			instance = new Deck();
+		}
+		
+		return instance;
 	}
 	
 	/**
@@ -84,5 +98,12 @@ public class Deck {
 	 */
 	public int size() {
 		return cards.size();
+	}
+
+	/**
+	 * Method used to reset the deck contents.
+	 */
+	public void reset() {
+		cards.clear();
 	}
 }

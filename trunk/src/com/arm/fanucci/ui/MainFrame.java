@@ -139,7 +139,7 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		Deck deck    = new Deck();
+		Deck deck    = Deck.getInstance();
 		JFrame frame = new MainFrame(deck);
 		
 		// Center the frame.
@@ -295,22 +295,34 @@ public class MainFrame extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			long startTime = System.currentTimeMillis();
-			FanucciCalc calc = new FanucciCalc(simOptions);
-			Chromosome[] arr = calc.execute(deck);
-			long endTime = System.currentTimeMillis();
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					long startTime = System.currentTimeMillis();
+					FanucciCalc calc = new FanucciCalc(simOptions);
+					Chromosome[] arr = calc.execute(deck);
+					long endTime = System.currentTimeMillis();
+					
+					// Print out the best hands available for the given deck.
+					for (Chromosome c : arr) {
+						if (c == null) {
+							break;
+						}
+						MainFrame.this.outputArea.append(c + "\n");
+					}
+					
+					MainFrame.this.outputArea.append("\nTotal time: " + 
+							(endTime - startTime) + "ms\n");
+				}				
+			};
 			
-			// Print out the best hands available for the given deck.
-			for (Chromosome c : arr) {
-				if (c == null) {
-					break;
-				}
-				MainFrame.this.outputArea.append(c + "\n");
+			Thread t = new Thread(r);
+			t.start();
+			try {
+				t.join();
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
 			}
-			
-			MainFrame.this.outputArea.append("\nTotal time: " + 
-					(endTime - startTime) + "ms\n");
-
 		}
 	}
 
