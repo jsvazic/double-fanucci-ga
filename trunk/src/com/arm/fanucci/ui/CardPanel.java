@@ -55,8 +55,8 @@ public class CardPanel extends JPanel {
 	/**
 	 * Default constructor.
 	 */
-	public CardPanel(Deck deck) {
-		this.deck = deck;
+	public CardPanel() {
+		this.deck = Deck.getInstance();
 		init();
 	}
 	

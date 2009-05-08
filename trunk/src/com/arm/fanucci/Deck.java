@@ -1,5 +1,6 @@
 package com.arm.fanucci;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,7 +18,7 @@ public class Deck {
 	 * Default constructor.
 	 */
 	private Deck() {
-		cards = new TreeSet<Card>();
+		cards = Collections.synchronizedSet(new TreeSet<Card>());
 	}
 	
 	/**
@@ -39,7 +40,9 @@ public class Deck {
 	 * @param card The <code>Card</code> to add to this deck.
 	 */
 	public void addCard(Card card) {
-		cards.add(card);
+		synchronized(cards) {
+			cards.add(card);
+		}
 	}
 	
 	/**
@@ -48,7 +51,9 @@ public class Deck {
 	 * @param c The card to remove from the imported set.
 	 */
 	public void removeCard(Card c) {
-		cards.remove(c);
+		synchronized(cards) {
+			cards.remove(c);
+		}
 	}
 	
 	/**
@@ -56,8 +61,13 @@ public class Deck {
 	 * 
 	 * @return The set of all imported cards.
 	 */
-	public Set<Card> getAllCards() {
-		return new TreeSet<Card>(cards);
+	public Card[] getAllCards() {
+		synchronized(cards) {
+			Set<Card> set = Collections.synchronizedSet(
+					new TreeSet<Card>(cards));
+			
+			return set.toArray(new Card[0]);
+		}
 	}
 	
 	/**
@@ -70,7 +80,9 @@ public class Deck {
 	 * <code>false</code> otherwise.
 	 */
 	public boolean hasCard(Card c) {
-		return cards.contains(c);
+		synchronized(cards) {
+			return cards.contains(c);
+		}
 	}
 	
 	/**
@@ -83,7 +95,10 @@ public class Deck {
 	 * given set.
 	 */
 	public Set<Card> getDifference(Card[] cards) {
-		Set<Card> mySet = new TreeSet<Card>(this.cards);
+		Set<Card> mySet;
+		synchronized (cards) {
+			mySet = Collections.synchronizedSet(new TreeSet<Card>(this.cards));
+		}
 		for (Card c : cards) {
 			mySet.remove(c);
 		}
@@ -97,13 +112,17 @@ public class Deck {
 	 * @return The size of this deck.
 	 */
 	public int size() {
-		return cards.size();
+		synchronized (cards) {
+			return cards.size();			
+		}
 	}
 
 	/**
 	 * Method used to reset the deck contents.
 	 */
 	public void reset() {
-		cards.clear();
+		synchronized (cards) {
+			cards.clear();
+		}
 	}
 }

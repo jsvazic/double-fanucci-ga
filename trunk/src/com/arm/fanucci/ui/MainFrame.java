@@ -37,8 +37,6 @@ import com.arm.genetic.Chromosome;
  */
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
-	private Deck deck;
 	private CardPanel cardPanel;
 	private SimulatorOptions simOptions;
 	private JTextArea outputArea;
@@ -46,10 +44,9 @@ public class MainFrame extends JFrame {
 	/**
 	 * Default constructor.
 	 */
-	public MainFrame(Deck deck) {
+	public MainFrame() {
 		super("Yet Another Double Fanucci Calculator (YADFC)");
 		simOptions = OptionsController.loadOptions();
-		this.deck  = deck;
 		init();
 	}
 	
@@ -79,7 +76,7 @@ public class MainFrame extends JFrame {
 		
 		setJMenuBar(menuBar);
 		
-		cardPanel = new CardPanel(deck);
+		cardPanel = new CardPanel();
 		outputArea = new JTextArea(10, 20);
 		
 		JPanel contentPane = new JPanel();
@@ -139,8 +136,7 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		Deck deck    = Deck.getInstance();
-		JFrame frame = new MainFrame(deck);
+		JFrame frame = new MainFrame();
 		
 		// Center the frame.
 		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
@@ -187,7 +183,7 @@ public class MainFrame extends JFrame {
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File inFile = fc.getSelectedFile();
 				try {
-					deck = DeckController.importDeck(inFile);
+					DeckController.importDeck(inFile);
 					frame.resetSelection();
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
@@ -238,7 +234,7 @@ public class MainFrame extends JFrame {
 				}
 				
 				try {
-					DeckController.exportDeck(deck, outFile);
+					DeckController.exportDeck(Deck.getInstance(), outFile);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
 							"Failed to save the deck:\n" + ex.getMessage(), 
@@ -300,7 +296,7 @@ public class MainFrame extends JFrame {
 				public void run() {
 					long startTime = System.currentTimeMillis();
 					FanucciCalc calc = new FanucciCalc(simOptions);
-					Chromosome[] arr = calc.execute(deck);
+					Chromosome[] arr = calc.execute(Deck.getInstance());
 					long endTime = System.currentTimeMillis();
 					
 					// Print out the best hands available for the given deck.

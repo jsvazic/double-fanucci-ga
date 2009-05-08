@@ -19,7 +19,6 @@ import com.arm.genetic.Chromosome;
  */
 public class FanucciChromosome extends Chromosome {
 	private Map<Short, Set<Card>> hand;
-	private final Deck importer;
 	
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
@@ -32,12 +31,10 @@ public class FanucciChromosome extends Chromosome {
 	 * @throws NullPointerException Thrown if <code>cards</code> is 
 	 * <code>null</code>.
 	 */
-	public FanucciChromosome(Set<Card> cards, final Deck importer) {
+	public FanucciChromosome(Set<Card> cards) {
 		if (cards == null) {
 			throw new NullPointerException("'cards' cannot be null.");
 		}
-		
-		this.importer = importer;
 		
 		// We'll never have more than 4 unique suits, so pre-allocate 
 		// the space.
@@ -166,7 +163,7 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		// Return the new "child" from the mated chromosomes.
-		return new FanucciChromosome(cards, importer);
+		return new FanucciChromosome(cards);
 	}
 
 	@Override
@@ -174,7 +171,9 @@ public class FanucciChromosome extends Chromosome {
 		// Randomly mutate a card by removing it from the set and replacing 
 		// it with a new card.
 		Card[] myArr = getCards();
-		Card[] oArr  = importer.getDifference(myArr).toArray(new Card[0]);
+		Card[] oArr  = Deck.getInstance().getDifference(myArr).toArray(
+				new Card[0]);
+		
 		if (oArr.length < 1) {
 			return;
 		}
