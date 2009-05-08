@@ -41,7 +41,7 @@ public class FanucciCalc {
 		Chromosome[] arr = new Chromosome[maxHands];
 		
 		for (int i = 0; i < maxHands; i++) {
-			FanucciPopulation population =  new FanucciPopulation(deck, 
+			FanucciPopulation population =  new FanucciPopulation( 
 					simOptions.getPopulationSize());
 
 			Chromosome best = population.getBestChromosome();
