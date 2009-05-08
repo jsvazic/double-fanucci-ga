@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.NumberFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -306,12 +307,17 @@ public class MainFrame extends JFrame {
 					
 					long endTime = System.currentTimeMillis();
 					
+					NumberFormat formatter = NumberFormat.getIntegerInstance();
 					// Print out the best hands available for the given deck.
-					for (Chromosome c : arr) {
+					for (int i = 0; i < arr.length; i++) {
+						Chromosome c = arr[i];
 						if (c == null) {
 							break;
 						}
-						MainFrame.this.outputArea.append(c + "\n");
+						outputArea.append("------------------------------------\n");
+						outputArea.append("Set " + (i + 1) + " (" + 
+								formatter.format(100.0 - c.getFitness()) + ")\n");						
+						outputArea.append(c + "\n");
 					}
 					
 					MainFrame.this.outputArea.append("\nTotal time: " + 
