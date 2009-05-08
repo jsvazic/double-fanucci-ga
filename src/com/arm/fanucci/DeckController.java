@@ -62,7 +62,9 @@ public class DeckController extends DefaultHandler {
 	 * @throws Exception Thrown if there was a problem importing the deck.
 	 */
 	public static Deck importDeck(File f) throws Exception {
-		Deck deck = new Deck();
+		Deck deck = Deck.getInstance();
+		deck.reset();
+		
 		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 		parser.parse(f, new DeckController(deck));
 		
