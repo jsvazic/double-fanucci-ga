@@ -1,5 +1,7 @@
 package com.arm.fanucci;
 
+import java.util.Set;
+
 import com.arm.genetic.Chromosome;
 
 /**
@@ -28,7 +30,7 @@ public class FanucciCalc {
 	 * 
 	 * @return The unique optimal solution for each hand.
 	 */
-	public Chromosome[] execute(Deck deck) {
+	public Chromosome[] execute(Set<Card> deck) {
 		int maxHands = simOptions.getMaxHands();
 		int maxIterations = simOptions.getMaxIterations();
 		float elitismRate = simOptions.getElitismRate();
@@ -40,8 +42,9 @@ public class FanucciCalc {
 		
 		Chromosome[] arr = new Chromosome[maxHands];
 		
-		for (int i = 0; i < maxHands; i++) {
-			FanucciPopulation population =  new FanucciPopulation( 
+		for (int i = 0; i < maxHands && deck.size() > 0; i++) {
+			FanucciPopulation population =  new FanucciPopulation(
+					deck.toArray(new Card[0]), 
 					simOptions.getPopulationSize());
 
 			Chromosome best = population.getBestChromosome();
@@ -68,7 +71,7 @@ public class FanucciCalc {
 			// the next hand.
 			arr[i] = population.getBestChromosome();
 			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
-				deck.removeCard(c);
+				deck.remove(c);
 			}
 		}
 		

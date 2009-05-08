@@ -48,7 +48,7 @@ public class CLICalculator {
 		SimulatorOptions simOptions = OptionsController.loadOptions();
 		
 		FanucciCalc calc = new FanucciCalc(simOptions);
-		Chromosome[] arr = calc.execute(deck);
+		Chromosome[] arr = calc.execute(deck.getCardSet());
 		long endTime = System.currentTimeMillis();
 		
 		// Print out the best hands available for the given deck.

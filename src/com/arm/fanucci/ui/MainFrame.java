@@ -105,10 +105,12 @@ public class MainFrame extends JFrame {
 	}
 	
 	/**
-	 * Method used to reset the selection in the suit list.
+	 * Method to retrieve the underlying <code>CardPanel</code> instance.
+	 * 
+	 * @return The associated <code>CardPanel</code> instance.
 	 */
-	public void resetSelection() {
-		cardPanel.resetSelection();
+	public CardPanel getCardPanel() {
+		return cardPanel;
 	}
 	
 	/**
@@ -184,7 +186,10 @@ public class MainFrame extends JFrame {
 				File inFile = fc.getSelectedFile();
 				try {
 					DeckController.importDeck(inFile);
-					frame.resetSelection();
+					CardPanel cardPanel = frame.getCardPanel();
+					int selectedIdx = cardPanel.getSelectedIndex();
+					cardPanel.setSelection(-1);
+					cardPanel.setSelection(selectedIdx);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
 							"Failed to load the deck:\n" + ex.getMessage(), 
@@ -296,7 +301,9 @@ public class MainFrame extends JFrame {
 				public void run() {
 					long startTime = System.currentTimeMillis();
 					FanucciCalc calc = new FanucciCalc(simOptions);
-					Chromosome[] arr = calc.execute(Deck.getInstance());
+					Chromosome[] arr = calc.execute(
+							Deck.getInstance().getCardSet());
+					
 					long endTime = System.currentTimeMillis();
 					
 					// Print out the best hands available for the given deck.
