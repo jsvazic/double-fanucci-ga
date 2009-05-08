@@ -46,10 +46,10 @@ public class MainFrame extends JFrame {
 	/**
 	 * Default constructor.
 	 */
-	public MainFrame() {
+	public MainFrame(Deck deck) {
 		super("Yet Another Double Fanucci Calculator (YADFC)");
 		simOptions = OptionsController.loadOptions();
-		this.deck  = new Deck();
+		this.deck  = deck;
 		init();
 	}
 	
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
 				BorderLayout.SOUTH);
 		
 		setContentPane(contentPane);
-		setSize(375, 550);
+		setSize(400, 550);
 				
 		addListeners();
 	}
@@ -139,7 +139,8 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		JFrame frame = new MainFrame();
+		Deck deck    = new Deck();
+		JFrame frame = new MainFrame(deck);
 		
 		// Center the frame.
 		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
@@ -295,8 +296,8 @@ public class MainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			long startTime = System.currentTimeMillis();
-			FanucciCalc calc = new FanucciCalc(MainFrame.this.simOptions);
-			Chromosome[] arr = calc.execute(MainFrame.this.deck);
+			FanucciCalc calc = new FanucciCalc(simOptions);
+			Chromosome[] arr = calc.execute(deck);
 			long endTime = System.currentTimeMillis();
 			
 			// Print out the best hands available for the given deck.

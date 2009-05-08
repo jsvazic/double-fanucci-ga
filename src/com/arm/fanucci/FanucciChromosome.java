@@ -175,6 +175,9 @@ public class FanucciChromosome extends Chromosome {
 		// it with a new card.
 		Card[] myArr = getCards();
 		Card[] oArr  = importer.getDifference(myArr).toArray(new Card[0]);
+		if (oArr.length < 1) {
+			return;
+		}
 		
 		Card toRemove = myArr[rand.nextInt(myArr.length)];
 		Card toAdd = oArr[rand.nextInt(oArr.length)];

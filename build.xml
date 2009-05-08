@@ -40,16 +40,9 @@
 		<mkdir dir="${dist.dir}" />
 	</target>
 
-	<!-- Target to set the IDs for everything. -->
-	<target name="copy-files" depends="init">
-		<copy todir="${build.dir}">
-			<fileset dir="${etc.dir}" includes="**/*.mf" />
-		</copy>
-	</target>
-
 	<!-- Target to compile the code. -->
-	<target name="compile" depends="copy-files">
-		<javac srcdir="${src.dir}" destdir="${build.dir}" compiler="javac1.5" source="1.5" debug="false" deprecation="on">
+	<target name="compile" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" compiler="javac1.5" source="1.5" debug="true" deprecation="on">
 			<classpath refid="project.class.path" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -57,7 +50,9 @@
 
 	<!-- Target to create the various JAR files. -->
 	<target name="jar" depends="compile">
-		<jar destfile="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" basedir="${build.dir}" manifest="${build.dir}/manifest.mf" excludes="**/manifest.mf" />
+		<jar destfile="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" basedir="${build.dir}" manifest="${etc.dir}/manifest.mf">
+			<fileset dir="${src.dir}" includes="**/*.gif" />
+		</jar>
 	</target>
 
 	<!-- Target to generate the Javadocs. -->
@@ -107,7 +102,7 @@
 
 <!-- Target to run YADFC. -->
 <target name="run" depends="dist">
-<java jar="${dist.dir}/${ant.project.name}.jar" fork="true" failonerror="true" />
+<java jar="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" fork="true" failonerror="true" />
 </target>
 
 <!-- Target to clean up all the copmiled artifacts. -->
