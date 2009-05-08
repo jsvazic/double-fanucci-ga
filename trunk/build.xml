@@ -94,7 +94,7 @@
 <delete dir="${build.dir}" />
 <delete dir="${dist.dir}" />
 <zip destfile="${ant.project.name}-${yadfc.version}-src.zip">
-	<zipfileset dir="." excludes="*.zip" />
+	<zipfileset dir="." excludes="*.zip,.classpath,.project" />
 </zip>
 <checksum file="${ant.project.name}-${yadfc.version}-bin.zip" />
 <checksum file="${ant.project.name}-${yadfc.version}-src.zip" />
