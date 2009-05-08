@@ -138,7 +138,7 @@ public class FanucciUtil implements IFanucci {
 	 * @see com.arm.fanucci.IFanucci
 	 */
 	public static short getValue(String value) {
-		if ("Naught".equals(value)) {
+		if ("Naught".equals(value) || "0".equals(value)) {
 			return POWER_NAUGHT;
 		} else if ("1".equals(value)) {
 			return POWER_ONE;
@@ -158,7 +158,7 @@ public class FanucciUtil implements IFanucci {
 			return POWER_EIGHT;
 		} else if ("9".equals(value)) {
 			return POWER_NINE;
-		} else if ("Inifinity".equals(value)) {
+		} else if ("Inifinity".equals(value) || "\u221E".equals(value)) {
 			return POWER_INFINITY;
 		}
 		

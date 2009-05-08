@@ -13,8 +13,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
@@ -69,7 +69,7 @@ public class CardPanel extends JPanel {
 		suitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-					new GridBagConstraints(0, 0, 1, 1, 0.3, 0.3, 
+					new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, 
 							GridBagConstraints.WEST, GridBagConstraints.BOTH,
 							new Insets(1, 1, 1, 1), 0, 0)
 		);
@@ -88,24 +88,24 @@ public class CardPanel extends JPanel {
 			BufferedImage img = null;
 			BufferedImage selectedImg = null;
 			try {
-				File imgFile = new File("images/" + suit.toLowerCase() + 
-						".gif");
-				if (imgFile.exists() && imgFile.canRead()) {
-					img = ImageIO.read(imgFile);
-				}
+				// Read the main image
+				URL url = CardPanel.class.getResource("images/" + 
+						suit.toLowerCase() + ".gif");
+				img = ImageIO.read(url);
 				
-				imgFile = new File("images/" + suit.toLowerCase() + 
-						"_selected.gif");
-				if (imgFile.exists() && imgFile.canRead()) {
-					selectedImg = ImageIO.read(imgFile);
-				}
-				
+				// Now read the selected image
+				url = CardPanel.class.getResource("images/" + 
+						suit.toLowerCase() + "_selected.gif");
+				selectedImg = ImageIO.read(url);
 			} catch (IOException ex) {
-				//ex.printStackTrace();
+				// Safe to ignore
 			}
 		
 			int xPos = 0;
 			int yPos = 0;
+			int fillType = (img != null && selectedImg != null) ? 
+					GridBagConstraints.NONE : GridBagConstraints.BOTH;
+			
 			for (String label : BUTTON_LABELS) {
 				JToggleButton button;
 				if (img != null && selectedImg != null) {
@@ -124,11 +124,10 @@ public class CardPanel extends JPanel {
 						handleButtonToggled(e);
 					}
 				});
-			
+							
 				innerPanel.add(button, new GridBagConstraints(
 						xPos, yPos, 1, 1, 0.5, 0.5, GridBagConstraints.CENTER, 
-						GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 
-						1, 1));
+						fillType, new Insets(1, 1, 1, 1), 1, 1));
 			
 				xPos = (xPos + 1) % 3;
 				if (xPos == 0) {
@@ -190,7 +189,8 @@ public class CardPanel extends JPanel {
 				(String) suitList.getSelectedValue());
 		
 		short groupId = FanucciUtil.getGroupId(suitId);
-		short value = FanucciUtil.getValue(button.getText());
+		String str = ((FanucciCardImageIcon) button.getIcon()).getLabel();
+		short value = FanucciUtil.getValue(str);
 		
 		Card c = new Card(groupId, suitId, value);
 		if (button.getModel().isSelected()) {
@@ -220,6 +220,15 @@ public class CardPanel extends JPanel {
 			super(img);
 			this.font  = new Font("Helvedica", Font.PLAIN, 12);
 			this.label = label;
+		}
+		
+		/**
+		 * Method to retrieve the card label. 
+		 * 
+		 * @return The label of the card.
+		 */
+		public String getLabel() {
+			return label;
 		}
 		
 		@Override
