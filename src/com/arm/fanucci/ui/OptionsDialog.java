@@ -153,7 +153,7 @@ public class OptionsDialog extends JDialog {
 		iterationField.setDocument(new IntegerDocument(5));
 		iterationField.setText(String.valueOf(options.getMaxIterations()));
 
-		setComboBox = new JComboBox(new String[] { "2", "3", "4", "5", "6" });
+		setComboBox = new JComboBox(new String[] { "1", "2", "3", "4", "5" });
 		setComboBox.setSelectedItem(String.valueOf(options.getMaxHands()));
 
 		repeatSpinner = new JSpinner(new SpinnerNumberModel(options
