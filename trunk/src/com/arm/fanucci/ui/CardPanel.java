@@ -246,18 +246,35 @@ public class CardPanel extends JPanel {
 	 */
 	private void handleButtonToggled(ActionEvent e) {
 		AbstractButton button = (AbstractButton) e.getSource();
-		short suitId = FanucciUtil.getSuitId(
-				(String) suitList.getSelectedValue());
-		
+		String suit  = (String) suitList.getSelectedValue(); 
+		short suitId = FanucciUtil.getSuitId(suit);
 		short groupId = FanucciUtil.getGroupId(suitId);
 		String str = ((FanucciCardImageIcon) button.getIcon()).getLabel();
 		short value = FanucciUtil.getValue(str);
 		
 		Card c = new Card(groupId, suitId, value);
-		if (button.getModel().isSelected()) {
-			deck.addCard(c);
-		} else {
+		if (!button.isSelected()) {
 			deck.removeCard(c);
+		} else {
+			deck.addCard(c);
+			
+			// Iterate over the sub-cards and make sure they
+			// get auto-selected as well.
+			JPanel panel = this.panelMap.get(suit);
+			for (Component component : panel.getComponents()) {
+				AbstractButton btn = (AbstractButton) component;
+				if (btn == button) {
+					break;
+				}
+				
+				str = ((FanucciCardImageIcon) btn.getIcon()).getLabel();
+				value = FanucciUtil.getValue(str);
+				c = new Card(groupId, suitId, value);
+				if (!btn.getModel().isSelected()) {
+					btn.setSelected(true);
+					deck.addCard(c);
+				}
+			}
 		}
 	}
 	
