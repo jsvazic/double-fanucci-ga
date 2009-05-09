@@ -270,7 +270,7 @@ public class CardPanel extends JPanel {
 				str = ((FanucciCardImageIcon) btn.getIcon()).getLabel();
 				value = FanucciUtil.getValue(str);
 				c = new Card(groupId, suitId, value);
-				if (!btn.getModel().isSelected()) {
+				if (!btn.isSelected()) {
 					btn.setSelected(true);
 					deck.addCard(c);
 				}
