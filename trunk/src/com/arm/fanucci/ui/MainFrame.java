@@ -1,6 +1,5 @@
 package com.arm.fanucci.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -17,8 +16,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -82,17 +81,15 @@ public class MainFrame extends JFrame {
 		outputArea = new JTextArea(10, 20);
 		outputArea.setEditable(false);
 		
-		JPanel contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout(5, 5));
-		contentPane.add(cardPanel, BorderLayout.CENTER);
-		contentPane.add(new JScrollPane(outputArea, 
-					JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-				BorderLayout.SOUTH);
+		JSplitPane contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				cardPanel, new JScrollPane(outputArea, 
+						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
+		);
 		
 		setContentPane(contentPane);
 		setSize(400, 550);
-				
+
 		addListeners();
 	}
 	

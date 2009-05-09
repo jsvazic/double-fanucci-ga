@@ -68,15 +68,8 @@ public class CardPanel extends JPanel {
 	 * Helper method used to initialize the UI.
 	 */
 	private void init() {
-		setLayout(new GridBagLayout());
 		suitList = new JList(SUITS);
 		suitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-					new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, 
-							GridBagConstraints.WEST, GridBagConstraints.BOTH,
-							new Insets(1, 1, 1, 1), 0, 0)
-		);
 
 		buttonPanel = new JPanel();
 		cardLayout  = new CardLayout();
@@ -150,6 +143,14 @@ public class CardPanel extends JPanel {
 			panelMap.put(suit, innerPanel);
 			buttonPanel.add(innerPanel, suit);
 		}
+		
+		setLayout(new GridBagLayout());
+		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+				new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, 
+						GridBagConstraints.WEST, GridBagConstraints.BOTH,
+						new Insets(1, 1, 1, 1), 0, 0)
+		);
 		
 		add(new JScrollPane(buttonPanel, 
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
