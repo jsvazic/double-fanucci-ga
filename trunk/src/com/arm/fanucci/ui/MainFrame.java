@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.arm.fanucci.Deck;
 import com.arm.fanucci.DeckController;
 import com.arm.fanucci.FanucciCalc;
+import com.arm.fanucci.FanucciChromosome;
 import com.arm.fanucci.OptionsController;
 import com.arm.fanucci.SimulatorOptions;
 import com.arm.genetic.Chromosome;
@@ -79,6 +80,7 @@ public class MainFrame extends JFrame {
 		
 		cardPanel = new CardPanel();
 		outputArea = new JTextArea(10, 20);
+		outputArea.setEditable(false);
 		
 		JPanel contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(5, 5));
@@ -300,6 +302,7 @@ public class MainFrame extends JFrame {
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
+					outputArea.setText(null);
 					long startTime = System.currentTimeMillis();
 					FanucciCalc calc = new FanucciCalc(simOptions);
 					Chromosome[] arr = calc.execute(
@@ -308,19 +311,24 @@ public class MainFrame extends JFrame {
 					long endTime = System.currentTimeMillis();
 					
 					NumberFormat formatter = NumberFormat.getIntegerInstance();
+					int totalCards = 0;
+					int totalScore = 0;
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
-						Chromosome c = arr[i];
+						FanucciChromosome c = (FanucciChromosome) arr[i];
 						if (c == null) {
 							break;
 						}
+						totalScore += (int) (100 - c.getFitness());
+						totalCards += c.getCards().length;
 						outputArea.append("------------------------------------\n");
 						outputArea.append("Set " + (i + 1) + " (" + 
 								formatter.format(100.0 - c.getFitness()) + ")\n");						
 						outputArea.append(c + "\n");
 					}
-					
-					MainFrame.this.outputArea.append("\nTotal time: " + 
+					outputArea.append("\nTotal cards : " + totalCards + "\n");
+					outputArea.append("\nTotal value : " + totalScore + "\n");
+					outputArea.append("\nTotal time  : " + 
 							(endTime - startTime) + "ms\n");
 				}				
 			};

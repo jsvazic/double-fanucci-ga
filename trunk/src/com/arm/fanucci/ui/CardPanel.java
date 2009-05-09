@@ -40,8 +40,8 @@ public class CardPanel extends JPanel {
 	private static final String BLANK = "blank_panel";
 	
 	private static final String[] SUITS = {
-			"Books", "Bugs", "Lamps", "Mazes", "Fromps", "Hives", "Inkblots", 
-			"Ears", "Time", "Scythes", "Zurfs", "Plungers", "Tops", "Rain",
+			"Bugs", "Lamps", "Mazes", "Fromps", "Hives", "Inkblots", "Ears", 
+			"Time", "Scythes", "Zurfs", "Books", "Plungers", "Tops", "Rain",
 			"Faces"
 	};
 	
