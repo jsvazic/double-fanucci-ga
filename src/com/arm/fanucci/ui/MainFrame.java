@@ -324,11 +324,12 @@ public class MainFrame extends JFrame {
 						outputArea.append("------------------------------------\n");
 						outputArea.append("Set " + (i + 1) + " (" + 
 								formatter.format(100.0 - c.getFitness()) + ")\n");						
-						outputArea.append(c + "\n");
+						outputArea.append(c.toString().trim() + "\n");
 					}
-					outputArea.append("\nTotal cards : " + totalCards + "\n");
-					outputArea.append("\nTotal value : " + totalScore + "\n");
-					outputArea.append("\nTotal time  : " + 
+					outputArea.append("------------------------------------\n");
+					outputArea.append("Total cards : " + totalCards + "\n");
+					outputArea.append("Total value : " + totalScore + "\n");
+					outputArea.append("Total time  : " + 
 							(endTime - startTime) + "ms\n");
 				}				
 			};
