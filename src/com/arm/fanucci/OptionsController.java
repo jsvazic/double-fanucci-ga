@@ -38,8 +38,11 @@ import org.xml.sax.helpers.DefaultHandler;
 public class OptionsController extends DefaultHandler {
 	
 	/** The location where the options file will be saved to. */
-	public final static File OPTIONS_FILE = 
+	public final static File OLD_OPTIONS_FILE = 
 			new File(System.getProperty("user.home"), "yadfc/options.config");
+
+	public final static File OPTIONS_FILE = 
+		new File(System.getProperty("user.dir"), "calc.dat");
 
 	/** The default size for the population. */
 	public static final int DEFAULT_POPULATION_SIZE = 256;
@@ -148,6 +151,12 @@ public class OptionsController extends DefaultHandler {
 			if (OPTIONS_FILE.exists() && OPTIONS_FILE.canRead()) {			
 				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 				parser.parse(OPTIONS_FILE, controller);
+			} else if (OLD_OPTIONS_FILE.exists() && OLD_OPTIONS_FILE.canRead()) {
+				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+				parser.parse(OLD_OPTIONS_FILE, controller);
+				if (!OLD_OPTIONS_FILE.delete()) {
+					OLD_OPTIONS_FILE.deleteOnExit();
+				}
 			}
 		} catch (Exception ex) {
 			System.out.println("Failed to load the config file: " +

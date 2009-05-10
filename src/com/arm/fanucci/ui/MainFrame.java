@@ -7,7 +7,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -41,6 +45,10 @@ public class MainFrame extends JFrame {
 	private CardPanel cardPanel;
 	private SimulatorOptions simOptions;
 	private JTextArea outputArea;
+	private JSplitPane contentPane;
+	private String lastSaveFileLocation;
+	
+	private static final String UI_CONFIG_FILE = "yadfc.dat";
 
 	/**
 	 * Default constructor.
@@ -81,7 +89,7 @@ public class MainFrame extends JFrame {
 		outputArea = new JTextArea(10, 20);
 		outputArea.setEditable(false);
 		
-		JSplitPane contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+		contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 				cardPanel, new JScrollPane(outputArea, 
 						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
@@ -89,6 +97,21 @@ public class MainFrame extends JFrame {
 		
 		setContentPane(contentPane);
 		setSize(400, 550);
+		
+		// Center the frame.
+		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
+		Dimension screenSize = toolkit.getScreenSize(); 
+		int x = (screenSize.width - getWidth()) / 2; 
+		int y = (screenSize.height -getHeight()) / 2;
+		setLocation(x, y);
+		
+		// Try to load the settings
+		try {
+			loadDetails();
+		} catch (IOException ex) {
+			// Failed to load the frame, no problem, stick with
+			// the defaults.
+		}
 
 		addListeners();
 	}
@@ -124,7 +147,15 @@ public class MainFrame extends JFrame {
 					"Failed to save the options: " + ex.getMessage(),
 					"Error Saving Options", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
+		try {
+			saveDetails();
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, 
+					"Failed to save the UI settings: " + ex.getMessage(),
+					"Error Saving UI Settings", JOptionPane.ERROR_MESSAGE);
+		}
+	
 		dispose();
 		System.exit(0);
 	}
@@ -138,15 +169,7 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		JFrame frame = new MainFrame();
-		
-		// Center the frame.
-		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
-		Dimension screenSize = toolkit.getScreenSize(); 
-		int x = (screenSize.width - frame.getWidth()) / 2; 
-		int y = (screenSize.height - frame.getHeight()) / 2;
-		
-		frame.setLocation(x, y);
+		JFrame frame = new MainFrame();		
 		frame.setVisible(true);
 	}
 
@@ -176,9 +199,15 @@ public class MainFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc;
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			        "Double Fanucci Deck (*.dfd)", "dfd");
+			
+			if (lastSaveFileLocation != null) {
+				fc = new JFileChooser(lastSaveFileLocation);
+			} else {
+				fc = new JFileChooser(System.getProperty("user.dir"));
+			}
 			
 			fc.setFileFilter(filter);
 			int retVal = fc.showOpenDialog(frame);
@@ -224,14 +253,21 @@ public class MainFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc;
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			        "Double Fanucci Deck", "dfd");
+			
+			if (lastSaveFileLocation != null) {
+				fc = new JFileChooser(lastSaveFileLocation);
+			} else {
+				fc = new JFileChooser(System.getProperty("user.dir"));
+			}
 
 			fc.setFileFilter(filter);
 			int retVal = fc.showSaveDialog(frame);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File outFile = fc.getSelectedFile();
+				lastSaveFileLocation = outFile.getParent();
 				
 				// Make sure we have the proper extension on the file.
 				if (!outFile.getAbsolutePath().endsWith(".dfd")) {
@@ -374,5 +410,52 @@ public class MainFrame extends JFrame {
 			dialog.setLocation(x, y);
 			dialog.setVisible(true);
 		}
+	}
+	
+	private void saveDetails() throws IOException {
+	    Properties props = new Properties();
+	    props.setProperty("State", String.valueOf(getExtendedState()));
+	    props.setProperty("X", String.valueOf(getX()));
+	    props.setProperty("Y", String.valueOf(getY()));
+	    props.setProperty("W", String.valueOf(getWidth()));
+	    props.setProperty("H", String.valueOf(getHeight()));
+	    props.setProperty("SFL", (lastSaveFileLocation != null) ? 
+	    		lastSaveFileLocation : System.getProperty("user.dir"));
+	    
+	    props.setProperty("DL", String.valueOf(
+	    		contentPane.getDividerLocation()));
+	    
+	    props.storeToXML(new FileOutputStream(UI_CONFIG_FILE), null);
+	}
+	
+	private void loadDetails() throws IOException {
+		File file = new File(UI_CONFIG_FILE);
+		if (!file.exists() || !file.canRead()) {
+			System.out.println("Not loading the settings.");
+			return;
+		}
+	    Properties props = new Properties();
+	    props.loadFromXML(new FileInputStream(UI_CONFIG_FILE));
+	    int extendedState = Integer.parseInt(props.getProperty("State", 
+	    		String.valueOf(getExtendedState())));
+	    
+	    lastSaveFileLocation = props.getProperty("SFL", 
+	    		System.getProperty("user.dir"));
+	    
+	    contentPane.setDividerLocation(Integer.parseInt(
+	    		props.getProperty("DL", 
+	    				String.valueOf(contentPane.getLastDividerLocation()))));
+	    contentPane.repaint();
+
+	    if (extendedState != JFrame.MAXIMIZED_BOTH) {
+	        setBounds(
+	            Integer.parseInt(props.getProperty("X", String.valueOf(getX()))),
+	            Integer.parseInt(props.getProperty("Y", String.valueOf(getY()))),
+	            Integer.parseInt(props.getProperty("W", String.valueOf(getWidth()))),
+	            Integer.parseInt(props.getProperty("H", String.valueOf(getHeight())))
+	        );
+	    } else {
+	        setExtendedState(JFrame.MAXIMIZED_BOTH);
+	    }
 	}
 }
