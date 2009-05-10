@@ -165,7 +165,10 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		// Return the new "child" from the mated chromosomes.
-		return new FanucciChromosome(population, cards);
+		FanucciChromosome child = new FanucciChromosome(population, cards);
+		child.scrubHand(); // Clean out any invalid qualities.
+		
+		return child;
 	}
 
 	@Override
@@ -190,6 +193,9 @@ public class FanucciChromosome extends Chromosome {
 			set.add(toAdd);
 			hand.put(toAdd.getSuit(), set);
 		}
+		
+		// Clean the hand.
+		scrubHand();
 	}
 
 	@Override
@@ -276,4 +282,22 @@ public class FanucciChromosome extends Chromosome {
 		return set.toArray(new Card[0]);
 	}
 
+	/**
+	 * Method used to clean up a given hand to ensure that there are at most
+	 * two cards from a single suit in the hand.
+	 */
+	private void scrubHand() {
+		for (Short suit : hand.keySet()) {
+			Set<Card> cards = hand.get(suit);
+			if (cards.size() > 2) {
+				Iterator<Card> it = cards.iterator();
+				for (int i = 0; it.hasNext(); i++) {
+					it.next();
+					if (i > 1) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
 }
