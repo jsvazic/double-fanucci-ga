@@ -97,8 +97,9 @@ public class FanucciChromosome extends Chromosome {
 	@Override
 	public double getFitness() {
 		double value = 0.0;
-		// Get the dominant suit
-		short dominantGroup = FanucciUtil.getGroupId(getDominantSuite());
+		// Get the dominant group
+		short dominantSuit = getDominantSuite();
+		short dominantGroup = FanucciUtil.getGroupId(dominantSuit);
 		
 		// Discourage more than three suits for a single slot
 		if (hand.keySet().size() > 3) {
@@ -111,28 +112,64 @@ public class FanucciChromosome extends Chromosome {
 			}
 		}
 
-		Short[] arr = hand.keySet().toArray(new Short[0]);
 		
+		Short[] arr = hand.keySet().toArray(new Short[0]);
+		System.out.println("dominantSuit: " + FanucciUtil.getSuitName(dominantSuit));
+		System.out.print("dominantGroup: ");
+		switch (dominantGroup) {
+			case IFanucci.GROUP_1:
+				System.out.println("Group 1");
+				break;
+			case IFanucci.GROUP_2:
+				System.out.println("Group 2");
+				break;
+			case IFanucci.GROUP_3:
+				System.out.println("Group 3");
+				break;
+			case IFanucci.GROUP_4:
+				System.out.println("Group 4");
+				break;
+			case IFanucci.GROUP_5:
+				System.out.println("Group 5");
+				break;
+			case IFanucci.GROUP_6:
+				System.out.println("Group 6");
+				break;
+		}
+		System.out.println("arr.length: " + arr.length);
 		// Iterate over the remaining suits and get their total values
-		for (int i = 0; i < arr.length - 1; i++) {
+		for (int i = 0; i < arr.length; i++) {
 			double suitValue = 0.0;
 			
 			// Only the top two cards in the suit count
 			Iterator<Card> it = hand.get(arr[i]).iterator();
-			for (int k = 0; k < 2 && it.hasNext(); k++) {
+			for (int j = 0; j < 2 && it.hasNext(); j++) {
 				suitValue += it.next().getValue();
 			}
 
-			for (int j = i + 1; j < arr.length; j++) {
-				double modifier = 0.0;
-				if (FanucciUtil.getGroupId(arr[i]) != dominantGroup) {
-					modifier = FanucciUtil.getModifier(
-							FanucciUtil.getGroupId(arr[i]), 
-							FanucciUtil.getGroupId(arr[j]));
-				}
-				
-				suitValue -= (suitValue * modifier);
+			if (FanucciUtil.getGroupId(arr[i]) == dominantGroup) {
+				continue;
 			}
+			
+			double modifier = 0.0;
+			for (int j = 0; j < arr.length; j++) {
+				if (j != i) {
+					if (modifier != 0.0) {
+						modifier *= FanucciUtil.getModifier(
+								FanucciUtil.getGroupId(arr[i]), 
+								FanucciUtil.getGroupId(arr[j]));
+					} else {
+						modifier = FanucciUtil.getModifier(
+								FanucciUtil.getGroupId(arr[i]), 
+								FanucciUtil.getGroupId(arr[j]));						
+					}
+				}
+			}
+			
+			System.out.println("suitValue: " + suitValue);
+			System.out.println("modifier : " + modifier);
+			System.out.println();
+			value += suitValue - (suitValue * modifier);
 		}
 
 		// Remember, there is a maximum value of 100 for any given hand.
