@@ -108,12 +108,13 @@ public class FanucciChromosome extends Chromosome {
 		
 		// Get the dominant group
 		short dominantGroup = getDominantGroup(groups);
+		System.out.println("Dominant Group: " + dominantGroup);
 		
 		double value = 0.0;
 		Short[] groupIds = groups.keySet().toArray(new Short[0]);
 		
 		// Iterate over the remaining suits and get their total values
-		for (int i = 0; i < groupIds.length; i++) {
+		for (int i = 0; i < groupIds.length - 1; i++) {
 			double groupValue = 0.0;
 			
 			// We've already discounted the possibility of more than two cards
@@ -128,18 +129,15 @@ public class FanucciChromosome extends Chromosome {
 				continue;
 			}
 			
-			double modifier = 0.0;
-			for (int j = 0; j < groupIds.length; j++) {
-				if (i != j) {
-					if (modifier != 0.0) {
-						modifier *= getModifier(groupIds[i], groupIds[j]);
-					} else {
-						modifier = getModifier(groupIds[i], groupIds[j]);						
-					}
+			for (int j = i + 1; j < groupIds.length; j++) {
+				if (groupIds[j] != dominantGroup) {
+					double modifier = getModifier(groupIds[i], groupIds[j]);
+					System.out.println("Modifier for " + groupIds[i] + " <-> " + groupIds[j] + " = " + modifier);
+					groupValue -= (groupValue * modifier);
 				}
 			}
 			
-			value += groupValue - (groupValue * modifier);
+			value += groupValue;
 		}
 		
 		// Remember, there is a maximum value of 100 for any given hand.
