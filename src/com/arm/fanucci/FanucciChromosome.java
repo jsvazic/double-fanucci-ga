@@ -18,7 +18,7 @@ import com.arm.genetic.Chromosome;
  *
  */
 public class FanucciChromosome extends Chromosome {
-	private Map<Short, Set<Card>> hand;
+	private Set<Card> hand;
 	private FanucciPopulation population;
 	
 	private static final Random rand = new Random(System.currentTimeMillis());
@@ -38,51 +38,34 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		this.population = population;
-		// We'll never have more than 4 unique suits, so pre-allocate 
-		// the space.
-		this.hand = new HashMap<Short, Set<Card>>(4);
-		
-		// Group the cards by their respective suits
-		for (Card card : cards) {
-			short suit = card.getSuit();
-			Set<Card> set;
-			if (this.hand.containsKey(suit)) {
-				set = this.hand.get(suit);
-			} else {
-				set = new TreeSet<Card>();
-				this.hand.put(suit, set);
-			}
-			set.add(card);
-		}
+		this.hand = new TreeSet<Card>();
+		this.hand.addAll(cards);
 	}
 	
 	/**
-	 * Method used to retrieve the dominant suit for the slot.
+	 * Method used to retrieve the dominant group for the hand.
 	 * 
 	 * @return The dominant suit for the hand, or <code>SUIT_UNKNOWN</code>
 	 * if there was an issue determining the suit.
 	 * 
 	 * @see com.arm.fanucci.IFanucci
 	 */
-	private short getDominantSuite() {
-		short bestSuite = IFanucci.SUIT_UNKNOWN;
-		short bestValue = 0;
-		for (Short suit : hand.keySet()) {
-			Iterator<Card> it = hand.get(suit).iterator();
-			short total = 0;
-			
-			// We only care about the top 2 cards in the suit
-			for (int i = 0; i < 2 && it.hasNext(); i++) {
-				total += it.next().getValue();
+	private short getDominantGroup(Map<Short, Set<Card>> groups) {
+		short bestGroup = IFanucci.GROUP_UNKNOWN;
+		short bestGroupValue = 0;
+		for (Short groupId : groups.keySet()) {
+			Set<Card> cards = groups.get(groupId);
+			short groupVal  = 0;
+			for (Card c : cards) {
+				groupVal += c.getValue();
 			}
-			
-			if (total > bestValue) {
-				bestSuite = suit;
-				bestValue = total;
+			if (groupVal > bestGroupValue) {
+				bestGroupValue = groupVal;
+				bestGroup = groupId;
 			}
 		}
-		
-		return bestSuite;
+
+		return bestGroup;
 	}
 	
 	/**
@@ -96,82 +79,69 @@ public class FanucciChromosome extends Chromosome {
 	 */
 	@Override
 	public double getFitness() {
-		double value = 0.0;
+		// Do not let more than 3 cards from a single suit in.
+		short lastSuit  = IFanucci.SUIT_UNKNOWN;
+		short suitCount = 0;
+		for (Card c : hand) {
+			if (c.getSuit() != lastSuit) {
+				lastSuit  = c.getSuit();
+				suitCount = 1;
+			} else {
+				if (++suitCount > 2) {
+					return Double.MAX_VALUE;
+				}
+			}
+		}
+		
+		// Generate our group map.
+		Map<Short, Set<Card>> groups = new HashMap<Short, Set<Card>>(4);
+		Iterator<Card> it = hand.iterator();
+		
+		// Add all the cards to their respective groups.
+		while (it.hasNext()) {
+			Card c = it.next();
+			if (!groups.containsKey(c.getGroup())) {
+				groups.put(c.getGroup(), new TreeSet<Card>());
+			}
+			groups.get(c.getGroup()).add(c);
+		}
+		
 		// Get the dominant group
-		short dominantSuit = getDominantSuite();
-		short dominantGroup = FanucciUtil.getGroupId(dominantSuit);
+		short dominantGroup = getDominantGroup(groups);
 		
-		// Discourage more than three suits for a single slot
-		if (hand.keySet().size() > 3) {
-			return Double.MAX_VALUE;
-		}
+		double value = 0.0;
+		Short[] groupIds = groups.keySet().toArray(new Short[0]);
 		
-		for (Short suit : hand.keySet()) {
-			if (hand.get(suit).size() > 2) {
-				return Double.MAX_VALUE;
-			}
-		}
-
-		
-		Short[] arr = hand.keySet().toArray(new Short[0]);
-		System.out.println("dominantSuit: " + FanucciUtil.getSuitName(dominantSuit));
-		System.out.print("dominantGroup: ");
-		switch (dominantGroup) {
-			case IFanucci.GROUP_1:
-				System.out.println("Group 1");
-				break;
-			case IFanucci.GROUP_2:
-				System.out.println("Group 2");
-				break;
-			case IFanucci.GROUP_3:
-				System.out.println("Group 3");
-				break;
-			case IFanucci.GROUP_4:
-				System.out.println("Group 4");
-				break;
-			case IFanucci.GROUP_5:
-				System.out.println("Group 5");
-				break;
-			case IFanucci.GROUP_6:
-				System.out.println("Group 6");
-				break;
-		}
-		System.out.println("arr.length: " + arr.length);
 		// Iterate over the remaining suits and get their total values
-		for (int i = 0; i < arr.length; i++) {
-			double suitValue = 0.0;
+		for (int i = 0; i < groupIds.length; i++) {
+			double groupValue = 0.0;
 			
-			// Only the top two cards in the suit count
-			Iterator<Card> it = hand.get(arr[i]).iterator();
-			for (int j = 0; j < 2 && it.hasNext(); j++) {
-				suitValue += it.next().getValue();
+			// We've already discounted the possibility of more than two cards
+			// of the same suit showing up, so just sum up all the cards.
+			it = groups.get(groupIds[i]).iterator();
+			while (it.hasNext()) {
+				groupValue += it.next().getValue();
 			}
 
-			if (FanucciUtil.getGroupId(arr[i]) == dominantGroup) {
+			if (groupIds[i] == dominantGroup) {
+				value += groupValue;
 				continue;
 			}
 			
 			double modifier = 0.0;
-			for (int j = 0; j < arr.length; j++) {
-				if (j != i) {
+			for (int j = 0; j < groupIds.length; j++) {
+				if (i != j) {
 					if (modifier != 0.0) {
-						modifier *= FanucciUtil.getModifier(
-								FanucciUtil.getGroupId(arr[i]), 
-								FanucciUtil.getGroupId(arr[j]));
+						modifier *= getModifier(groupIds[i], groupIds[j]);
 					} else {
-						modifier = FanucciUtil.getModifier(
-								FanucciUtil.getGroupId(arr[i]), 
-								FanucciUtil.getGroupId(arr[j]));						
+						modifier = getModifier(groupIds[i], groupIds[j]);						
 					}
 				}
 			}
 			
-			System.out.println("suitValue: " + suitValue);
-			System.out.println("modifier : " + modifier);
-			System.out.println();
-			value += suitValue - (suitValue * modifier);
+			value += (groupValue * modifier);
 		}
-
+		
 		// Remember, there is a maximum value of 100 for any given hand.
 		return (value > 100.0) ? 0.0 : (100 - value);
 	}
@@ -227,33 +197,21 @@ public class FanucciChromosome extends Chromosome {
 			return;
 		}
 		
-		Card toRemove = myArr[rand.nextInt(myArr.length)];
-		Card toAdd = oArr[rand.nextInt(oArr.length)];
-		
-		hand.get(toRemove.getSuit()).remove(toRemove);
-		if (hand.containsKey(toAdd.getSuit())) {
-			hand.get(toAdd.getSuit()).add(toAdd);
-		} else {
-			Set<Card> set = new TreeSet<Card>();
-			set.add(toAdd);
-			hand.put(toAdd.getSuit(), set);
-		}
-		
+		hand.remove(myArr[rand.nextInt(myArr.length)]);
+		hand.add(oArr[rand.nextInt(oArr.length)]);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (Set<Card> cards : hand.values()) {
-			Iterator<Card> it = cards.iterator();
-			if (it.hasNext()) {
-				sb.append('\t').append(it.next());
-			}
-			while (it.hasNext()) {
-				sb.append(", ").append(it.next());
-			}
-			sb.append('\n');
+		Iterator<Card> it = hand.iterator();
+		if (it.hasNext()) {
+			sb.append('\t').append(it.next());
 		}
+		while (it.hasNext()) {
+			sb.append(", ").append(it.next());
+		}
+		sb.append('\n');
 		
 		return sb.toString();
 	}
@@ -263,13 +221,8 @@ public class FanucciChromosome extends Chromosome {
 	 * 
 	 * @return The cards in the given hand as an array.
 	 */
-	public Card[] getCards() {
-		Set<Card> cards = new TreeSet<Card>();
-		for (Set<Card> s : hand.values()) {
-			cards.addAll(s);
-		}
-		
-		return cards.toArray(new Card[0]);
+	public Card[] getCards() {		
+		return hand.toArray(new Card[0]);
 	}
 
 	@Override
@@ -284,17 +237,9 @@ public class FanucciChromosome extends Chromosome {
 			return false;
 		}
 		
-		for (Short key : hand.keySet()) {
-			if (!fc.hand.containsKey(key)) {
+		for (Card card : hand) {
+			if (!fc.hand.contains(card)) {
 				return false;
-			}
-			if (hand.get(key).size() != fc.hand.get(key).size()) {
-				return false;
-			}
-			for (Card card : hand.get(key)) {
-				if (!(fc.hand.get(key).contains(card))) {
-					return false;
-				}
 			}
 		}
 		
@@ -324,4 +269,41 @@ public class FanucciChromosome extends Chromosome {
 		
 		return set.toArray(new Card[0]);
 	}
+	
+	/**
+	 * Method to retrieve the weight-modifier for a given pair of groups.  The
+	 * modifiers will be one of:
+	 * <ul>
+	 *    <li>0.0</li>
+	 *    <li>0.5</li>
+	 *    <li>1.0</li>
+	 *    <li>1.5</li>
+	 * </ul>
+	 * depending on whether or not the two group IDs are from the same family,
+	 * are allies, neutral or enemies respectively.
+	 * 
+	 * @param firstGroupId The first group ID to compare.
+	 * @param secondGroupId The second group ID to compare.
+	 * 
+	 * @return The modifier for the given pair of suits. 
+	 */
+	private static double getModifier(short firstGroupId, short secondGroupId) {
+		if (firstGroupId == secondGroupId) {
+			return 0.0;
+		}
+		
+		int idx = Math.abs(firstGroupId - secondGroupId) % 4;
+		switch (idx) {
+			case 0:	
+			case 2:
+				return 0.5; // Allies
+			case 1: 
+				return 1.5; // Enemies
+			case 3: 
+				return 1.0; // Neutral
+			default:
+				return 0.0; // Unknown
+		}
+	}
+
 }

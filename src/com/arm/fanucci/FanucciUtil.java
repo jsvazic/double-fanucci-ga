@@ -8,42 +8,6 @@ package com.arm.fanucci;
 public class FanucciUtil implements IFanucci {
 
 	/**
-	 * Method to retrieve the weight-modifier for a given pair of groups.  The
-	 * modifiers will be one of:
-	 * <ul>
-	 *    <li>0.0</li>
-	 *    <li>0.5</li>
-	 *    <li>1.0</li>
-	 *    <li>1.5</li>
-	 * </ul>
-	 * depending on whether or not the two group IDs are from the same family,
-	 * are allies, neutral or enemies respectively.
-	 * 
-	 * @param firstGroupId The first group ID to compare.
-	 * @param secondGroupId The second group ID to compare.
-	 * 
-	 * @return The modifier for the given pair of suits. 
-	 */
-	public static double getModifier(short firstGroupId, short secondGroupId) {
-		if (firstGroupId == secondGroupId) {
-			return 0.0;
-		}
-		
-		int idx = Math.abs(firstGroupId - secondGroupId) % 4;
-		switch (idx) {
-			case 0:	
-			case 2:
-				return 0.5; // Allies
-			case 1: 
-				return 1.5; // Enemies
-			case 3: 
-				return 1.0; // Neutral
-			default:
-				return 0.0; // Unknown
-		}
-	}
-
-	/**
 	 * Method to return a group ID given a suit ID.
 	 * 
 	 * @param suitId The ID of the suit to return the group ID for.

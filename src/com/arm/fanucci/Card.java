@@ -60,18 +60,18 @@ public class Card implements Comparable<Card>, IFanucci {
 		} else if (group > o.group) {
 			return 1;
 		} else {
-			if (value > o.value) {
+			if (suit < o.suit) {
 				return -1;
-			} else if (value < o.value) {
+			} else if (suit > o.suit) {
 				return 1;
 			} else {
-				if (suit < o.suit) {
+				if (value > o.value) {
 					return -1;
-				} else if (suit > o.suit) {
+				} else if (value < o.value) {
 					return 1;
 				}
 		
-				// Group, value and suit are all the same, i.e. the same card.
+				// Group, suit and value are equal, i.e. the same card.
 				return 0;
 			}
 		}
