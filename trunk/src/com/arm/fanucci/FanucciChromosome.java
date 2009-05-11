@@ -98,10 +98,10 @@ public class FanucciChromosome extends Chromosome {
 	public double getFitness() {
 		double value = 0.0;
 		// Get the dominant suit
-		short dominantSuit = getDominantSuite();
+		short dominantGroup = FanucciUtil.getGroupId(getDominantSuite());
 		
 		// Discourage more than three suits for a single slot
-		if (hand.size() > 3) {
+		if (hand.keySet().size() > 3) {
 			return Double.MAX_VALUE;
 		}
 		
@@ -111,27 +111,30 @@ public class FanucciChromosome extends Chromosome {
 			}
 		}
 
-		int totalCards = 0;
+		Short[] arr = hand.keySet().toArray(new Short[0]);
+		
 		// Iterate over the remaining suits and get their total values
-		for (Short suit : hand.keySet()) {
-			totalCards += hand.get(suit).size();
-			double modifier = 0.0;
-			if (suit != dominantSuit) {
-				modifier = FanucciUtil.getModifier(
-						FanucciUtil.getGroupId(dominantSuit), 
-						FanucciUtil.getGroupId(suit));
-			}
+		for (int i = 0; i < arr.length - 1; i++) {
 			double suitValue = 0.0;
-			Iterator<Card> it = hand.get(suit).iterator();
 			
 			// Only the top two cards in the suit count
-			for (int i = 0; i < 2 && it.hasNext(); i++) {
+			Iterator<Card> it = hand.get(arr[i]).iterator();
+			for (int k = 0; k < 2 && it.hasNext(); k++) {
 				suitValue += it.next().getValue();
 			}
-			
-			value += suitValue - (suitValue * modifier);
-		}
+
+			for (int j = i + 1; j < arr.length; j++) {
+				double modifier = 0.0;
+				if (FanucciUtil.getGroupId(arr[i]) != dominantGroup) {
+					modifier = FanucciUtil.getModifier(
+							FanucciUtil.getGroupId(arr[i]), 
+							FanucciUtil.getGroupId(arr[j]));
+				}
 				
+				suitValue -= (suitValue * modifier);
+			}
+		}
+
 		// Remember, there is a maximum value of 100 for any given hand.
 		return (value > 100.0) ? 0.0 : (100 - value);
 	}
