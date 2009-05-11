@@ -139,7 +139,7 @@ public class FanucciChromosome extends Chromosome {
 				}
 			}
 			
-			value += (groupValue * modifier);
+			value += groupValue - (groupValue * modifier);
 		}
 		
 		// Remember, there is a maximum value of 100 for any given hand.
