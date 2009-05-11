@@ -1,8 +1,6 @@
 package com.arm.fanucci;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,34 +36,7 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		this.population = population;
-		this.hand = new TreeSet<Card>();
-		this.hand.addAll(cards);
-	}
-	
-	/**
-	 * Method used to retrieve the dominant group for the hand.
-	 * 
-	 * @return The dominant suit for the hand, or <code>SUIT_UNKNOWN</code>
-	 * if there was an issue determining the suit.
-	 * 
-	 * @see com.arm.fanucci.IFanucci
-	 */
-	private short getDominantGroup(Map<Short, Set<Card>> groups) {
-		short bestGroup = IFanucci.GROUP_UNKNOWN;
-		short bestGroupValue = 0;
-		for (Short groupId : groups.keySet()) {
-			Set<Card> cards = groups.get(groupId);
-			short groupVal  = 0;
-			for (Card c : cards) {
-				groupVal += c.getValue();
-			}
-			if (groupVal > bestGroupValue) {
-				bestGroupValue = groupVal;
-				bestGroup = groupId;
-			}
-		}
-
-		return bestGroup;
+		this.hand = new TreeSet<Card>(cards);
 	}
 	
 	/**
@@ -80,9 +51,34 @@ public class FanucciChromosome extends Chromosome {
 	@Override
 	public double getFitness() {
 		// Do not let more than 3 cards from a single suit in.
-		short lastSuit  = IFanucci.SUIT_UNKNOWN;
-		short suitCount = 0;
+		short dominantGroup  = IFanucci.GROUP_UNKNOWN;
+		short lastGroup      = IFanucci.GROUP_UNKNOWN;
+		short lastSuit       = IFanucci.SUIT_UNKNOWN;
+		short suitCount      = 0;
+		short groupCount     = 0;
+		short bestGroupValue = 0;
+		short[] groupValues  = new short[6];
+		
 		for (Card c : hand) {
+			if (c.getGroup() != lastGroup) {
+				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
+						groupValues[lastGroup] > bestGroupValue) {
+					
+					bestGroupValue = groupValues[lastGroup];
+					dominantGroup  = lastGroup;
+				}
+				lastGroup  = c.getGroup();
+				++groupCount;
+			} else {
+				groupValues[lastGroup] += c.getValue();
+			}
+			
+			// Discourage more than 2 groups.
+			if (groupCount > 2) {
+				return Double.MAX_VALUE;
+			}
+			
+			// Discourage more than 2 cards of the same suit
 			if (c.getSuit() != lastSuit) {
 				lastSuit  = c.getSuit();
 				suitCount = 1;
@@ -93,52 +89,17 @@ public class FanucciChromosome extends Chromosome {
 			}
 		}
 		
-		// Generate our group map.
-		Map<Short, Set<Card>> groups = new HashMap<Short, Set<Card>>(4);
-		Iterator<Card> it = hand.iterator();
-		
-		// Add all the cards to their respective groups.
-		while (it.hasNext()) {
-			Card c = it.next();
-			if (!groups.containsKey(c.getGroup())) {
-				groups.put(c.getGroup(), new TreeSet<Card>());
-			}
-			groups.get(c.getGroup()).add(c);
-		}
-		
 		// Get the dominant group
-		short dominantGroup = getDominantGroup(groups);
-		System.out.println("Dominant Group: " + dominantGroup);
-		
 		double value = 0.0;
-		Short[] groupIds = groups.keySet().toArray(new Short[0]);
-		
-		// Iterate over the remaining suits and get their total values
-		for (int i = 0; i < groupIds.length - 1; i++) {
-			double groupValue = 0.0;
-			
-			// We've already discounted the possibility of more than two cards
-			// of the same suit showing up, so just sum up all the cards.
-			it = groups.get(groupIds[i]).iterator();
-			while (it.hasNext()) {
-				groupValue += it.next().getValue();
+		for (Card c : hand) {
+			if (c.getGroup() == dominantGroup) {
+				value += c.getValue();
+			} else {
+				double modifier = getModifier(dominantGroup, c.getGroup());
+				short cardValue = c.getValue();
+				value += (cardValue - (cardValue * modifier));
 			}
-
-			if (groupIds[i] == dominantGroup) {
-				value += groupValue;
-				continue;
-			}
-			
-			for (int j = i + 1; j < groupIds.length; j++) {
-				if (groupIds[j] != dominantGroup) {
-					double modifier = getModifier(groupIds[i], groupIds[j]);
-					System.out.println("Modifier for " + groupIds[i] + " <-> " + groupIds[j] + " = " + modifier);
-					groupValue -= (groupValue * modifier);
-				}
-			}
-			
-			value += groupValue;
-		}
+		}		
 		
 		// Remember, there is a maximum value of 100 for any given hand.
 		return (value > 100.0) ? 0.0 : (100 - value);
