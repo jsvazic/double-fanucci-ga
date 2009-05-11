@@ -20,6 +20,23 @@ public class TestFitness implements IFanucci {
 				new FanucciPopulation(new Card[0], 0), cards);
 		
 		System.out.println("Fitness: " + (100 - chromosome.getFitness()));
+		System.out.println("--------------------------------");
+
+		cards.clear();
+		cards.add(new Card(FanucciUtil.getGroupId(SUIT_BUGS), SUIT_BUGS, 
+				POWER_TWO));
+		cards.add(new Card(FanucciUtil.getGroupId(SUIT_BUGS), SUIT_BUGS, 
+				POWER_ONE));
+		cards.add(new Card(FanucciUtil.getGroupId(SUIT_ZURFS), SUIT_ZURFS, 
+				POWER_ONE));
+		cards.add(new Card(FanucciUtil.getGroupId(SUIT_INKBLOTS), SUIT_INKBLOTS, 
+				POWER_TWO));
+		
+		chromosome = new FanucciChromosome(new FanucciPopulation(
+				new Card[0], 0), cards);
+		
+		System.out.println("Fitness: " + (100 - chromosome.getFitness()));
+
 	}
 
 }
