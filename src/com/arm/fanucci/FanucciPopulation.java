@@ -17,7 +17,7 @@ import com.arm.genetic.Population;
  */
 public class FanucciPopulation extends Population {
 	private static final Random rand = new Random(System.currentTimeMillis());
-	private Card[] allCards;
+	private Set<Card> allCards;
 	
 	/**
 	 * Default constructor. Used to initialize the simulation.
@@ -26,7 +26,10 @@ public class FanucciPopulation extends Population {
 	 */
 	public FanucciPopulation(Card[] deck, int size) {
 		this.population = new ArrayList<Chromosome>(size);
-		this.allCards = deck;
+		this.allCards = new TreeSet<Card>();
+		for (Card c : deck) {
+			this.allCards.add(c);
+		}
 		generateInitialPopulation(size);
 	}
 	
@@ -34,12 +37,13 @@ public class FanucciPopulation extends Population {
 	 */
 	protected void generateInitialPopulation(int populationSize) {
 		try {
+			Card[] cardArr = allCards.toArray(new Card[0]);
 			for (int i = 0; i < populationSize; i++) {							
 				Set<Card> hand = new TreeSet<Card>();
 				for (int j = 0; j < 4; j++) {
 					// Randomly add cards
-					int idx = rand.nextInt(allCards.length);
-					hand.add(allCards[idx]);
+					int idx = rand.nextInt(cardArr.length);
+					hand.add(cardArr[idx]);
 				}
 				
 				population.add(new FanucciChromosome(this, hand));
@@ -56,7 +60,7 @@ public class FanucciPopulation extends Population {
 	 * 
 	 * @return The <code>Card</code>s available to the current population.
 	 */
-	public Card[] getDeck() {
+	public Set<Card> getDeck() {
 		return allCards;
 	}
 }
