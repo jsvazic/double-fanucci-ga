@@ -20,6 +20,7 @@ import com.arm.genetic.Chromosome;
 public class FanucciChromosome extends Chromosome {
 	private Set<Card> hand;
 	private FanucciPopulation population;
+	private double fitness;
 	
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
@@ -39,6 +40,7 @@ public class FanucciChromosome extends Chromosome {
 		
 		this.population = population;
 		this.hand = new TreeSet<Card>(cards);
+		updateFitness();
 	}
 	
 	/**
@@ -52,65 +54,11 @@ public class FanucciChromosome extends Chromosome {
 	 */
 	@Override
 	public double getFitness() {
-		// Do not let more than 3 cards from a single suit in.
-		short dominantGroup  = IFanucci.GROUP_UNKNOWN;
-		short lastGroup      = IFanucci.GROUP_UNKNOWN;
-		short lastSuit       = IFanucci.SUIT_UNKNOWN;
-		short suitCount      = 0;
-		short bestGroupValue = 0;
-		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
-		
-		for (Card c : hand) {
-			if (c.getGroup() != lastGroup) {
-				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
-						groupValues.get(lastGroup) > bestGroupValue) {
-					
-					bestGroupValue = groupValues.get(lastGroup);
-					dominantGroup  = lastGroup;
-				}
-				
-				lastGroup  = c.getGroup();
-				groupValues.put(lastGroup, c.getValue());
-			} else {
-				groupValues.put(lastGroup, 
-						(short) (groupValues.get(lastGroup) + c.getValue()));
-			}
-
-			// Discourage more than 2 groups.
-			if (groupValues.keySet().size() > 2) {
-				return Double.MAX_VALUE;
-			}
-			
-			// Discourage more than 2 cards of the same suit
-			if (c.getSuit() != lastSuit) {
-				lastSuit  = c.getSuit();
-				suitCount = 1;
-			} else {
-				if (++suitCount > 2) {
-					return Double.MAX_VALUE;
-				}
-			}
-		}
-		
-		// The dominant group won't be set if we only have one group of cards.
-		if (groupValues.keySet().size() == 1) {
-			dominantGroup = lastGroup; 
-		}
-		
-		// Calculate the values.
-		double value = 0.0;
-		for (Short groupId : groupValues.keySet()) {
-			double modifier = getModifier(dominantGroup, groupId);
-			short gValue = groupValues.get(groupId);
-			value += (gValue - (gValue * modifier));
-		}
-		
-		// Remember, there is a maximum value of 100 for any given hand.
-		return (value > 100.0) ? 0.0 : (100 - value);
+		return fitness;
 	}
 
 	@Override
-	public Chromosome mate(Chromosome mate) {
+	public Chromosome mate(final Chromosome mate) {
 		Card[] parent1   = getCards();
 		Card[] parent2 = ((FanucciChromosome) mate).getCards();
 		int idx1 = (int) (parent1.length / 2);
@@ -162,6 +110,72 @@ public class FanucciChromosome extends Chromosome {
 		
 		hand.remove(myArr[rand.nextInt(myArr.length)]);
 		hand.add(oArr[rand.nextInt(oArr.length)]);
+		
+		updateFitness();
+	}
+	
+	/**
+	 * Helper method used to update the fitness calculation of the 
+	 * chromosome.
+	 */
+	private void updateFitness() {
+		// Do not let more than 3 cards from a single suit in.
+		short dominantGroup  = IFanucci.GROUP_UNKNOWN;
+		short lastGroup      = IFanucci.GROUP_UNKNOWN;
+		short lastSuit       = IFanucci.SUIT_UNKNOWN;
+		short suitCount      = 0;
+		short bestGroupValue = 0;
+		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
+		
+		for (Card c : hand) {
+			if (c.getGroup() != lastGroup) {
+				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
+						groupValues.get(lastGroup) > bestGroupValue) {
+					
+					bestGroupValue = groupValues.get(lastGroup);
+					dominantGroup  = lastGroup;
+				}
+				
+				lastGroup  = c.getGroup();
+				groupValues.put(lastGroup, c.getValue());
+			} else {
+				groupValues.put(lastGroup, 
+						(short) (groupValues.get(lastGroup) + c.getValue()));
+			}
+
+			// Discourage more than 2 groups.
+			if (groupValues.keySet().size() > 2) {
+				fitness = Double.MAX_VALUE;
+				return;
+			}
+			
+			// Discourage more than 2 cards of the same suit
+			if (c.getSuit() != lastSuit) {
+				lastSuit  = c.getSuit();
+				suitCount = 1;
+			} else {
+				if (++suitCount > 2) {
+					fitness = Double.MAX_VALUE;
+					return;
+				}
+			}
+		}
+		
+		// The dominant group won't be set if we only have one group of cards.
+		if (groupValues.keySet().size() == 1) {
+			dominantGroup = lastGroup; 
+		}
+		
+		// Calculate the values.
+		double value = 0.0;
+		for (Short groupId : groupValues.keySet()) {
+			double modifier = getModifier(dominantGroup, groupId);
+			short gValue = groupValues.get(groupId);
+			value += (gValue - (gValue * modifier));
+		}
+		
+		// Remember, there is a maximum value of 100 for any given hand.
+		fitness = (value > 100.0) ? 0.0 : (100 - value);
 	}
 
 	@Override
@@ -200,8 +214,10 @@ public class FanucciChromosome extends Chromosome {
 			return false;
 		}
 		
-		for (Card card : hand) {
-			if (!fc.hand.contains(card)) {
+		Iterator<Card> it1 = hand.iterator();
+		Iterator<Card> it2 = fc.hand.iterator();
+		while (it1.hasNext()) {
+			if (!it1.next().equals(it2.next())) {
 				return false;
 			}
 		}
@@ -219,13 +235,7 @@ public class FanucciChromosome extends Chromosome {
 	 * given set.
 	 */
 	private Card[] getDifference(Card[] cardArr) {
-		Set<Card> set = new TreeSet<Card>();
-		
-		// Add all the cards in the current deck to the set
-		for (Card c : population.getDeck()) {
-			set.add(c);
-		}
-		
+		Set<Card> set = new TreeSet<Card>(population.getDeck());		
 		for (Card c : cardArr) {
 			set.remove(c);
 		}
