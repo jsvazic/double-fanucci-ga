@@ -123,9 +123,8 @@ public class CardPanel extends JPanel {
 				});
 				
 				short suitId = FanucciUtil.getSuitId(suit);
-				short groupId = FanucciUtil.getGroupId(suitId);
 				short value   = FanucciUtil.getValue(label);
-				Card c = new Card(groupId, suitId, value);
+				Card c = new Card(suitId, value);
 				if (deck.hasCard(c)) {
 					button.setSelected(true);
 				}
@@ -226,11 +225,10 @@ public class CardPanel extends JPanel {
 			short suitId = FanucciUtil.getSuitId(
 					(String) suitList.getSelectedValue());
 			
-			short groupId = FanucciUtil.getGroupId(suitId);
 			String str = ((FanucciCardImageIcon) button.getIcon()).getLabel();
 			short value = FanucciUtil.getValue(str);
 			
-			Card c = new Card(groupId, suitId, value);
+			Card c = new Card(suitId, value);
 			if (deck.hasCard(c)) {
 				button.setSelected(true);
 			} else {
@@ -249,11 +247,10 @@ public class CardPanel extends JPanel {
 		AbstractButton button = (AbstractButton) e.getSource();
 		String suit  = (String) suitList.getSelectedValue(); 
 		short suitId = FanucciUtil.getSuitId(suit);
-		short groupId = FanucciUtil.getGroupId(suitId);
 		String str = ((FanucciCardImageIcon) button.getIcon()).getLabel();
 		short value = FanucciUtil.getValue(str);
 		
-		Card c = new Card(groupId, suitId, value);
+		Card c = new Card(suitId, value);
 		if (!button.isSelected()) {
 			deck.removeCard(c);
 		} else {
@@ -270,7 +267,7 @@ public class CardPanel extends JPanel {
 				
 				str = ((FanucciCardImageIcon) btn.getIcon()).getLabel();
 				value = FanucciUtil.getValue(str);
-				c = new Card(groupId, suitId, value);
+				c = new Card(suitId, value);
 				if (!btn.isSelected()) {
 					btn.setSelected(true);
 					deck.addCard(c);

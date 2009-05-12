@@ -1,6 +1,8 @@
 package com.arm.fanucci;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -55,26 +57,27 @@ public class FanucciChromosome extends Chromosome {
 		short lastGroup      = IFanucci.GROUP_UNKNOWN;
 		short lastSuit       = IFanucci.SUIT_UNKNOWN;
 		short suitCount      = 0;
-		short groupCount     = 0;
 		short bestGroupValue = 0;
-		short[] groupValues  = new short[6];
+		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
 		
 		for (Card c : hand) {
 			if (c.getGroup() != lastGroup) {
 				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
-						groupValues[lastGroup] > bestGroupValue) {
+						groupValues.get(lastGroup) > bestGroupValue) {
 					
-					bestGroupValue = groupValues[lastGroup];
+					bestGroupValue = groupValues.get(lastGroup);
 					dominantGroup  = lastGroup;
 				}
+				
 				lastGroup  = c.getGroup();
-				++groupCount;
+				groupValues.put(lastGroup, c.getValue());
 			} else {
-				groupValues[lastGroup] += c.getValue();
+				groupValues.put(lastGroup, 
+						(short) (groupValues.get(lastGroup) + c.getValue()));
 			}
-			
+
 			// Discourage more than 2 groups.
-			if (groupCount > 2) {
+			if (groupValues.keySet().size() > 2) {
 				return Double.MAX_VALUE;
 			}
 			
@@ -89,17 +92,18 @@ public class FanucciChromosome extends Chromosome {
 			}
 		}
 		
-		// Get the dominant group
+		// The dominant group won't be set if we only have one group of cards.
+		if (groupValues.keySet().size() == 1) {
+			dominantGroup = lastGroup; 
+		}
+		
+		// Calculate the values.
 		double value = 0.0;
-		for (Card c : hand) {
-			if (c.getGroup() == dominantGroup) {
-				value += c.getValue();
-			} else {
-				double modifier = getModifier(dominantGroup, c.getGroup());
-				short cardValue = c.getValue();
-				value += (cardValue - (cardValue * modifier));
-			}
-		}		
+		for (Short groupId : groupValues.keySet()) {
+			double modifier = getModifier(dominantGroup, groupId);
+			short gValue = groupValues.get(groupId);
+			value += (gValue - (gValue * modifier));
+		}
 		
 		// Remember, there is a maximum value of 100 for any given hand.
 		return (value > 100.0) ? 0.0 : (100 - value);

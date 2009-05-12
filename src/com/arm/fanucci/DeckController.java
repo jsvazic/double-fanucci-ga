@@ -48,9 +48,8 @@ public class DeckController extends DefaultHandler {
 		
 		if ("card".equals(qName)) {
 			short suit = FanucciUtil.getSuitId(attr.getValue("suit"));
-			short group = FanucciUtil.getGroupId(suit);
 			short value = FanucciUtil.getValue(attr.getValue("value"));
-			deck.addCard(new Card(group, suit, value));
+			deck.addCard(new Card(suit, value));
 		}
 	}
 	
