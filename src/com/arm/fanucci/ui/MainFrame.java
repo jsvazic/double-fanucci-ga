@@ -1,5 +1,6 @@
 package com.arm.fanucci.ui;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -368,6 +369,7 @@ public class MainFrame extends JFrame {
 				}				
 			};
 			
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			Thread t = new Thread(r);
 			t.start();
 			try {
@@ -375,6 +377,7 @@ public class MainFrame extends JFrame {
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
+			setCursor(Cursor.getDefaultCursor());
 		}
 	}
 
