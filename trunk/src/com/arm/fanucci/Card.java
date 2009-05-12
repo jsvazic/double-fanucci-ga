@@ -19,10 +19,10 @@ public class Card implements Comparable<Card>, IFanucci {
 	 * @param suit The suite of the card.
 	 * @param value The value of the card.
 	 */
-	public Card(short group, short suit, short value) {
+	public Card(short suit, short value) {
 		this.suit = suit;
 		this.value = value;
-		this.group = group;
+		this.group = FanucciUtil.getGroupId(suit);
 	}
 	
 	/**

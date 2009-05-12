@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
 	private SimulatorOptions simOptions;
 	private JTextArea outputArea;
 	private JSplitPane contentPane;
-	private String lastSaveFileLocation;
+	private String lastFileLocation;
 	
 	private static final String UI_CONFIG_FILE = "yadfc.dat";
 
@@ -203,8 +203,8 @@ public class MainFrame extends JFrame {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			        "Double Fanucci Deck (*.dfd)", "dfd");
 			
-			if (lastSaveFileLocation != null) {
-				fc = new JFileChooser(lastSaveFileLocation);
+			if (lastFileLocation != null) {
+				fc = new JFileChooser(lastFileLocation);
 			} else {
 				fc = new JFileChooser(System.getProperty("user.dir"));
 			}
@@ -213,6 +213,7 @@ public class MainFrame extends JFrame {
 			int retVal = fc.showOpenDialog(frame);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File inFile = fc.getSelectedFile();
+				lastFileLocation = inFile.getParent();
 				try {
 					DeckController.importDeck(inFile);
 					CardPanel cardPanel = frame.getCardPanel();
@@ -257,8 +258,8 @@ public class MainFrame extends JFrame {
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 			        "Double Fanucci Deck", "dfd");
 			
-			if (lastSaveFileLocation != null) {
-				fc = new JFileChooser(lastSaveFileLocation);
+			if (lastFileLocation != null) {
+				fc = new JFileChooser(lastFileLocation);
 			} else {
 				fc = new JFileChooser(System.getProperty("user.dir"));
 			}
@@ -267,7 +268,7 @@ public class MainFrame extends JFrame {
 			int retVal = fc.showSaveDialog(frame);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File outFile = fc.getSelectedFile();
-				lastSaveFileLocation = outFile.getParent();
+				lastFileLocation = outFile.getParent();
 				
 				// Make sure we have the proper extension on the file.
 				if (!outFile.getAbsolutePath().endsWith(".dfd")) {
@@ -419,8 +420,8 @@ public class MainFrame extends JFrame {
 	    props.setProperty("Y", String.valueOf(getY()));
 	    props.setProperty("W", String.valueOf(getWidth()));
 	    props.setProperty("H", String.valueOf(getHeight()));
-	    props.setProperty("SFL", (lastSaveFileLocation != null) ? 
-	    		lastSaveFileLocation : System.getProperty("user.dir"));
+	    props.setProperty("SFL", (lastFileLocation != null) ? 
+	    		lastFileLocation : System.getProperty("user.dir"));
 	    
 	    props.setProperty("DL", String.valueOf(
 	    		contentPane.getDividerLocation()));
@@ -439,7 +440,7 @@ public class MainFrame extends JFrame {
 	    int extendedState = Integer.parseInt(props.getProperty("State", 
 	    		String.valueOf(getExtendedState())));
 	    
-	    lastSaveFileLocation = props.getProperty("SFL", 
+	    lastFileLocation = props.getProperty("SFL", 
 	    		System.getProperty("user.dir"));
 	    
 	    contentPane.setDividerLocation(Integer.parseInt(
