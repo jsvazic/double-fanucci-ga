@@ -20,8 +20,6 @@ import com.arm.genetic.Chromosome;
 public class FanucciChromosome extends Chromosome {
 	private Set<Card> hand;
 	private FanucciPopulation population;
-	private double fitness;
-	
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
 	/**
@@ -43,20 +41,6 @@ public class FanucciChromosome extends Chromosome {
 		updateFitness();
 	}
 	
-	/**
-	 * Method to retrieve the weight of the given slot hand.  Note that only 
-	 * slots with at most 2 suits will have a valid value.  More than two
-	 * suits will return a zero weight.  Also note that the maximum point 
-	 * value a slot can have is 100. 
-	 * 
-	 * @return The fitness of the given hand, measured in terms of the 
-	 * distance from the ideal hand of 100 points.  
-	 */
-	@Override
-	public double getFitness() {
-		return fitness;
-	}
-
 	@Override
 	public Chromosome mate(final Chromosome mate) {
 		Card[] parent1   = getCards();
@@ -128,7 +112,7 @@ public class FanucciChromosome extends Chromosome {
 		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
 		
 		for (Card c : hand) {
-			if (c.getGroup() != lastGroup) {
+			if (c.group != lastGroup) {
 				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
 						groupValues.get(lastGroup) > bestGroupValue) {
 					
@@ -136,11 +120,11 @@ public class FanucciChromosome extends Chromosome {
 					dominantGroup  = lastGroup;
 				}
 				
-				lastGroup  = c.getGroup();
-				groupValues.put(lastGroup, c.getValue());
+				lastGroup  = c.group;
+				groupValues.put(lastGroup, c.value);
 			} else {
 				groupValues.put(lastGroup, 
-						(short) (groupValues.get(lastGroup) + c.getValue()));
+						(short) (groupValues.get(lastGroup) + c.value));
 			}
 
 			// Discourage more than 2 groups.
@@ -150,8 +134,8 @@ public class FanucciChromosome extends Chromosome {
 			}
 			
 			// Discourage more than 2 cards of the same suit
-			if (c.getSuit() != lastSuit) {
-				lastSuit  = c.getSuit();
+			if (c.suit != lastSuit) {
+				lastSuit  = c.suit;
 				suitCount = 1;
 			} else {
 				if (++suitCount > 2) {
@@ -209,7 +193,6 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		FanucciChromosome fc = (FanucciChromosome) c; 
-		
 		if (hand.size() != fc.hand.size()) {
 			return false;
 		}

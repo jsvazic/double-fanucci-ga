@@ -87,9 +87,9 @@ public class DeckController extends DefaultHandler {
 		Element root = doc.createElement("cards");
 		for (Card c : deck.getAllCards()) {
 			Element card = doc.createElement("card");
-			card.setAttribute("suit", FanucciUtil.getSuitName(c.getSuit()));
+			card.setAttribute("suit", FanucciUtil.getSuitName(c.suit));
 			card.setAttribute("value", 
-					FanucciUtil.getValueString(c.getValue()));
+					FanucciUtil.getValueString(c.value));
 			
 			root.appendChild(card);
 		}
