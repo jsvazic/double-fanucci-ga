@@ -9,10 +9,17 @@ package com.arm.genetic;
 public abstract class Chromosome implements Comparable<Chromosome> {
 
 	/**
+	 * The fitness level for the <code>Chromosome</code>.
+	 */
+	protected double fitness;
+	
+	/**
 	 * Method to retrieve the fitness level of the chromosome.
 	 *  
 	 * @return The fitness level of the chromosome.	 */
-	public abstract double getFitness();
+	public double getFitness() {
+		return fitness;
+	}
 	
 	/**
 	 * Method to mutate the chromosome.
@@ -43,9 +50,7 @@ public abstract class Chromosome implements Comparable<Chromosome> {
 			return 0;
 		}
 		
-		double myFitness = getFitness();
-		double otherFitness = o.getFitness();
-		if (myFitness <= otherFitness) {
+		if (fitness <= o.fitness) {
 			return -1;
 		} else {
 			return 1;
