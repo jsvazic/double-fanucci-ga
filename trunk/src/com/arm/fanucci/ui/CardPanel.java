@@ -3,6 +3,7 @@ package com.arm.fanucci.ui;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -80,7 +81,7 @@ public class CardPanel extends JPanel {
 		// Iterate over the suits, giving a custom panel for each.
 		for (String suit : SUITS) {
 			JPanel innerPanel = new JPanel();
-			innerPanel.setLayout(new GridBagLayout());
+			innerPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 			
 			BufferedImage img = null;
 			BufferedImage selectedImg = null;
@@ -98,11 +99,6 @@ public class CardPanel extends JPanel {
 				// Safe to ignore
 			}
 		
-			int xPos = 0;
-			int yPos = 0;
-			int fillType = (img != null && selectedImg != null) ? 
-					GridBagConstraints.NONE : GridBagConstraints.BOTH;
-			
 			for (String label : BUTTON_LABELS) {
 				JToggleButton button;
 				if (img != null && selectedImg != null) {
@@ -129,14 +125,7 @@ public class CardPanel extends JPanel {
 					button.setSelected(true);
 				}
 							
-				innerPanel.add(button, new GridBagConstraints(
-						xPos, yPos, 1, 1, 0.5, 0.5, GridBagConstraints.CENTER, 
-						fillType, new Insets(1, 1, 1, 1), 1, 1));
-			
-				xPos = (xPos + 1) % 3;
-				if (xPos == 0) {
-					++yPos;
-				}
+				innerPanel.add(button);			
 			}
 			
 			panelMap.put(suit, innerPanel);
@@ -146,7 +135,7 @@ public class CardPanel extends JPanel {
 		setLayout(new GridBagLayout());
 		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-				new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, 
+				new GridBagConstraints(0, 0, 1, 1, 0.2, 0.2, 
 						GridBagConstraints.WEST, GridBagConstraints.BOTH,
 						new Insets(1, 1, 1, 1), 0, 0)
 		);
@@ -154,7 +143,7 @@ public class CardPanel extends JPanel {
 		add(new JScrollPane(buttonPanel, 
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-				new GridBagConstraints(1, 0, 1, 1, 0.7, 0.7, 
+				new GridBagConstraints(1, 0, 1, 1, 0.8, 0.8, 
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
 						new Insets(1, 1, 1, 1), 0, 0)
 		);
