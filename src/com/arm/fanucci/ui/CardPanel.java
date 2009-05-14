@@ -1,5 +1,6 @@
 package com.arm.fanucci.ui;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -7,8 +8,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -81,7 +80,7 @@ public class CardPanel extends JPanel {
 		// Iterate over the suits, giving a custom panel for each.
 		for (String suit : SUITS) {
 			JPanel innerPanel = new JPanel();
-			innerPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+			innerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			
 			BufferedImage img = null;
 			BufferedImage selectedImg = null;
@@ -132,21 +131,15 @@ public class CardPanel extends JPanel {
 			buttonPanel.add(innerPanel, suit);
 		}
 		
-		setLayout(new GridBagLayout());
+		setLayout(new BorderLayout(5, 5));
 		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
-				new GridBagConstraints(0, 0, 1, 1, 0.2, 0.2, 
-						GridBagConstraints.WEST, GridBagConstraints.BOTH,
-						new Insets(1, 1, 1, 1), 0, 0)
-		);
+				BorderLayout.WEST);
 		
 		add(new JScrollPane(buttonPanel, 
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-				new GridBagConstraints(1, 0, 1, 1, 0.8, 0.8, 
-						GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-						new Insets(1, 1, 1, 1), 0, 0)
-		);
+				BorderLayout.CENTER);
 	
 		addListeners();
 		
