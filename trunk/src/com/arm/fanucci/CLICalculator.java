@@ -2,8 +2,6 @@ package com.arm.fanucci;
 
 import java.io.File;
 
-import com.arm.genetic.Chromosome;
-
 /**
  * The main entry point for a command-line version of the calculator.
  * 

@@ -7,8 +7,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.arm.genetic.Chromosome;
-
 /**
  * Class modeling a Fanucci <i>slot</i>, which is a collection of at most 4 
  * cards.  Slots in Double Fanucci are defined for Body, Mind, Spirit and the 
@@ -17,9 +15,10 @@ import com.arm.genetic.Chromosome;
  * @author jsvazic
  *
  */
-public class FanucciChromosome extends Chromosome {
+public class Chromosome implements Comparable<Chromosome> {
 	private Set<Card> hand;
-	private FanucciPopulation population;
+	private Population population;
+	private double fitness;
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
 	/**
@@ -31,7 +30,7 @@ public class FanucciChromosome extends Chromosome {
 	 * @throws NullPointerException Thrown if <code>cards</code> is 
 	 * <code>null</code>.
 	 */
-	public FanucciChromosome(FanucciPopulation population, Set<Card> cards) {
+	public Chromosome(Population population, Set<Card> cards) {
 		if (cards == null) {
 			throw new NullPointerException("'cards' cannot be null.");
 		}
@@ -41,10 +40,13 @@ public class FanucciChromosome extends Chromosome {
 		updateFitness();
 	}
 	
-	@Override
+
+	/**
+	 * Method to mutate the chromosome.
+	 */
 	public Chromosome mate(final Chromosome mate) {
-		Card[] parent1   = getCards();
-		Card[] parent2 = ((FanucciChromosome) mate).getCards();
+		Card[] parent1 = getCards();
+		Card[] parent2 = mate.getCards();
 		int idx1 = (int) (parent1.length / 2);
 		int idx2 = (int) (parent2.length / 2);
 		
@@ -76,12 +78,19 @@ public class FanucciChromosome extends Chromosome {
 		}
 		
 		// Return the new "child" from the mated chromosomes.
-		FanucciChromosome child = new FanucciChromosome(population, cards);
+		Chromosome child = new Chromosome(population, cards);
 
 		return child;
 	}
 
-	@Override
+	/**
+	 * Method used to mate this chromosome with another, producing an 
+	 * offspring.
+	 * 
+	 * @param mate The <code>Chromosome</code> to mate with.
+	 * 
+	 * @return The resulting <code>Chomosome</code> after mating.
+	 */
 	public void mutate() {
 		// Randomly mutate a card by removing it from the set and replacing 
 		// it with a new card.
@@ -187,12 +196,12 @@ public class FanucciChromosome extends Chromosome {
 	}
 
 	@Override
-	public boolean equalsChromosome(Chromosome c) {
-		if (!(c instanceof FanucciChromosome)) {
+	public boolean equals(Object o) {
+		if (!(o instanceof Chromosome)) {
 			return false;
 		}
 		
-		FanucciChromosome fc = (FanucciChromosome) c; 
+		Chromosome fc = (Chromosome) o;
 		if (hand.size() != fc.hand.size()) {
 			return false;
 		}
@@ -262,4 +271,32 @@ public class FanucciChromosome extends Chromosome {
 		}
 	}
 
+	/**
+	 * Method to retrieve the fitness level of the chromosome.
+	 *  
+	 * @return The fitness level of the chromosome.	 */
+	public double getFitness() {
+		return fitness;
+	}
+	
+	/**
+	 * Default implementation that will allow sorting based on the fitness
+	 * level with a lower fitness value being "better".
+	 *  
+	 *  @param o The <code>Chromosome</code> to compare to.
+	 *  @return -1 if this <code>Chromosome</code> has a better fitness level,
+	 *  1 if the other <code>Chromosome</code> has a better fitness level, 
+	 *  or 0 if both <code>Chromosome</code>s have the same fitness level. 
+	 */
+	public int compareTo(Chromosome o) {
+		if (this.equals(o)) {
+			return 0;
+		}
+		
+		if (fitness <= o.fitness) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
 }
