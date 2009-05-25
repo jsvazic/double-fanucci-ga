@@ -41,7 +41,7 @@ public class CardPanel extends JPanel implements IFanucci {
 		POWER_NAUGHT, POWER_ONE, POWER_TWO, POWER_THREE, POWER_FOUR, 
 		POWER_FIVE, POWER_SIX, POWER_SEVEN, POWER_EIGHT, POWER_NINE, 
 		POWER_INFINITY
-};
+	};
 
 	
 	private JList suitList;
