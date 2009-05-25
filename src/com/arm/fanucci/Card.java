@@ -8,7 +8,6 @@ package com.arm.fanucci;
  * @author jsvazic
  */
 public class Card implements Comparable<Card>, IFanucci {
-
 	public final short suit;
 	public final short value;
 	public final short group;
@@ -22,7 +21,40 @@ public class Card implements Comparable<Card>, IFanucci {
 	public Card(short suit, short value) {
 		this.suit = suit;
 		this.value = value;
-		this.group = FanucciUtil.getGroupId(suit);
+		this.group = getGroupId(suit);
+	}
+
+	/**
+	 * Method to return the printable label for the card's value.
+	 * @return
+	 */
+	public String getValueStr() {
+		switch (value) {
+			case POWER_NAUGHT:
+				return "0";
+			case POWER_ONE:
+				return "1";
+			case POWER_TWO:
+				return "2";
+			case POWER_THREE:
+				return "3";
+			case POWER_FOUR:
+				return "4";
+			case POWER_FIVE:
+				return "5";
+			case POWER_SIX:
+				return "6";
+			case POWER_SEVEN:
+				return "7";
+			case POWER_EIGHT:
+				return "8";
+			case POWER_NINE:
+				return "9";
+			case POWER_INFINITY:
+				return "\u221E";
+			default:
+				return "?";
+		}
 	}
 	
 	@Override
@@ -70,9 +102,47 @@ public class Card implements Comparable<Card>, IFanucci {
 		
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer(FanucciUtil.getValueString(value));
+		StringBuffer sb = new StringBuffer(getValueStr());
 		sb.append(" of ").append(FanucciUtil.getSuitName(suit));
 		
 		return sb.toString();
+	}
+	
+	/**
+	 * Method to return a group ID given a suit ID.
+	 * 
+	 * @param suitId The ID of the suit to return the group ID for.
+	 * 
+	 * @return The group ID for the given suit, or <code>GROUP_UNKNOWN</code>
+	 * if no matching group can be found.
+	 * 
+	 * @see com.arm.fanucci.IFanucci
+	 */
+	private static short getGroupId(short suitId) {
+		switch (suitId) {
+			case SUIT_BUGS:
+			case SUIT_TIME:
+				return GROUP_1;
+			case SUIT_LAMPS:
+			case SUIT_FROMPS:
+				return GROUP_2;
+			case SUIT_HIVES:
+			case SUIT_INKBLOTS:
+				return GROUP_3;
+			case SUIT_MAZES:
+			case SUIT_EARS:
+			case SUIT_SCYTHES:
+				return GROUP_4;
+			case SUIT_ZURFS:
+			case SUIT_BOOKS:
+			case SUIT_PLUNGERS:
+				return GROUP_5;
+			case SUIT_TOPS:
+			case SUIT_RAIN:
+			case SUIT_FACES:
+				return GROUP_6;
+			default:
+				return GROUP_UNKNOWN;
+		}
 	}
 }

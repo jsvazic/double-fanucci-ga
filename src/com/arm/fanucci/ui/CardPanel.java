@@ -2,25 +2,16 @@ package com.arm.fanucci.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,8 +23,9 @@ import javax.swing.event.ListSelectionListener;
 import com.arm.fanucci.Card;
 import com.arm.fanucci.Deck;
 import com.arm.fanucci.FanucciUtil;
+import com.arm.fanucci.IFanucci;
 
-public class CardPanel extends JPanel {
+public class CardPanel extends JPanel implements IFanucci {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -45,9 +37,12 @@ public class CardPanel extends JPanel {
 			"Faces"
 	};
 	
-	private static final String[] BUTTON_LABELS = {
-			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\u221E"
-	};
+	private static final short[] CARD_VALUES = {
+		POWER_NAUGHT, POWER_ONE, POWER_TWO, POWER_THREE, POWER_FOUR, 
+		POWER_FIVE, POWER_SIX, POWER_SEVEN, POWER_EIGHT, POWER_NINE, 
+		POWER_INFINITY
+};
+
 	
 	private JList suitList;
 	private JPanel buttonPanel;
@@ -82,23 +77,13 @@ public class CardPanel extends JPanel {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			
-			BufferedImage img = null;
-			BufferedImage selectedImg = null;
-			try {
-				// Read the main image
-				URL url = CardPanel.class.getResource("images/" + 
-						suit.toLowerCase() + ".gif");
-				img = ImageIO.read(url);
-				
-				// Now read the selected image
-				url = CardPanel.class.getResource("images/" + 
-						suit.toLowerCase() + "_selected.gif");
-				selectedImg = ImageIO.read(url);
-			} catch (IOException ex) {
-				// Safe to ignore
-			}
+			BufferedImage img = CardHelper.getCardImage(suit, false);
+			BufferedImage selectedImg = CardHelper.getCardImage(suit, true);
 		
-			for (String label : BUTTON_LABELS) {
+			for (short cardValue : CARD_VALUES) {
+				Card card    = new Card(FanucciUtil.getSuitId(suit), cardValue);
+				String label = card.getValueStr();
+				
 				JToggleButton button;
 				if (img != null && selectedImg != null) {
 					button = new JToggleButton(new FanucciCardImageIcon(
@@ -256,50 +241,5 @@ public class CardPanel extends JPanel {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Class used for drawing text onto images.
-	 * 
-	 * @author jsvazic
-	 */
-	private class FanucciCardImageIcon extends ImageIcon {
-		private static final long serialVersionUID = 1L;
-		private Font font;
-		private String label;
-		
-		/**
-		 * Default constructor.
-		 * 
-		 * @param img The image to use for the icon.
-		 * @param label The label for the card.
-		 */
-		public FanucciCardImageIcon(Image img, String label) {
-			super(img);
-			this.font  = new Font("Helvedica", Font.PLAIN, 12);
-			this.label = label;
-		}
-		
-		/**
-		 * Method to retrieve the card label. 
-		 * 
-		 * @return The label of the card.
-		 */
-		public String getLabel() {
-			return label;
-		}
-		
-		@Override
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-			super.paintIcon(c, g, x, y);
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setFont(font);
-			g2d.setColor(Color.BLACK);
-			g2d.drawString(label, 5, 15);
-			g2d.translate(c.getWidth() - 5, c.getHeight() - 15);			
-			g2d.rotate(Math.PI); // Rotate 180 degrees
-			g2d.drawString(label, 0, 0);
-			g2d.translate(c.getWidth() - 5, c.getHeight() - 15);			
-		}
-	}
+	}	
 }

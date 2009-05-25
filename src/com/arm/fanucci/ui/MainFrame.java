@@ -31,10 +31,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.arm.fanucci.Deck;
 import com.arm.fanucci.DeckController;
 import com.arm.fanucci.FanucciCalc;
-import com.arm.fanucci.FanucciChromosome;
+import com.arm.fanucci.Chromosome;
 import com.arm.fanucci.OptionsController;
 import com.arm.fanucci.SimulatorOptions;
-import com.arm.genetic.Chromosome;
 
 /**
  * Main class for the UI.
@@ -350,7 +349,7 @@ public class MainFrame extends JFrame {
 					int totalScore = 0;
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
-						FanucciChromosome c = (FanucciChromosome) arr[i];
+						Chromosome c = (Chromosome) arr[i];
 						if (c == null) {
 							break;
 						}

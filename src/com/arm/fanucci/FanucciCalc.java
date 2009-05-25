@@ -2,8 +2,6 @@ package com.arm.fanucci;
 
 import java.util.Set;
 
-import com.arm.genetic.Chromosome;
-
 /**
  * Main driver for the Hello World Genetic Algorithms simulation.
  * 
@@ -44,7 +42,7 @@ public class FanucciCalc {
 		
 		for (int i = 0; i < maxHands && deck.size() > 0; i++) {
 			Card[] cardArr = deck.toArray(new Card[0]);
-			FanucciPopulation population =  new FanucciPopulation(
+			Population population =  new Population(
 					cardArr, simOptions.getPopulationSize());
 
 			Chromosome best = population.getBestChromosome();
@@ -69,7 +67,7 @@ public class FanucciCalc {
 			// Save the best hand so far and adjust the remaining cards for 
 			// the next hand.
 			arr[i] = population.getBestChromosome();
-			for (Card c : ((FanucciChromosome) arr[i]).getCards()) {
+			for (Card c : ((Chromosome) arr[i]).getCards()) {
 				deck.remove(c);
 			}
 		}

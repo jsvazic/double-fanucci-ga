@@ -7,43 +7,6 @@ package com.arm.fanucci;
  */
 public class FanucciUtil implements IFanucci {
 
-	/**
-	 * Method to return a group ID given a suit ID.
-	 * 
-	 * @param suitId The ID of the suit to return the group ID for.
-	 * 
-	 * @return The group ID for the given suit, or <code>GROUP_UNKNOWN</code>
-	 * if no matching group can be found.
-	 * 
-	 * @see com.arm.fanucci.IFanucci
-	 */
-	public static short getGroupId(short suitId) {
-		switch (suitId) {
-			case SUIT_BUGS:
-			case SUIT_TIME:
-				return GROUP_1;
-			case SUIT_LAMPS:
-			case SUIT_FROMPS:
-				return GROUP_2;
-			case SUIT_HIVES:
-			case SUIT_INKBLOTS:
-				return GROUP_3;
-			case SUIT_MAZES:
-			case SUIT_EARS:
-			case SUIT_SCYTHES:
-				return GROUP_4;
-			case SUIT_ZURFS:
-			case SUIT_BOOKS:
-			case SUIT_PLUNGERS:
-				return GROUP_5;
-			case SUIT_TOPS:
-			case SUIT_RAIN:
-			case SUIT_FACES:
-				return GROUP_6;
-			default:
-				return GROUP_UNKNOWN;
-		}
-	}
 	
 	/**
 	 * Method to return the suit ID for a given suit plain-text name.
@@ -56,35 +19,35 @@ public class FanucciUtil implements IFanucci {
 	 * @see com.arm.fanucci.IFanucci
 	 */
 	public static short getSuitId(String suit) {
-		if ("Books".equals(suit)) {
+		if ("Books".equalsIgnoreCase(suit)) {
 			return  SUIT_BOOKS;
-		} else if ("Bugs".equals(suit)) {
+		} else if ("Bugs".equalsIgnoreCase(suit)) {
 			return SUIT_BUGS;
-		} else if ("Ears".equals(suit)) {
+		} else if ("Ears".equalsIgnoreCase(suit)) {
 			return SUIT_EARS;
-		} else if ("Faces".equals(suit)) {
+		} else if ("Faces".equalsIgnoreCase(suit)) {
 			return SUIT_FACES;
-		} else if ("Fromps".equals(suit)) {
+		} else if ("Fromps".equalsIgnoreCase(suit)) {
 			return SUIT_FROMPS;
-		} else if ("Hives".equals(suit)) {
+		} else if ("Hives".equalsIgnoreCase(suit)) {
 			return SUIT_HIVES;
-		} else if ("Inkblots".equals(suit)) {
+		} else if ("Inkblots".equalsIgnoreCase(suit)) {
 			return SUIT_INKBLOTS;
-		} else if ("Lamps".equals(suit)) {
+		} else if ("Lamps".equalsIgnoreCase(suit)) {
 			return SUIT_LAMPS;
-		} else if ("Mazes".equals(suit)) {
+		} else if ("Mazes".equalsIgnoreCase(suit)) {
 			return SUIT_MAZES;
-		} else if ("Plungers".equals(suit)) {
+		} else if ("Plungers".equalsIgnoreCase(suit)) {
 			return SUIT_PLUNGERS;
-		} else if ("Rain".equals(suit)) {
+		} else if ("Rain".equalsIgnoreCase(suit)) {
 			return SUIT_RAIN;
-		} else if ("Scythes".equals(suit)) {
+		} else if ("Scythes".equalsIgnoreCase(suit)) {
 			return SUIT_SCYTHES;
-		} else if ("Time".equals(suit)) {
+		} else if ("Time".equalsIgnoreCase(suit)) {
 			return SUIT_TIME;
-		} else if ("Tops".equals(suit)) {
+		} else if ("Tops".equalsIgnoreCase(suit)) {
 			return SUIT_TOPS;
-		} else if ("Zurfs".equals(suit)) {
+		} else if ("Zurfs".equalsIgnoreCase(suit)) {
 			return SUIT_ZURFS;
 		}
 		
