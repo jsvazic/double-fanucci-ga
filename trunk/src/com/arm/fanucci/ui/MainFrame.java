@@ -47,6 +47,7 @@ public class MainFrame extends JFrame {
 	private JTextArea outputArea;
 	private JSplitPane contentPane;
 	private String lastFileLocation;
+	private SolutionPanel solutionPanel;
 	
 	private static final String UI_CONFIG_FILE = "yadfc.dat";
 
@@ -88,9 +89,13 @@ public class MainFrame extends JFrame {
 		cardPanel = new CardPanel();
 		outputArea = new JTextArea(10, 20);
 		outputArea.setEditable(false);
+	
+		solutionPanel = new SolutionPanel();
 		
 		contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				cardPanel, new JScrollPane(outputArea, 
+				cardPanel, new JScrollPane(
+						outputArea,
+						//solutionPanel,
 						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 		);
@@ -353,6 +358,9 @@ public class MainFrame extends JFrame {
 						if (c == null) {
 							break;
 						}
+						
+						solutionPanel.updatePanel(i, c.getCards());
+						
 						totalScore += (int) (100 - c.getFitness());
 						totalCards += c.getCards().length;
 						outputArea.append("------------------------------------\n");
