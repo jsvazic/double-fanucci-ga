@@ -29,21 +29,10 @@ public class CardHelper {
 	 * @return The corresponding <code>BufferedImage</code> instance, or 
 	 * <code>null</code> if one could not be found/loaded.
 	 */
-	public static final BufferedImage getCardImage(String suit, 
-			boolean isSelected) {
-		
-		String key = new StringBuffer(suit.toLowerCase()).append(isSelected)
-				.toString();
-		
+	public static final BufferedImage getCardImage(String suit) {
+		String key = suit.toLowerCase();
 		if (!images.containsKey(key)) {
-			String name;
-			if (isSelected) {
-				name = suit.toLowerCase() + "_selected.gif";
-			} else {
-				name = suit.toLowerCase() + ".gif";
-			}
-
-			images.put(key, loadImage(name));
+			images.put(key, loadImage(suit.toLowerCase() + ".jpg"));
 		}
 
 		return images.get(key);

@@ -107,7 +107,7 @@ public class SolutionPanel extends JPanel {
 					Card[] arr = chromosome.getCards();
 					for (int i = 0; i < arr.length; i++) {
 						BufferedImage img = CardHelper.getCardImage(
-								FanucciUtil.getSuitName(arr[i].suit), false);
+								FanucciUtil.getSuitName(arr[i].suit));
 						
 						cards[i].setIcon(new FanucciCardImageIcon(img, 
 								arr[i].getValueStr()));
