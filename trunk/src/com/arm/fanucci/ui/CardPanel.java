@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,15 +79,16 @@ public class CardPanel extends JPanel implements IFanucci {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 			
-			BufferedImage img = CardHelper.getCardImage(suit, false);
-			BufferedImage selectedImg = CardHelper.getCardImage(suit, true);
+			BufferedImage img = CardHelper.getCardImage(suit);
+			RescaleOp op = new RescaleOp(0.8f, 0.0f, null);
+			BufferedImage selectedImg = op.filter(img, null); 
 		
 			for (short cardValue : CARD_VALUES) {
 				Card card    = new Card(FanucciUtil.getSuitId(suit), cardValue);
 				String label = card.getValueStr();
 				
 				JToggleButton button;
-				if (img != null && selectedImg != null) {
+				if (img != null && selectedImg != null) {					
 					button = new JToggleButton(new FanucciCardImageIcon(
 							img, label));
 					
