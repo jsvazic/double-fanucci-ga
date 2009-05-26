@@ -6,12 +6,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import java.text.NumberFormat;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 
 import com.arm.fanucci.Card;
+import com.arm.fanucci.Chromosome;
 import com.arm.fanucci.FanucciUtil;
 
 public class SolutionPanel extends JPanel {
@@ -23,35 +28,20 @@ public class SolutionPanel extends JPanel {
 	public static final int SPIRIT   = 3;
 	public static final int SIDEKICK = 4;
 	
-	private JPanel[] cardPanels;
+	private SlotPanel[] cardPanels;
 	
 	public SolutionPanel() {
-		super();
 		init();
 	}
 	
 	private void init() {
-		JPanel mindPanel = new JPanel();
-		mindPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		mindPanel.setBorder(BorderFactory.createTitledBorder("Mind"));
-
-		JPanel bodyPanel = new JPanel();
-		bodyPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		bodyPanel.setBorder(BorderFactory.createTitledBorder("Body"));
+		SlotPanel mindPanel = new SlotPanel("Mind");
+		SlotPanel bodyPanel = new SlotPanel("Body");		
+		SlotPanel spiritPanel = new SlotPanel("Spirit");
+		SlotPanel sidekickPanel = new SlotPanel("Sidekick");
+		GambitPanel gambitPanel = new GambitPanel();
 		
-		JPanel spiritPanel = new JPanel();
-		spiritPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		spiritPanel.setBorder(BorderFactory.createTitledBorder("Spirit"));
-		
-		JPanel sidekickPanel = new JPanel();
-		sidekickPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		sidekickPanel.setBorder(BorderFactory.createTitledBorder("Sidekick"));
-		
-		JPanel gambitPanel = new JPanel();
-		gambitPanel.setLayout(new BorderLayout(5, 5));
-		gambitPanel.setBorder(BorderFactory.createTitledBorder("Fanucci Gambit"));
-		
-		cardPanels = new JPanel[] { gambitPanel, mindPanel, bodyPanel, 
+		cardPanels = new SlotPanel[] { gambitPanel, mindPanel, bodyPanel, 
 				spiritPanel, sidekickPanel };
 		
 		setLayout(new GridBagLayout());
@@ -67,55 +57,101 @@ public class SolutionPanel extends JPanel {
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
-		add(sidekickPanel, new GridBagConstraints(1, 0, 1, 1, 0.5, 0.5, 
+		add(gambitPanel, new GridBagConstraints(1, 0, 1, 2, 0.5, 0.5, 
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
-		add(gambitPanel, new GridBagConstraints(1, 1, 1, 2, 0.5, 0.5, 
+		add(sidekickPanel, new GridBagConstraints(1, 2, 1, 1, 0.5, 0.5, 
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
 				new Insets(1, 1, 1, 1), 1, 1));
 	}
 	
-	public void updatePanel(int panel, Card[] cards) {
-		cardPanels[panel].removeAll();
-		for (int i = 0; i < cards.length && i < 4; i++) {
-			BufferedImage img = CardHelper.getCardImage(
-					FanucciUtil.getSuitName(cards[i].suit), false);
+	public void updatePanel(int panel, Chromosome c) {
+		cardPanels[panel].layoutCards(c);
+	}
+	
+	private class SlotPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		protected String title;
+		protected TitledBorder border;
+		protected JLabel[] cards;
+		
+		public SlotPanel(String title) {
+			this.title  = title;
+			this.border = BorderFactory.createTitledBorder(
+					BorderFactory.createEtchedBorder(), title + " - 0");
 			
-			JLabel label = new JLabel(new FanucciCardImageIcon(img, 
-					cards[i].getValueStr()));
+			setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 			
-			switch(panel) {
-				case MIND:
-				case BODY:
-				case SPIRIT:
-				case SIDEKICK:
-					cardPanels[panel].add(label);
-					break;
-				case GAMBIT:
-					if (i == 0) {
-						JPanel p = new JPanel();
-						p.setLayout(new FlowLayout(FlowLayout.CENTER));
-						p.add(label);
-						cardPanels[panel].add(p, BorderLayout.NORTH);
-					} else if (i == 1) {
-						JPanel p = new JPanel();
-						p.setLayout(new FlowLayout(FlowLayout.LEFT));
-						p.add(label);
-						cardPanels[panel].add(p, BorderLayout.EAST);						
-					} else if (i == 2) {
-						JPanel p = new JPanel();
-						p.setLayout(new FlowLayout(FlowLayout.CENTER));
-						p.add(label);
-						cardPanels[panel].add(p, BorderLayout.SOUTH);						
-					} else if (i == 3) {
-						JPanel p = new JPanel();
-						p.setLayout(new FlowLayout(FlowLayout.RIGHT));
-						p.add(label);
-						cardPanels[panel].add(p, BorderLayout.WEST);						
-					}
-					break;
+			cards = new JLabel[4];
+			for (int i = 0; i < cards.length; i++) {
+				cards[i] = new JLabel(new ImageIcon(CardHelper.loadImage(
+						"blank.gif")));
 			}
+
+			setBorder(border);
+			init();
+		}
+		
+		protected void init() {
+			for (int i = 0; i < cards.length; i++) {
+				add(cards[i]);
+			}
+		}
+				
+		public void layoutCards(final Chromosome chromosome) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					Card[] arr = chromosome.getCards();
+					for (int i = 0; i < arr.length; i++) {
+						BufferedImage img = CardHelper.getCardImage(
+								FanucciUtil.getSuitName(arr[i].suit), false);
+						
+						cards[i].setIcon(new FanucciCardImageIcon(img, 
+								arr[i].getValueStr()));
+					}
+
+					NumberFormat formatter = NumberFormat.getIntegerInstance();
+					border.setTitle(title + " - " + formatter.format(
+							100.0 - chromosome.getFitness()));
+					//setBorder(border);
+					repaint();
+				}
+			});
+		}
+	}
+	
+	private class GambitPanel extends SlotPanel {
+		private static final long serialVersionUID = 1L;
+
+		public GambitPanel() {
+			super("Fanucci Gambit");
+			setLayout(new BorderLayout(1, 1));
+			init();
+		}
+		
+		protected void init() {
+			JPanel p = new JPanel();
+			p.setLayout(new FlowLayout(FlowLayout.CENTER));
+			p.add(cards[0]);
+			add(p, BorderLayout.NORTH);
+
+			p = new JPanel();
+			p.setLayout(new FlowLayout(FlowLayout.LEFT));
+			p.add(cards[1]);
+			add(p, BorderLayout.EAST);
+			
+			p = new JPanel();
+			p.setLayout(new FlowLayout(FlowLayout.CENTER));
+			p.add(cards[2]);
+			add(p, BorderLayout.SOUTH);
+
+			p = new JPanel();
+			p.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			p.add(cards[3]);
+			add(p, BorderLayout.WEST);			
 		}
 	}
 }

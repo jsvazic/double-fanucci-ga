@@ -36,26 +36,30 @@ public class CardHelper {
 				.toString();
 		
 		if (!images.containsKey(key)) {
-			BufferedImage img = null;
-			try {
-				// Read the main image
-				URL url;
-				if (isSelected) {
-					url = CardPanel.class.getResource("images/" + 
-							suit.toLowerCase() + "_selected.gif");
-				} else {
-					url = CardHelper.class.getResource("images/" + 
-							suit.toLowerCase() + ".gif");
-				}
-
-				img = ImageIO.read(url);
-				images.put(key, img);
-			} catch (IOException ex) {
-				// Safe to ignore
+			String name;
+			if (isSelected) {
+				name = suit.toLowerCase() + "_selected.gif";
+			} else {
+				name = suit.toLowerCase() + ".gif";
 			}
 
+			images.put(key, loadImage(name));
 		}
 
 		return images.get(key);
-	}	
+	}
+	
+	public static BufferedImage loadImage(String name) {
+		BufferedImage img = null;
+		try {
+			// Read the main image
+			URL url;
+			url = CardHelper.class.getResource("images/" + name);
+			img = ImageIO.read(url);
+		} catch (IOException ex) {
+			// Safe to ignore
+		}
+		
+		return img;
+	}
 }

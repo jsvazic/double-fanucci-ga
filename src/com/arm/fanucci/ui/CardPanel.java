@@ -65,6 +65,7 @@ public class CardPanel extends JPanel implements IFanucci {
 	private void init() {
 		suitList = new JList(SUITS);
 		suitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		suitList.setVisibleRowCount(4);
 
 		buttonPanel = new JPanel();
 		cardLayout  = new CardLayout();
@@ -75,7 +76,7 @@ public class CardPanel extends JPanel implements IFanucci {
 		// Iterate over the suits, giving a custom panel for each.
 		for (String suit : SUITS) {
 			JPanel innerPanel = new JPanel();
-			innerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
 			
 			BufferedImage img = CardHelper.getCardImage(suit, false);
 			BufferedImage selectedImg = CardHelper.getCardImage(suit, true);
