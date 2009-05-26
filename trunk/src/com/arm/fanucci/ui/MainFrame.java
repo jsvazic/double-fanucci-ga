@@ -1,5 +1,6 @@
 package com.arm.fanucci.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -21,8 +22,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -45,7 +46,7 @@ public class MainFrame extends JFrame {
 	private CardPanel cardPanel;
 	private SimulatorOptions simOptions;
 	private JTextArea outputArea;
-	private JSplitPane contentPane;
+	private JPanel contentPane;
 	private String lastFileLocation;
 	private SolutionPanel solutionPanel;
 	
@@ -92,22 +93,22 @@ public class MainFrame extends JFrame {
 	
 		solutionPanel = new SolutionPanel();
 		
-		contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				cardPanel, new JScrollPane(
-						outputArea,
-						//solutionPanel,
-						JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
-		);
+		contentPane = new JPanel();
+		contentPane.setLayout(new BorderLayout(3, 3));
+		contentPane.add(cardPanel, BorderLayout.NORTH);
+		contentPane.add(new JScrollPane(solutionPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+				BorderLayout.CENTER);
 		
 		setContentPane(contentPane);
-		setSize(400, 550);
+		setSize(850, 480);
 		
 		// Center the frame.
 		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
 		Dimension screenSize = toolkit.getScreenSize(); 
 		int x = (screenSize.width - getWidth()) / 2; 
-		int y = (screenSize.height -getHeight()) / 2;
+		int y = (screenSize.height - getHeight()) / 2;
 		setLocation(x, y);
 		
 		// Try to load the settings
@@ -359,7 +360,7 @@ public class MainFrame extends JFrame {
 							break;
 						}
 						
-						solutionPanel.updatePanel(i, c.getCards());
+						solutionPanel.updatePanel(i, c);
 						
 						totalScore += (int) (100 - c.getFitness());
 						totalCards += c.getCards().length;
@@ -433,9 +434,6 @@ public class MainFrame extends JFrame {
 	    props.setProperty("SFL", (lastFileLocation != null) ? 
 	    		lastFileLocation : System.getProperty("user.dir"));
 	    
-	    props.setProperty("DL", String.valueOf(
-	    		contentPane.getDividerLocation()));
-	    
 	    props.storeToXML(new FileOutputStream(UI_CONFIG_FILE), null);
 	}
 	
@@ -453,9 +451,6 @@ public class MainFrame extends JFrame {
 	    lastFileLocation = props.getProperty("SFL", 
 	    		System.getProperty("user.dir"));
 	    
-	    contentPane.setDividerLocation(Integer.parseInt(
-	    		props.getProperty("DL", 
-	    				String.valueOf(contentPane.getLastDividerLocation()))));
 	    contentPane.repaint();
 
 	    if (extendedState != JFrame.MAXIMIZED_BOTH) {
