@@ -36,15 +36,19 @@ public class CardPanel extends JPanel implements IFanucci {
 	private static final String[] SUITS = {
 			"Bugs", "Lamps", "Mazes", "Fromps", "Hives", "Inkblots", "Ears", 
 			"Time", "Scythes", "Zurfs", "Books", "Plungers", "Tops", "Rain",
-			"Faces"
+			"Faces", "Fanucci Face"
 	};
 	
 	private static final short[] CARD_VALUES = {
-		POWER_NAUGHT, POWER_ONE, POWER_TWO, POWER_THREE, POWER_FOUR, 
-		POWER_FIVE, POWER_SIX, POWER_SEVEN, POWER_EIGHT, POWER_NINE, 
-		POWER_INFINITY
+			POWER_NAUGHT, POWER_ONE, POWER_TWO, POWER_THREE, POWER_FOUR, 
+			POWER_FIVE, POWER_SIX, POWER_SEVEN, POWER_EIGHT, POWER_NINE, 
+			POWER_INFINITY
 	};
 
+	private static final short[] FACE_CARDS = {
+			FACE_BEAUTY, FACE_DEATH, FACE_GRANOLA, FACE_GRUE, FACE_JESTER,
+			FACE_LIGHT, FACE_LOBSTER, FACE_SNAIL, FACE_TIME
+	};
 	
 	private JList suitList;
 	private JPanel buttonPanel;
@@ -76,10 +80,10 @@ public class CardPanel extends JPanel implements IFanucci {
 		buttonPanel.add(new JPanel(), BLANK);
 		
 		// Iterate over the suits, giving a custom panel for each.
-		for (String suit : SUITS) {
+		for (int i = 0; i < SUITS.length - 1; i++) {
+			String suit = SUITS[i];
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-					
 			for (short cardValue : CARD_VALUES) {
 				Card card = new Card(FanucciUtil.getSuitId(suit), cardValue);
 				BufferedImage img = CardHelper.getCardImage(card);
@@ -108,6 +112,40 @@ public class CardPanel extends JPanel implements IFanucci {
 			panelMap.put(suit, innerPanel);
 			buttonPanel.add(innerPanel, suit);
 		}
+		
+		// Now handle the face cards.
+		JPanel innerPanel = new JPanel();
+		innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+		String suit = SUITS[SUITS.length - 1];
+		for (short cardValue : FACE_CARDS) {
+			Card card = new Card(FanucciUtil.getSuitId(suit), cardValue);
+			BufferedImage img = CardHelper.getCardImage(card);
+			RescaleOp op = new RescaleOp(new float[] { 0.8f, 0.8f, 0.8f }, 
+					new float[] { 0.0f, 0.0f, 0.0f } , null);
+			
+			BufferedImage selectedImg = op.filter(img, null);
+
+			FanucciCardButton button = new FanucciCardButton(
+					new ImageIcon(img), card);
+			
+			button.setSelectedIcon(new ImageIcon(selectedImg));
+			button.setMargin(new Insets(0, 0, 0, 0));
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					handleButtonToggled(e);
+				}
+			});
+			
+			if (deck.hasCard(card)) {
+				button.setSelected(true);
+			}
+						
+			innerPanel.add(button);			
+		}
+		
+		panelMap.put(suit, innerPanel);
+		buttonPanel.add(innerPanel, suit);
+
 		
 		setLayout(new BorderLayout(5, 5));
 		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 

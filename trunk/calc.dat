@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><fanucci-options><population-size value="256"/><elitism-rate value="0.1"/><mutation-rate value="0.15"/><iterations value="128"/><hands value="4"/><repeat-count value="32"/></fanucci-options>
