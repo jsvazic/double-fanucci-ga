@@ -1,6 +1,5 @@
 package com.arm.fanucci.ui;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,7 +16,6 @@ import javax.swing.border.TitledBorder;
 
 import com.arm.fanucci.Card;
 import com.arm.fanucci.Chromosome;
-import com.arm.fanucci.FanucciUtil;
 
 public class SolutionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -36,7 +34,7 @@ public class SolutionPanel extends JPanel {
 	
 	private void init() {
 		SlotPanel mindPanel = new SlotPanel("Mind");
-		SlotPanel bodyPanel = new SlotPanel("Body");		
+		SlotPanel bodyPanel = new SlotPanel("Body");
 		SlotPanel spiritPanel = new SlotPanel("Spirit");
 		SlotPanel sidekickPanel = new SlotPanel("Sidekick");
 		GambitPanel gambitPanel = new GambitPanel();
@@ -46,24 +44,25 @@ public class SolutionPanel extends JPanel {
 		
 		setLayout(new GridBagLayout());
 		add(mindPanel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, 
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
 		add(bodyPanel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.5, 
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
 		add(spiritPanel, new GridBagConstraints(0, 2, 1, 1, 0.5, 0.5, 
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
-		add(gambitPanel, new GridBagConstraints(1, 0, 1, 2, 0.5, 0.5, 
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+		add(sidekickPanel, new GridBagConstraints(1, 0, 1, 1, 0.5, 0.5, 
+				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, 
 				new Insets(1, 1, 1, 1), 1, 1));
 
-		add(sidekickPanel, new GridBagConstraints(1, 2, 1, 1, 0.5, 0.5, 
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+		add(gambitPanel, new GridBagConstraints(2, 0, 1, 3, 0.5, 0.5, 
+				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, 
 				new Insets(1, 1, 1, 1), 1, 1));
+
 	}
 	
 	public void updatePanel(int panel, Chromosome c) {
@@ -82,12 +81,12 @@ public class SolutionPanel extends JPanel {
 			this.border = BorderFactory.createTitledBorder(
 					BorderFactory.createEtchedBorder(), title + " - 0");
 			
-			setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+			setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
 			
 			cards = new JLabel[4];
 			for (int i = 0; i < cards.length; i++) {
 				cards[i] = new JLabel(new ImageIcon(CardHelper.loadImage(
-						"blank.gif")));
+						"blank.png")));
 			}
 
 			setBorder(border);
@@ -106,17 +105,15 @@ public class SolutionPanel extends JPanel {
 				public void run() {
 					Card[] arr = chromosome.getCards();
 					for (int i = 0; i < arr.length; i++) {
-						BufferedImage img = CardHelper.getCardImage(
-								FanucciUtil.getSuitName(arr[i].suit));
-						
-						cards[i].setIcon(new FanucciCardImageIcon(img, 
-								arr[i].getValueStr()));
+						BufferedImage img = CardHelper.getCardImage(arr[i]);
+						cards[i].setIcon(new ImageIcon(img));
+						cards[i].setToolTipText(arr[i].toString());
 					}
 
 					NumberFormat formatter = NumberFormat.getIntegerInstance();
 					border.setTitle(title + " - " + formatter.format(
 							100.0 - chromosome.getFitness()));
-					//setBorder(border);
+					
 					repaint();
 				}
 			});
@@ -128,30 +125,26 @@ public class SolutionPanel extends JPanel {
 
 		public GambitPanel() {
 			super("Fanucci Gambit");
-			setLayout(new BorderLayout(1, 1));
+			setLayout(new GridBagLayout());
 			init();
 		}
 		
 		protected void init() {
-			JPanel p = new JPanel();
-			p.setLayout(new FlowLayout(FlowLayout.CENTER));
-			p.add(cards[0]);
-			add(p, BorderLayout.NORTH);
+			add(cards[0], new GridBagConstraints(0, 0, 2, 1, 0.5, 0.5, 
+					GridBagConstraints.SOUTH, GridBagConstraints.NONE, 
+					new Insets(1, 1, 1, 1), 0, 0));
 
-			p = new JPanel();
-			p.setLayout(new FlowLayout(FlowLayout.LEFT));
-			p.add(cards[1]);
-			add(p, BorderLayout.EAST);
+			add(cards[1], new GridBagConstraints(1, 1, 1, 1, 0.5, 0.5, 
+					GridBagConstraints.WEST, GridBagConstraints.NONE, 
+					new Insets(1, 1, 1, 1), 0, 0));
 			
-			p = new JPanel();
-			p.setLayout(new FlowLayout(FlowLayout.CENTER));
-			p.add(cards[2]);
-			add(p, BorderLayout.SOUTH);
+			add(cards[2], new GridBagConstraints(0, 2, 2, 1, 0.5, 0.5, 
+					GridBagConstraints.NORTH, GridBagConstraints.NONE, 
+					new Insets(1, 1, 1, 1), 0, 0));
 
-			p = new JPanel();
-			p.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			p.add(cards[3]);
-			add(p, BorderLayout.WEST);			
+			add(cards[3], new GridBagConstraints(0, 1, 1, 1, 0.5, 0.5, 
+					GridBagConstraints.EAST, GridBagConstraints.NONE, 
+					new Insets(1, 1, 1, 1), 0, 0));
 		}
 	}
 }
