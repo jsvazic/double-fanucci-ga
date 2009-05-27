@@ -67,7 +67,7 @@ public class CardPanel extends JPanel implements IFanucci {
 	private void init() {
 		suitList = new JList(SUITS);
 		suitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		suitList.setVisibleRowCount(4);
+		suitList.setVisibleRowCount(8);
 
 		buttonPanel = new JPanel();
 		cardLayout  = new CardLayout();
