@@ -90,7 +90,6 @@ public class MainFrame extends JFrame {
 		cardPanel = new CardPanel();
 		outputArea = new JTextArea(10, 20);
 		outputArea.setEditable(false);
-	
 		solutionPanel = new SolutionPanel();
 		
 		contentPane = new JPanel();

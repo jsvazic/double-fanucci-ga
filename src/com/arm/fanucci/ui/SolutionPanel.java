@@ -1,6 +1,5 @@
 package com.arm.fanucci.ui;
 
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -62,9 +61,8 @@ public class SolutionPanel extends JPanel {
 		add(gambitPanel, new GridBagConstraints(2, 0, 1, 3, 0.5, 0.5, 
 				GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, 
 				new Insets(1, 1, 1, 1), 1, 1));
-
 	}
-	
+		
 	public void updatePanel(int panel, Chromosome c) {
 		cardPanels[panel].layoutCards(c);
 	}
@@ -81,7 +79,7 @@ public class SolutionPanel extends JPanel {
 			this.border = BorderFactory.createTitledBorder(
 					BorderFactory.createEtchedBorder(), title + " - 0");
 			
-			setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+			setLayout(new GridBagLayout());
 			
 			cards = new JLabel[4];
 			for (int i = 0; i < cards.length; i++) {
@@ -95,7 +93,9 @@ public class SolutionPanel extends JPanel {
 		
 		protected void init() {
 			for (int i = 0; i < cards.length; i++) {
-				add(cards[i]);
+				add(cards[i], new GridBagConstraints(i, 0, 1, 1, 0.5, 0.5, 
+						GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+						new Insets(1, 1, 1, 1), 0, 0));
 			}
 		}
 				
