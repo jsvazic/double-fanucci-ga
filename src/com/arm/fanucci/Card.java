@@ -28,10 +28,10 @@ public class Card implements Comparable<Card>, IFanucci {
 	 * Method to return the printable label for the card's value.
 	 * @return
 	 */
-	public String getValueStr() {
+	private static String getValueStr(short value) {
 		switch (value) {
 			case POWER_NAUGHT:
-				return "0";
+				return "Naught";
 			case POWER_ONE:
 				return "1";
 			case POWER_TWO:
@@ -102,8 +102,13 @@ public class Card implements Comparable<Card>, IFanucci {
 		
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer(getValueStr());
-		sb.append(" of ").append(FanucciUtil.getSuitName(suit));
+		StringBuffer sb = new StringBuffer();
+		if (suit != SUIT_FACE_ALL) {
+			sb.append(getValueStr(value)).append(" of ");
+			sb.append(FanucciUtil.getSuitName(suit));
+		} else {
+			sb.append("The ").append(FanucciUtil.getValueString(value));
+		}
 		
 		return sb.toString();
 	}
@@ -141,6 +146,8 @@ public class Card implements Comparable<Card>, IFanucci {
 			case SUIT_RAIN:
 			case SUIT_FACES:
 				return GROUP_6;
+			case SUIT_FACE_ALL:
+				return GROUP_FACE_CARDS;
 			default:
 				return GROUP_UNKNOWN;
 		}

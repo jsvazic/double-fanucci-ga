@@ -118,36 +118,56 @@ public class Chromosome implements Comparable<Chromosome> {
 		short lastSuit       = IFanucci.SUIT_UNKNOWN;
 		short suitCount      = 0;
 		short bestGroupValue = 0;
+		boolean hasFaceCards = false;
 		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
 		
 		for (Card c : hand) {
 			if (c.group != lastGroup) {
-				if (lastGroup != IFanucci.GROUP_UNKNOWN && 
-						groupValues.get(lastGroup) > bestGroupValue) {
+				if (lastGroup != IFanucci.GROUP_UNKNOWN 
+						&& lastGroup != IFanucci.GROUP_FACE_CARDS 
+						&& groupValues.get(lastGroup) > bestGroupValue) {
 					
 					bestGroupValue = groupValues.get(lastGroup);
 					dominantGroup  = lastGroup;
 				}
 				
 				lastGroup  = c.group;
-				groupValues.put(lastGroup, c.value);
+				if (lastGroup != IFanucci.GROUP_FACE_CARDS) {
+					groupValues.put(lastGroup, c.value);
+				} else {
+					groupValues.put(lastGroup, (short) 25);
+					hasFaceCards = true;
+				}
 			} else {
-				groupValues.put(lastGroup, 
-						(short) (groupValues.get(lastGroup) + c.value));
+				if (lastGroup != IFanucci.GROUP_FACE_CARDS) {
+					groupValues.put(lastGroup, 
+							(short) (groupValues.get(lastGroup) + c.value));
+				} else {
+					groupValues.put(lastGroup, 
+							(short) (groupValues.get(lastGroup) + 25));
+				}
 			}
 
+			int groupCount = groupValues.keySet().size();
+			
+			// Face cards don't count towards our group limit.
+			if (hasFaceCards) {
+				--groupCount; 
+			}
+			
 			// Discourage more than 2 groups.
-			if (groupValues.keySet().size() > 2) {
+			if (groupCount > 2) {
 				fitness = Double.MAX_VALUE;
 				return;
 			}
 			
-			// Discourage more than 2 cards of the same suit
+			// Discourage more than 2 cards of the same suit 
+			// (except face cards)
 			if (c.suit != lastSuit) {
 				lastSuit  = c.suit;
 				suitCount = 1;
 			} else {
-				if (++suitCount > 2) {
+				if (lastSuit != IFanucci.SUIT_FACE_ALL && ++suitCount > 2) {
 					fitness = Double.MAX_VALUE;
 					return;
 				}
@@ -156,7 +176,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		
 		// The dominant group won't be set if we only have one group of cards.
 		if (groupValues.keySet().size() == 1) {
-			dominantGroup = lastGroup; 
+			dominantGroup = lastGroup;
 		}
 		
 		// Calculate the values.
@@ -253,7 +273,10 @@ public class Chromosome implements Comparable<Chromosome> {
 	 * @return The modifier for the given pair of suits. 
 	 */
 	private static double getModifier(short firstGroupId, short secondGroupId) {
-		if (firstGroupId == secondGroupId) {
+		if (firstGroupId == secondGroupId || 
+				firstGroupId == IFanucci.GROUP_FACE_CARDS ||
+				secondGroupId == IFanucci.GROUP_FACE_CARDS) {
+			
 			return 0.0;
 		}
 		

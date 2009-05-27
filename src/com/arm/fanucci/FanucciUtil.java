@@ -85,8 +85,28 @@ public class FanucciUtil implements IFanucci {
 			return POWER_EIGHT;
 		} else if ("9".equals(value)) {
 			return POWER_NINE;
-		} else if ("Infinity".equals(value) || "\u221E".equals(value)) {
+		} else if ("Infinity".equals(value) || "\u221E".equals(value) 
+				|| "10".equals(value)) {
+			
 			return POWER_INFINITY;
+		} else if ("Beauty".equalsIgnoreCase(value)) {
+			return FACE_BEAUTY;
+		} else if ("Death".equalsIgnoreCase(value)) {
+			return FACE_DEATH;
+		} else if ("Granola".equalsIgnoreCase(value)) {
+			return FACE_GRANOLA;
+		} else if ("Grue".equalsIgnoreCase(value)) {
+			return FACE_GRUE;
+		} else if ("Jester".equalsIgnoreCase(value)) {
+			return FACE_JESTER;
+		} else if ("Light".equalsIgnoreCase(value)) {
+			return FACE_LIGHT;
+		} else if ("Lobster".equalsIgnoreCase(value)) {
+			return FACE_LOBSTER;
+		} else if ("Snail".equalsIgnoreCase(value)) {
+			return FACE_SNAIL;
+		} else if ("Time".equalsIgnoreCase(value)) {
+			return FACE_TIME;
 		}
 		
 		return POWER_UNKNOWN;
@@ -137,7 +157,7 @@ public class FanucciUtil implements IFanucci {
 	public static String getValueString(short value) {
 		switch (value) {
 			case POWER_NAUGHT:
-				return "Naught";
+				return "0";
 			case POWER_ONE:
 				return "1";
 			case POWER_TWO:
@@ -157,7 +177,25 @@ public class FanucciUtil implements IFanucci {
 			case POWER_NINE:
 				return "9";
 			case POWER_INFINITY:
-				return "Infinity";
+				return "10";
+			case FACE_BEAUTY:
+				return "Beauty";
+			case FACE_DEATH:
+				return "Death";
+			case FACE_GRANOLA:
+				return "Granola";
+			case FACE_GRUE:
+				return "Grue";
+			case FACE_JESTER:
+				return "Jester";
+			case FACE_LIGHT:
+				return "Light";
+			case FACE_LOBSTER:
+				return "Lobster";
+			case FACE_SNAIL:
+				return "Snail";
+			case FACE_TIME:
+				return "Time";
 			default:
 				return "Unknown";
 		}
