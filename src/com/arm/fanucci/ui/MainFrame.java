@@ -102,7 +102,7 @@ public class MainFrame extends JFrame {
 				BorderLayout.CENTER);
 		
 		setContentPane(contentPane);
-		setSize(850, 480);
+		setSize(850, 555);
 		
 		// Center the frame.
 		Toolkit toolkit = Toolkit.getDefaultToolkit(); 

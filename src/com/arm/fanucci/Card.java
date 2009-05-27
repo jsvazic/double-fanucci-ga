@@ -53,7 +53,7 @@ public class Card implements Comparable<Card>, IFanucci {
 			case POWER_INFINITY:
 				return "\u221E";
 			default:
-				return "?";
+				return "? (" + value + ")";
 		}
 	}
 	
