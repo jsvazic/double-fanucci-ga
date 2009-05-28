@@ -225,27 +225,34 @@ public class CardPanel extends JPanel implements IFanucci {
 		String suit = (String) suitList.getSelectedValue();
 		JPanel panel = this.panelMap.get(suit);
 		boolean deSelect = false;
+		Card card = button.getCard();
+		
+		if (button.isSelected()) {
+			deck.addCard(card);
+		} else {
+			deck.removeCard(card);
+		}
+
+		// If this is a face card, then we're done.
+		if (card.suit == IFanucci.SUIT_FACE_ALL) {
+			return;
+		}
 		
 		// Iterate over the sub-cards and make sure they
 		// get auto-selected as well.
 		for (Component component : panel.getComponents()) {
 			FanucciCardButton btn = (FanucciCardButton) component;
-			Card c = btn.getCard();
+			card = btn.getCard();
 			if (btn == button) {
-				if (btn.isSelected()) {
-					deck.addCard(c);
-				} else {
-					deck.removeCard(c);
-				}
 				deSelect = true;
 				continue;
 			}
 			if (!btn.isSelected() && !deSelect) {
 				btn.setSelected(true);
-				deck.addCard(c);
+				deck.addCard(card);
 			} else if (btn.isSelected() && deSelect) {
 				btn.setSelected(false);
-				deck.removeCard(c);
+				deck.removeCard(card);
 			}
 		}
 
