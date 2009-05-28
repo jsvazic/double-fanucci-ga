@@ -57,7 +57,7 @@ public class MainFrame extends JFrame {
 	 * Default constructor.
 	 */
 	public MainFrame() {
-		super("Yet Another Double Fanucci Calculator (YADFC)");
+		super("Yet Another Double Fanucci Calculator(tm)");
 		simOptions = OptionsController.loadOptions();
 		init();
 	}
