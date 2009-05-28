@@ -12,6 +12,7 @@ import java.awt.image.RescaleOp;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
@@ -19,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -71,12 +74,15 @@ public class CardPanel extends JPanel implements IFanucci {
 	private void init() {
 		suitList = new JList(SUITS);
 		suitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		suitList.setVisibleRowCount(8);
+		suitList.setVisibleRowCount(10);
 
 		buttonPanel = new JPanel();
 		cardLayout  = new CardLayout();
 		
 		buttonPanel.setLayout(cardLayout);
+		buttonPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(), "Total cards - 0"));
+		
 		buttonPanel.add(new JPanel(), BLANK);
 		
 		// Iterate over the suits, giving a custom panel for each.
@@ -177,8 +183,8 @@ public class CardPanel extends JPanel implements IFanucci {
 					
 					cardLayout.show(buttonPanel, suit);
 				}
-			}			
-		});		
+			}
+		});
 	}
 	
 	/**
@@ -199,6 +205,14 @@ public class CardPanel extends JPanel implements IFanucci {
 			}
 		}
 		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				((TitledBorder) buttonPanel.getBorder()).setTitle(
+						"Total cards - " + deck.size());
+				
+				buttonPanel.repaint();
+			}			
+		});
 	}
 
 	/**
@@ -208,15 +222,15 @@ public class CardPanel extends JPanel implements IFanucci {
 	 */
 	private void handleButtonToggled(ActionEvent e) {
 		FanucciCardButton button = (FanucciCardButton) e.getSource();
-		String suit = (String) suitList.getSelectedValue(); 
-		
-		Card c = button.getCard();
-		// Iterate over the sub-cards and make sure they
-		// get auto-selected as well.
+		String suit = (String) suitList.getSelectedValue();
 		JPanel panel = this.panelMap.get(suit);
 		boolean deSelect = false;
+		
+		// Iterate over the sub-cards and make sure they
+		// get auto-selected as well.
 		for (Component component : panel.getComponents()) {
 			FanucciCardButton btn = (FanucciCardButton) component;
+			Card c = btn.getCard();
 			if (btn == button) {
 				if (btn.isSelected()) {
 					deck.addCard(c);
@@ -226,8 +240,6 @@ public class CardPanel extends JPanel implements IFanucci {
 				deSelect = true;
 				continue;
 			}
-			
-			c = btn.getCard();
 			if (!btn.isSelected() && !deSelect) {
 				btn.setSelected(true);
 				deck.addCard(c);
@@ -236,6 +248,15 @@ public class CardPanel extends JPanel implements IFanucci {
 				deck.removeCard(c);
 			}
 		}
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				((TitledBorder) buttonPanel.getBorder()).setTitle(
+						"Total cards - " + deck.size());
+				
+				buttonPanel.repaint();
+			}			
+		});
 	}
 	
 	private class FanucciCardButton extends JToggleButton {
