@@ -32,44 +32,20 @@ public class CardHelper implements IFanucci {
 	 * <code>null</code> if one could not be found/loaded.
 	 */
 	public static final BufferedImage getCardImage(Card card) {
-		String suit = FanucciUtil.getSuitName(card.suit).toLowerCase();
 		if (!images.containsKey(card.toString())) {
-			String url = suit + "-" + getSuffix(card.value) + ".png";
-			images.put(card.toString(), loadImage(url));
+			StringBuilder url = new StringBuilder();
+			if (card.suit != SUIT_FACE_ALL) {
+				String suit = FanucciUtil.getSuitName(card.suit).toLowerCase();
+				url.append(suit).append('-');
+			}
+			url.append(FanucciUtil.getValueString(card.value).toLowerCase());
+			url.append(".png"); 
+			images.put(card.toString(), loadImage(url.toString()));
 		}
 
 		return images.get(card.toString());
 	}
 	
-	private static String getSuffix(short value) {
-		switch (value) {
-			case POWER_NAUGHT:
-				return "0";
-			case POWER_ONE:
-				return "1";
-			case POWER_TWO:
-				return "2";
-			case POWER_THREE:
-				return "3";
-			case POWER_FOUR:
-				return "4";
-			case POWER_FIVE:
-				return "5";
-			case POWER_SIX:
-				return "6";
-			case POWER_SEVEN:
-				return "7";
-			case POWER_EIGHT:
-				return "8";
-			case POWER_NINE:
-				return "9";
-			case POWER_INFINITY:
-				return "10";
-		}
-		
-		return null;
-	}
-
 	public static BufferedImage loadImage(String url) {
 		BufferedImage img = null;
 		try {

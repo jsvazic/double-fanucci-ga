@@ -20,7 +20,7 @@ public class FanucciUtil implements IFanucci {
 	 */
 	public static short getSuitId(String suit) {
 		if ("Books".equalsIgnoreCase(suit)) {
-			return  SUIT_BOOKS;
+			return SUIT_BOOKS;
 		} else if ("Bugs".equalsIgnoreCase(suit)) {
 			return SUIT_BUGS;
 		} else if ("Ears".equalsIgnoreCase(suit)) {
@@ -51,7 +51,7 @@ public class FanucciUtil implements IFanucci {
 			return SUIT_ZURFS;
 		}
 		
-		return SUIT_UNKNOWN;		
+		return SUIT_UNKNOWN;
 	}
 	
 	/**
