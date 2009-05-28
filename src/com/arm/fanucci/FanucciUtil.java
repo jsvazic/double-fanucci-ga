@@ -6,7 +6,6 @@ package com.arm.fanucci;
  * @author jsvazic
  */
 public class FanucciUtil implements IFanucci {
-
 	
 	/**
 	 * Method to return the suit ID for a given suit plain-text name.
