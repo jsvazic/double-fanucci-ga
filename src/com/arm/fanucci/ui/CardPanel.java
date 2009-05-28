@@ -205,14 +205,7 @@ public class CardPanel extends JPanel implements IFanucci {
 			}
 		}
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				((TitledBorder) buttonPanel.getBorder()).setTitle(
-						"Total cards - " + deck.size());
-				
-				buttonPanel.repaint();
-			}			
-		});
+		updateCardSelectionCount();
 	}
 
 	/**
@@ -227,43 +220,38 @@ public class CardPanel extends JPanel implements IFanucci {
 		boolean deSelect = false;
 		Card card = button.getCard();
 		
-		if (button.isSelected()) {
-			deck.addCard(card);
-		} else {
-			deck.removeCard(card);
-		}
-
-		// If this is a face card, then we're done.
-		if (card.suit == IFanucci.SUIT_FACE_ALL) {
-			return;
-		}
-		
-		// Iterate over the sub-cards and make sure they
-		// get auto-selected as well.
-		for (Component component : panel.getComponents()) {
-			FanucciCardButton btn = (FanucciCardButton) component;
-			card = btn.getCard();
-			if (btn == button) {
-				deSelect = true;
-				continue;
-			}
-			if (!btn.isSelected() && !deSelect) {
-				btn.setSelected(true);
+		try {
+			if (button.isSelected()) {
 				deck.addCard(card);
-			} else if (btn.isSelected() && deSelect) {
-				btn.setSelected(false);
+			} else {
 				deck.removeCard(card);
 			}
-		}
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				((TitledBorder) buttonPanel.getBorder()).setTitle(
-						"Total cards - " + deck.size());
-				
-				buttonPanel.repaint();
-			}			
-		});
+			// If this is a face card, then we're done.
+			if (card.suit == IFanucci.SUIT_FACE_ALL) {
+				return;
+			}
+			
+			// Iterate over the sub-cards and make sure they
+			// get auto-selected as well.
+			for (Component component : panel.getComponents()) {
+				FanucciCardButton btn = (FanucciCardButton) component;
+				card = btn.getCard();
+				if (btn == button) {
+					deSelect = true;
+					continue;
+				}
+				if (!btn.isSelected() && !deSelect) {
+					btn.setSelected(true);
+					deck.addCard(card);
+				} else if (btn.isSelected() && deSelect) {
+					btn.setSelected(false);
+					deck.removeCard(card);
+				}
+			}
+		} finally {
+			updateCardSelectionCount();
+		}
 	}
 	
 	private class FanucciCardButton extends JToggleButton {
@@ -280,5 +268,16 @@ public class CardPanel extends JPanel implements IFanucci {
 		public Card getCard() {
 			return card;
 		} 
+	}
+	
+	private void updateCardSelectionCount() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				((TitledBorder) buttonPanel.getBorder()).setTitle(
+						"Total cards - " + deck.size());
+				
+				buttonPanel.repaint();
+			}			
+		});
 	}
 }
