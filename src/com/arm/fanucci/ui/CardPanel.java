@@ -80,17 +80,22 @@ public class CardPanel extends JPanel implements IFanucci {
 		buttonPanel.add(new JPanel(), BLANK);
 		
 		// Iterate over the suits, giving a custom panel for each.
-		for (int i = 0; i < SUITS.length - 1; i++) {
-			String suit = SUITS[i];
+		for (String suit : SUITS) {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-			for (short cardValue : CARD_VALUES) {
-				Card card = new Card(FanucciUtil.getSuitId(suit), cardValue);
+			short[] arr = ("Fanucci Face".equals(suit) ? FACE_CARDS : 
+					CARD_VALUES);
+			
+			short suitId = ("Fanucci Face".equals(suit) ? SUIT_FACE_ALL : 
+					FanucciUtil.getSuitId(suit));
+			
+			for (short cardValue : arr) {
+				Card card = new Card(suitId, cardValue);
 				BufferedImage img = CardHelper.getCardImage(card);
 				RescaleOp op = new RescaleOp(new float[] { 0.8f, 0.8f, 0.8f }, 
 						new float[] { 0.0f, 0.0f, 0.0f } , null);
-				BufferedImage selectedImg = op.filter(img, null); 
-
+				
+				BufferedImage selectedImg = op.filter(img, null);
 				FanucciCardButton button = new FanucciCardButton(
 						new ImageIcon(img), card);
 				
@@ -112,40 +117,6 @@ public class CardPanel extends JPanel implements IFanucci {
 			panelMap.put(suit, innerPanel);
 			buttonPanel.add(innerPanel, suit);
 		}
-		
-		// Now handle the face cards.
-		JPanel innerPanel = new JPanel();
-		innerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-		String suit = SUITS[SUITS.length - 1];
-		for (short cardValue : FACE_CARDS) {
-			Card card = new Card(FanucciUtil.getSuitId(suit), cardValue);
-			BufferedImage img = CardHelper.getCardImage(card);
-			RescaleOp op = new RescaleOp(new float[] { 0.8f, 0.8f, 0.8f }, 
-					new float[] { 0.0f, 0.0f, 0.0f } , null);
-			
-			BufferedImage selectedImg = op.filter(img, null);
-
-			FanucciCardButton button = new FanucciCardButton(
-					new ImageIcon(img), card);
-			
-			button.setSelectedIcon(new ImageIcon(selectedImg));
-			button.setMargin(new Insets(0, 0, 0, 0));
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					handleButtonToggled(e);
-				}
-			});
-			
-			if (deck.hasCard(card)) {
-				button.setSelected(true);
-			}
-						
-			innerPanel.add(button);			
-		}
-		
-		panelMap.put(suit, innerPanel);
-		buttonPanel.add(innerPanel, suit);
-
 		
 		setLayout(new BorderLayout(5, 5));
 		add(new JScrollPane(suitList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
@@ -237,28 +208,32 @@ public class CardPanel extends JPanel implements IFanucci {
 	 */
 	private void handleButtonToggled(ActionEvent e) {
 		FanucciCardButton button = (FanucciCardButton) e.getSource();
-		String suit  = (String) suitList.getSelectedValue(); 
+		String suit = (String) suitList.getSelectedValue(); 
 		
 		Card c = button.getCard();
-		if (!button.isSelected()) {
-			deck.removeCard(c);
-		} else {
-			deck.addCard(c);
-			
-			// Iterate over the sub-cards and make sure they
-			// get auto-selected as well.
-			JPanel panel = this.panelMap.get(suit);
-			for (Component component : panel.getComponents()) {
-				FanucciCardButton btn = (FanucciCardButton) component;
-				if (btn == button) {
-					break;
-				}
-				
-				c = btn.getCard();
-				if (!btn.isSelected()) {
-					btn.setSelected(true);
+		// Iterate over the sub-cards and make sure they
+		// get auto-selected as well.
+		JPanel panel = this.panelMap.get(suit);
+		boolean deSelect = false;
+		for (Component component : panel.getComponents()) {
+			FanucciCardButton btn = (FanucciCardButton) component;
+			if (btn == button) {
+				if (btn.isSelected()) {
 					deck.addCard(c);
+				} else {
+					deck.removeCard(c);
 				}
+				deSelect = true;
+				continue;
+			}
+			
+			c = btn.getCard();
+			if (!btn.isSelected() && !deSelect) {
+				btn.setSelected(true);
+				deck.addCard(c);
+			} else if (btn.isSelected() && deSelect) {
+				btn.setSelected(false);
+				deck.removeCard(c);
 			}
 		}
 	}
