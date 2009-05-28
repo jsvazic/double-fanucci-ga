@@ -39,7 +39,6 @@ public class Chromosome implements Comparable<Chromosome> {
 		this.hand = new TreeSet<Card>(cards);
 		updateFitness();
 	}
-	
 
 	/**
 	 * Method to mutate the chromosome.
@@ -117,28 +116,44 @@ public class Chromosome implements Comparable<Chromosome> {
 		short lastGroup      = IFanucci.GROUP_UNKNOWN;
 		short lastSuit       = IFanucci.SUIT_UNKNOWN;
 		short suitCount      = 0;
-		boolean hasFaceCards = false;
-		Map<Short, Short> groupValues  = new HashMap<Short, Short>(2);
+		short groupCount     = 0;
+		short bestGroupCount = 0;
+		Map<Short, Short> groupValues = new HashMap<Short, Short>(2);
 		
 		for (Card c : hand) {
 			if (c.group != lastGroup) {
 				lastGroup = c.group;
 				if (lastGroup != IFanucci.GROUP_FACE_CARDS) {
 					groupValues.put(lastGroup, c.value);
+					++groupCount;
+					
+					// Discourage more than 2 groups
+					if (groupCount > 2) {
+						fitness = Double.MAX_VALUE;
+						return;
+					}
+					
+					if (c.value > bestGroupCount) {
+						dominantGroup = lastGroup;
+						bestGroupCount = c.value;
+					}
 				} else {
 					groupValues.put(lastGroup, (short) 25);
-					hasFaceCards = true;
 				}
 			} else {
 				if (c.group != IFanucci.GROUP_FACE_CARDS) {
-					groupValues.put(lastGroup, 
-							(short) (groupValues.get(lastGroup) + c.value));
+					short v = (short) (groupValues.get(lastGroup) + c.value);
+					groupValues.put(lastGroup, v);
+					if (v > bestGroupCount) {
+						dominantGroup  = lastGroup;
+						bestGroupCount = v;
+					}
 				} else {
 					groupValues.put(lastGroup, 
 							(short) (groupValues.get(lastGroup) + 25));
 				}
 			}
-			
+						
 			// Discourage more than 2 cards of the same suit 
 			// (except face cards)
 			if (c.suit != lastSuit) {
@@ -149,30 +164,6 @@ public class Chromosome implements Comparable<Chromosome> {
 					fitness = Double.MAX_VALUE;
 					return;
 				}
-			}
-		}
-
-		int groupCount = groupValues.keySet().size();
-		
-		// Face cards don't count towards our group limit.
-		if (hasFaceCards) {
-			--groupCount; 
-		}
-		
-		// Discourage more than 2 groups.
-		if (groupCount > 2) {
-			fitness = Double.MAX_VALUE;
-			return;
-		}
-
-		// Find the dominant group
-		int bestGroupCount = 0;
-		for (short group : groupValues.keySet()) {
-			if (group != IFanucci.GROUP_FACE_CARDS && 
-					groupValues.get(group) > bestGroupCount) {
-				
-				dominantGroup = group;
-				bestGroupCount = groupValues.get(group);
 			}
 		}
 				
