@@ -48,6 +48,8 @@ public class FanucciUtil implements IFanucci {
 			return SUIT_TOPS;
 		} else if ("Zurfs".equalsIgnoreCase(suit)) {
 			return SUIT_ZURFS;
+		} else if ("Fanucci-Face".equalsIgnoreCase(suit)) {
+			return SUIT_FACE_ALL;
 		}
 		
 		return SUIT_UNKNOWN;
@@ -148,6 +150,8 @@ public class FanucciUtil implements IFanucci {
 				return "Tops";
 			case SUIT_ZURFS:
 				return "Zurfs";
+			case SUIT_FACE_ALL:
+				return "Fanucci-Face";
 			default:
 				return "Unknown";
 		}	
