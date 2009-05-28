@@ -8,47 +8,57 @@ The following is an example of an XML file for use with the command-line interfa
 {{{
 <?xml version="1.0"?>
 <cards>
-	<card suit="Bugs" value="Naught" />
-	<card suit="Bugs" value="1" />
-	<card suit="Bugs" value="2" />
-	<card suit="Bugs" value="3" />
-	<card suit="Bugs" value="4" />
+    <card suit="Bugs" value="0" />
+    <card suit="Bugs" value="1" />
+    <card suit="Bugs" value="2" />
+    <card suit="Bugs" value="3" />
+    <card suit="Bugs" value="4" />
 
-    <card suit="Mazes" value="Naught" />
+    <card suit="Mazes" value="0" />
     <card suit="Mazes" value="1" />
     <card suit="Mazes" value="2" />
     <card suit="Mazes" value="3" />
 
-    <card suit="Fromps" value="Naught" />
+    <card suit="Fromps" value="0" />
     <card suit="Fromps" value="1" />
 
-    <card suit="Inkblots" value="Naught" />
+    <card suit="Inkblots" value="0" />
 
-    <card suit="Ears" value="Naught" />
+    <card suit="Ears" value="0" />
     <card suit="Ears" value="1" />
     <card suit="Ears" value="2" />
 
-    <card suit="Time" value="Naught" />
+    <card suit="Time" value="0" />
     <card suit="Time" value="1" />
     <card suit="Time" value="2" />
     <card suit="Time" value="3" />
+    <card suit="Time" value="4" />
+    <card suit="Time" value="5" />
+    <card suit="Time" value="6" />
+    <card suit="Time" value="7" />
+    <card suit="Time" value="8" />
+    <card suit="Time" value="9" />
+    <card suit="Time" value="10" />
 
-    <card suit="Zurfs" value="Naught" />
+    <card suit="Zurfs" value="0" />
     
-    <card suit="Books" value="Naught" />
+    <card suit="Books" value="0" />
     <card suit="Books" value="1" />
     
-    <card suit="Plungers" value="Naught" />
+    <card suit="Plungers" value="0" />
     <card suit="Plungers" value="1" />
 
-    <card suit="Tops" value="Naught" />
+    <card suit="Tops" value="0" />
     <card suit="Tops" value="1" />
     <card suit="Tops" value="2" />
     <card suit="Tops" value="3" />
 
-    <card suit="Rain" value="Naught" />
+    <card suit="Rain" value="0" />
     <card suit="Rain" value="1" />
     
-    <card suit="Faces" value="Naught" />
+    <card suit="Faces" value="0" />
+
+    <card suit="Fanucci-Face" value="Beauty" />
+    <card suit="Fanucci-Face" value="Jester" />
 </cards>
 }}}
