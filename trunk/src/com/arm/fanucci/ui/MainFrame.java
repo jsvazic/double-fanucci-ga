@@ -12,20 +12,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -45,10 +46,10 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private CardPanel cardPanel;
 	private SimulatorOptions simOptions;
-	private JTextArea outputArea;
 	private JPanel contentPane;
 	private String lastFileLocation;
 	private SolutionPanel solutionPanel;
+	private JLabel statusBar;
 	
 	private static final String UI_CONFIG_FILE = "yadfc.dat";
 
@@ -88,20 +89,24 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menuBar);
 		
 		cardPanel = new CardPanel();
-		outputArea = new JTextArea(10, 20);
-		outputArea.setEditable(false);
 		solutionPanel = new SolutionPanel();
 		
+		statusBar = new JLabel(" ");
+		statusBar.setHorizontalAlignment(SwingConstants.RIGHT);
+		statusBar.setBorder(BorderFactory.createEtchedBorder());
+		
 		contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout(3, 3));
+		contentPane.setLayout(new BorderLayout(1, 1));
 		contentPane.add(cardPanel, BorderLayout.NORTH);
 		contentPane.add(new JScrollPane(solutionPanel,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
 				BorderLayout.CENTER);
 		
+		contentPane.add(statusBar, BorderLayout.SOUTH);
+		
 		setContentPane(contentPane);
-		setSize(585, 610);
+		setSize(585, 630);
 		
 		// Center the frame.
 		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
@@ -341,38 +346,22 @@ public class MainFrame extends JFrame {
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
-					outputArea.setText(null);
-					long startTime = System.currentTimeMillis();
+					long sTime = System.currentTimeMillis();
 					FanucciCalc calc = new FanucciCalc(simOptions);
 					Chromosome[] arr = calc.execute(
 							Deck.getInstance().getCardSet());
+					long eTime = System.currentTimeMillis();
 					
-					long endTime = System.currentTimeMillis();
-					
-					NumberFormat formatter = NumberFormat.getIntegerInstance();
-					int totalCards = 0;
-					int totalScore = 0;
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
 						Chromosome c = (Chromosome) arr[i];
 						if (c == null) {
 							break;
 						}
-						
-						solutionPanel.updatePanel(i, c);
-						
-						totalScore += (int) (100 - c.getFitness());
-						totalCards += c.getCards().length;
-						outputArea.append("------------------------------------\n");
-						outputArea.append("Set " + (i + 1) + " (" + 
-								formatter.format(100.0 - c.getFitness()) + ")\n");						
-						outputArea.append(c.toString().trim() + "\n");
+						solutionPanel.updatePanel(i, c);					
 					}
-					outputArea.append("------------------------------------\n");
-					outputArea.append("Total cards : " + totalCards + "\n");
-					outputArea.append("Total value : " + totalScore + "\n");
-					outputArea.append("Total time  : " + 
-							(endTime - startTime) + "ms\n");
+					
+					statusBar.setText("Total time: " + (eTime - sTime) + "ms");
 				}				
 			};
 			
@@ -439,7 +428,6 @@ public class MainFrame extends JFrame {
 	private void loadDetails() throws IOException {
 		File file = new File(UI_CONFIG_FILE);
 		if (!file.exists() || !file.canRead()) {
-			System.out.println("Not loading the settings.");
 			return;
 		}
 	    Properties props = new Properties();
