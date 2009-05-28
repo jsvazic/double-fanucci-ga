@@ -51,7 +51,7 @@
 	<!-- Target to create the various JAR files. -->
 	<target name="jar" depends="compile">
 		<jar destfile="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" basedir="${build.dir}" manifest="${etc.dir}/manifest.mf">
-			<fileset dir="${src.dir}" includes="**/*.jpg" />
+			<fileset dir="${src.dir}" includes="**/*.png" />
 		</jar>
 	</target>
 
