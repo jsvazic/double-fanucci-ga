@@ -111,8 +111,8 @@ public class SolutionPanel extends JPanel {
 					}
 
 					NumberFormat formatter = NumberFormat.getIntegerInstance();
-					border.setTitle(title + " - " + formatter.format(
-							100.0 - chromosome.getFitness()));
+					border.setTitle(title + " - " + 
+							formatter.format(chromosome.getScore()));
 
 					repaint();
 				}

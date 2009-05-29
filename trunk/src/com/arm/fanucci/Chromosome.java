@@ -19,6 +19,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	private Set<Card> hand;
 	private Population population;
 	private double fitness;
+	private double score;
 	private static final Random rand = new Random(System.currentTimeMillis());
 	
 	/**
@@ -176,7 +177,8 @@ public class Chromosome implements Comparable<Chromosome> {
 		}
 		
 		// Remember, there is a maximum value of 100 for any given hand.
-		fitness = (value > 100.0) ? 0.0 : (100 - value);
+		score   = value;
+		fitness = Math.abs(100.0 - value);
 	}
 
 	@Override
@@ -288,6 +290,10 @@ public class Chromosome implements Comparable<Chromosome> {
 	 * @return The fitness level of the chromosome.	 */
 	public double getFitness() {
 		return fitness;
+	}
+	
+	public double getScore() {
+		return score;
 	}
 	
 	/**
