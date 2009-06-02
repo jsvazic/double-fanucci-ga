@@ -17,7 +17,7 @@ import com.arm.fanucci.IFanucci;
  * 
  * @author jsvazic 
  */
-public class CardHelper implements IFanucci {
+public class ImageHelper implements IFanucci {
 	
 	private static final Map<String, BufferedImage> images = 
 		new HashMap<String, BufferedImage>();
@@ -48,13 +48,18 @@ public class CardHelper implements IFanucci {
 	
 	public static BufferedImage loadImage(String url) {
 		BufferedImage img = null;
-		try {
-			// Read the image
-			img = ImageIO.read(CardHelper.class.getResource("images/" + url));
-		} catch (IOException ex) {
-			// Safe to ignore
+		if (!images.containsKey(url)) {
+			try {
+				// Read the image
+				img = ImageIO.read(ImageHelper.class.getResource(
+						"images/" + url));
+				
+				images.put(url, img);
+			} catch (IOException ex) {
+				// Safe to ignore
+			}
 		}
 		
-		return img;
+		return images.get(url);
 	}
 }

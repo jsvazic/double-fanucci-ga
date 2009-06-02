@@ -352,6 +352,8 @@ public class MainFrame extends JFrame {
 							Deck.getInstance().getCardSet());
 					long eTime = System.currentTimeMillis();
 					
+					solutionPanel.resetPanels();
+					
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
 						Chromosome c = (Chromosome) arr[i];
