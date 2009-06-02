@@ -67,6 +67,12 @@ public class SolutionPanel extends JPanel {
 		cardPanels[panel].layoutCards(c);
 	}
 	
+	public void resetPanels() {
+		for (SlotPanel panel : cardPanels) {
+			panel.reset();
+		}
+	}
+	
 	private class SlotPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
@@ -83,7 +89,7 @@ public class SolutionPanel extends JPanel {
 			
 			cards = new JLabel[4];
 			for (int i = 0; i < cards.length; i++) {
-				cards[i] = new JLabel(new ImageIcon(CardHelper.loadImage(
+				cards[i] = new JLabel(new ImageIcon(ImageHelper.loadImage(
 						"blank.png")));
 			}
 
@@ -98,14 +104,26 @@ public class SolutionPanel extends JPanel {
 						new Insets(1, 1, 1, 1), 0, 0));
 			}
 		}
-				
+
+		public void reset() {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					border.setTitle(title + " - 0");
+					for (int i = 0; i < cards.length; i++) {
+						cards[i].setIcon(new ImageIcon(
+								ImageHelper.loadImage("blank.png")));
+					}
+					repaint();
+				}
+			});
+		}
+		
 		public void layoutCards(final Chromosome chromosome) {
 			SwingUtilities.invokeLater(new Runnable() {
-				@Override
 				public void run() {
 					Card[] arr = chromosome.getCards();
 					for (int i = 0; i < arr.length; i++) {
-						BufferedImage img = CardHelper.getCardImage(arr[i]);
+						BufferedImage img = ImageHelper.getCardImage(arr[i]);
 						cards[i].setIcon(new ImageIcon(img));
 						cards[i].setToolTipText(arr[i].toString());
 					}

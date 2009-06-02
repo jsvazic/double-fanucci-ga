@@ -97,7 +97,7 @@ public class CardPanel extends JPanel implements IFanucci {
 			
 			for (short cardValue : arr) {
 				Card card = new Card(suitId, cardValue);
-				BufferedImage img = CardHelper.getCardImage(card);
+				BufferedImage img = ImageHelper.getCardImage(card);
 				RescaleOp op = new RescaleOp(new float[] { 0.8f, 0.8f, 0.8f }, 
 						new float[] { 0.0f, 0.0f, 0.0f } , null);
 				
