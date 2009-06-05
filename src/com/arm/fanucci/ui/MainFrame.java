@@ -226,6 +226,7 @@ public class MainFrame extends JFrame {
 				lastFileLocation = inFile.getParent();
 				try {
 					DeckController.importDeck(inFile);
+					solutionPanel.resetPanels();
 					CardPanel cardPanel = frame.getCardPanel();
 					int selectedIdx = cardPanel.getSelectedIndex();
 					cardPanel.setSelection(-1);
