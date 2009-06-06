@@ -25,7 +25,7 @@ public class CLICalculator {
 		} 
 
 		if (cardFile == null) {
-			System.out.println("Syntax: java -jar yadfc.jar " +
+			System.out.println("Syntax: java -classpath yadfc.jar " +
 					"com.arm.fanucci.CLICalculator <card file>");
 			
 			System.exit(1);
