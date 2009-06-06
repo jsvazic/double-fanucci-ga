@@ -1,5 +1,6 @@
 package com.arm.fanucci;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -185,11 +186,14 @@ public class Chromosome implements Comparable<Chromosome> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		Iterator<Card> it = hand.iterator();
+		double power = (score > 100.0) ? 100.0 : score;
+		NumberFormat formatter = NumberFormat.getIntegerInstance();
+		sb.append("Power (").append(formatter.format(power)).append(")\n");
 		if (it.hasNext()) {
 			sb.append('\t').append(it.next());
-		}
-		while (it.hasNext()) {
-			sb.append(", ").append(it.next());
+			while (it.hasNext()) {
+				sb.append(", ").append(it.next());
+			}
 		}
 		sb.append('\n');
 		
