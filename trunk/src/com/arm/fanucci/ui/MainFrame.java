@@ -225,7 +225,7 @@ public class MainFrame extends JFrame {
 				File inFile = fc.getSelectedFile();
 				lastFileLocation = inFile.getParent();
 				try {
-					DeckController.importDeck(inFile);
+					DeckController.importDeck(inFile, simOptions);
 					solutionPanel.resetPanels();
 					CardPanel cardPanel = frame.getCardPanel();
 					int selectedIdx = cardPanel.getSelectedIndex();
@@ -287,7 +287,8 @@ public class MainFrame extends JFrame {
 				}
 				
 				try {
-					DeckController.exportDeck(Deck.getInstance(), outFile);
+					DeckController.exportDeck(Deck.getInstance(), simOptions, 
+							outFile);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(frame, 
 							"Failed to save the deck:\n" + ex.getMessage(), 

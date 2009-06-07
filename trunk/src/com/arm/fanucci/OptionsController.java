@@ -28,8 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *   <elitism-rate value="0.1" />
  *   <mutation-rate value="0.15" />
  *   <iterations value="256" />
- *   <hands value="4" />
- *   <repeat-count value="4" />
+ *   <repeat-count value="32" />
  * </fanucci-options>
  * </pre>
  * 
@@ -43,24 +42,6 @@ public class OptionsController extends DefaultHandler {
 
 	public final static File OPTIONS_FILE = 
 		new File(System.getProperty("user.dir"), "calc.dat");
-
-	/** The default size for the population. */
-	public static final int DEFAULT_POPULATION_SIZE = 256;
-
-	/** The elitism rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
-	public static final float DEFAULT_ELITISM_RATE = 0.1f;
-
-	/** The mutation rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
-	public static final float DEFAULT_MUTATION_RATE = 0.15f;
-	
-	/** Maximum number of iterations for the simulation. */
-	public static final int DEFAULT_ITERATIONS = 128;
-	
-	/** Maximum number of hands to generate. */
-	public static final int DEFAULT_HANDS = 4;
-	
-	/** Maximum repeat count for a best fit before exiting. */
-	public static final int DEFAULT_REPEAT_COUNT = 32;
 	
 	private SimulatorOptions options;
 	
@@ -68,9 +49,7 @@ public class OptionsController extends DefaultHandler {
 	 * Default constructor.
 	 */
 	private OptionsController() {
-		this.options = new SimulatorOptions(DEFAULT_POPULATION_SIZE, 
-				DEFAULT_ELITISM_RATE, DEFAULT_MUTATION_RATE, 
-				DEFAULT_ITERATIONS, DEFAULT_HANDS, DEFAULT_REPEAT_COUNT);
+		this.options = new SimulatorOptions();
 	}
 	
 	@Override
@@ -82,7 +61,7 @@ public class OptionsController extends DefaultHandler {
 			try {
 				value = Integer.valueOf(attr.getValue("value"));
 			} catch (NumberFormatException ex) {
-				value = DEFAULT_POPULATION_SIZE;
+				value = SimulatorOptions.DEFAULT_POPULATION_SIZE;
 			}
 			options.setPopulationSize(value);
 		} else if ("elitism-rate".equals(qName)) {
@@ -90,7 +69,7 @@ public class OptionsController extends DefaultHandler {
 			try {
 				rate = Float.valueOf(attr.getValue("value"));
 			} catch (NumberFormatException ex) {
-				rate = DEFAULT_ELITISM_RATE;
+				rate = SimulatorOptions.DEFAULT_ELITISM_RATE;
 			}
 			options.setElitismRate(rate);			
 		} else if ("mutation-rate".equals(qName)) {
@@ -98,7 +77,7 @@ public class OptionsController extends DefaultHandler {
 			try {
 				rate = Float.valueOf(attr.getValue("value"));
 			} catch (NumberFormatException ex) {
-				rate = DEFAULT_MUTATION_RATE;
+				rate = SimulatorOptions.DEFAULT_MUTATION_RATE;
 			}
 			options.setMutationRate(rate);			
 		} else if ("iterations".equals(qName)) {
@@ -106,23 +85,15 @@ public class OptionsController extends DefaultHandler {
 			try {
 				count = Integer.valueOf(attr.getValue("value"));
 			} catch (NumberFormatException ex) {
-				count = DEFAULT_ITERATIONS;
+				count = SimulatorOptions.DEFAULT_ITERATIONS;
 			}
 			options.setMaxIterations(count);			
-		} else if ("hands".equals(qName)) {
-			int count;
-			try {
-				count = Integer.valueOf(attr.getValue("value"));
-			} catch (NumberFormatException ex) {
-				count = DEFAULT_HANDS;
-			}
-			options.setMaxHands(count);			
 		} else if ("repeat-count".equals(qName)) {
 			int count;
 			try {
 				count = Integer.valueOf(attr.getValue("value"));
 			} catch (NumberFormatException ex) {
-				count = DEFAULT_REPEAT_COUNT;
+				count = SimulatorOptions.DEFAULT_REPEAT_COUNT;
 			}
 			options.setMaxRepeatCount(count);			
 		}
@@ -188,7 +159,6 @@ public class OptionsController extends DefaultHandler {
 		
 		final float elitismRate = options.getElitismRate();
 		final float mutationRate = options.getMutationRate();
-		final int hands = options.getMaxHands();
 		final int iterations = options.getMaxIterations();
 		final int repeatCount = options.getMaxRepeatCount();
 		final int popSize = options.getPopulationSize();
@@ -208,11 +178,7 @@ public class OptionsController extends DefaultHandler {
 		element = doc.createElement("iterations");
 		element.setAttribute("value", String.valueOf(iterations)); 
 		root.appendChild(element);
-
-		element = doc.createElement("hands");
-		element.setAttribute("value", String.valueOf(hands)); 
-		root.appendChild(element);
-
+		
 		element = doc.createElement("repeat-count");
 		element.setAttribute("value", String.valueOf(repeatCount)); 
 		root.appendChild(element);

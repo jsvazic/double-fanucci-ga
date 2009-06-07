@@ -7,6 +7,25 @@ package com.arm.fanucci;
  * @author jsvazic
  */
 public class SimulatorOptions {
+	
+	/** The default size for the population. */
+	public static final int DEFAULT_POPULATION_SIZE = 256;
+
+	/** The elitism rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
+	public static final float DEFAULT_ELITISM_RATE = 0.1f;
+
+	/** The mutation rate for the simulation, where: 0.0 &lt; rate &lt; 1.0 */
+	public static final float DEFAULT_MUTATION_RATE = 0.15f;
+	
+	/** Maximum number of iterations for the simulation. */
+	public static final int DEFAULT_ITERATIONS = 128;
+	
+	/** Maximum number of hands to generate. */
+	public static final int DEFAULT_SLOT_COUNT = 4;
+	
+	/** Maximum repeat count for a best fit before exiting. */
+	public static final int DEFAULT_REPEAT_COUNT = 32;
+
 	private int populationSize;
 	private float elitismRate;
 	private float mutationRate;
@@ -18,6 +37,7 @@ public class SimulatorOptions {
 	 * Default constructor.
 	 */
 	public SimulatorOptions() {
+		this(1024, 0.1f, 0.15f, 256, 4, 32);
 	}
 	
 	/**
@@ -85,7 +105,7 @@ public class SimulatorOptions {
 	 * 
 	 * @return The maximum number of hands to generate. 
 	 */
-	public int getMaxHands() {
+	public int getMaxSlots() {
 		return maxHands;
 	}
 	
@@ -141,7 +161,7 @@ public class SimulatorOptions {
 	 * 
 	 * @param count The maximum number of hands to generate. 
 	 */
-	public void setMaxHands(int count) {
+	public void setMaxSlots(int count) {
 		maxHands = count;
 	}
 	

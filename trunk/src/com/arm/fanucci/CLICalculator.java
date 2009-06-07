@@ -31,10 +31,10 @@ public class CLICalculator {
 			System.exit(1);
 		}
 
-		long startTime = System.currentTimeMillis();
 		Deck deck = null;
+		SimulatorOptions simOptions = OptionsController.loadOptions();
 		try {
-			deck = DeckController.importDeck(cardFile);
+			deck = DeckController.importDeck(cardFile, simOptions);
 		} catch (Exception ex) {
 			System.out.println("Failed to import the Fanucci cards from: " + 
 					cardFile);
@@ -42,9 +42,8 @@ public class CLICalculator {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-		
-		SimulatorOptions simOptions = OptionsController.loadOptions();
-		
+				
+		long startTime = System.currentTimeMillis();
 		FanucciCalc calc = new FanucciCalc(simOptions);
 		Chromosome[] arr = calc.execute(deck.getCardSet());
 		long endTime = System.currentTimeMillis();
