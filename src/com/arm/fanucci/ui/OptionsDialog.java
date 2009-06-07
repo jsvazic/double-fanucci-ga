@@ -154,7 +154,7 @@ public class OptionsDialog extends JDialog {
 		iterationField.setText(String.valueOf(options.getMaxIterations()));
 
 		setComboBox = new JComboBox(new String[] { "1", "2", "3", "4", "5" });
-		setComboBox.setSelectedItem(String.valueOf(options.getMaxHands()));
+		setComboBox.setSelectedItem(String.valueOf(options.getMaxSlots()));
 
 		repeatSpinner = new JSpinner(new SpinnerNumberModel(options
 				.getMaxRepeatCount(), 0, 500, 1));
@@ -208,7 +208,7 @@ public class OptionsDialog extends JDialog {
 		// Update the options object
 		options.setElitismRate(elitismSlider.getValue() / 100.0f);
 		try {
-			options.setMaxHands(Integer.valueOf((String) setComboBox
+			options.setMaxSlots(Integer.valueOf((String) setComboBox
 					.getSelectedItem()));
 		} catch (NumberFormatException ex) {
 			// Safe to ignore.

@@ -29,7 +29,7 @@ public class FanucciCalc {
 	 * @return The unique optimal solution for each hand.
 	 */
 	public Chromosome[] execute(Set<Card> deck) {
-		int maxHands = simOptions.getMaxHands();
+		int maxHands = simOptions.getMaxSlots();
 		int maxIterations = simOptions.getMaxIterations();
 		float elitismRate = simOptions.getElitismRate();
 		float mutationRate = simOptions.getMutationRate();
