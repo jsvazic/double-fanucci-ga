@@ -1,6 +1,9 @@
 package com.arm.fanucci;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * format of the file is XML and must have the following structure:
  * 
  * <pre>
- * <cards slots="4">
+ * <cards slots="4" order="0,1,2,3,4">
  *   <card suit="Bugs" value="Naught" />
  *   <card suit="Bugs" value="1" />
  *   ...
@@ -52,13 +55,41 @@ public class DeckController extends DefaultHandler {
 			Attributes attr) throws SAXException {
 		
 		if ("cards".equals(qName)) {
-			int slotCount;
-			try {
-				slotCount = Integer.valueOf(attr.getValue("slots"));
-			} catch (NumberFormatException ex) {
-				slotCount = SimulatorOptions.DEFAULT_SLOT_COUNT;
+			// First get the number of slots
+			String str = attr.getValue("slots");
+			if (str != null) {
+				int slotCount;
+				try {
+					slotCount = Integer.valueOf(str);
+				} catch (NumberFormatException ex) {
+					slotCount = SimulatorOptions.DEFAULT_SLOT_COUNT;
+				}
+				options.setMaxSlots(slotCount);
 			}
-			options.setMaxSlots(slotCount);
+			
+			// Now get the order of the slots.
+			str = attr.getValue("order");
+			if (str != null) {
+				StringTokenizer st = new StringTokenizer(str, ",");
+				List<Integer> list = new ArrayList<Integer>(5);
+				while (st.hasMoreTokens()) {
+					try {
+						int i = Integer.valueOf(st.nextToken());
+						if (i >= 0 && i <= 4) {
+							list.add(i);
+						}
+					} catch (NumberFormatException ex) {
+						// Ignore.
+					}
+				}
+				if (list.size() > 0) {
+					int[] arr = new int[list.size()];
+					for (int i = 0; i < arr.length; i++) {
+						arr[i] = list.get(i);
+					}
+					options.setSolutionPanelOrder(arr);
+				}
+			}
 		} else if ("card".equals(qName)) {
 			short suit = FanucciUtil.getSuitId(attr.getValue("suit"));
 			short value = FanucciUtil.getValue(attr.getValue("value"));
@@ -108,7 +139,17 @@ public class DeckController extends DefaultHandler {
 		Document doc = builder.newDocument();
 		Element cards = doc.createElement("cards");
 		cards.setAttribute("slots", String.valueOf(options.getMaxSlots()));
-		
+
+		final int[] slotOrder = options.getSolutionPanelOrder();
+		StringBuffer sb = new StringBuffer();
+		if (slotOrder.length > 0) {
+			sb.append(slotOrder[0]);
+			for (int i = 1; i < slotOrder.length; i++) {
+				sb.append(',').append(slotOrder[i]);
+			}
+		}
+		cards.setAttribute("order", sb.toString());
+
 		for (Card c : deck.getAllCards()) {
 			Element card = doc.createElement("card");
 			card.setAttribute("suit", FanucciUtil.getSuitName(c.suit));

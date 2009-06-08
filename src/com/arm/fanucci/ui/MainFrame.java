@@ -355,14 +355,14 @@ public class MainFrame extends JFrame {
 					long eTime = System.currentTimeMillis();
 					
 					solutionPanel.resetPanels();
-					
+					final int[] slotOrder = simOptions.getSolutionPanelOrder();
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
 						Chromosome c = (Chromosome) arr[i];
 						if (c == null) {
 							break;
 						}
-						solutionPanel.updatePanel(i, c);					
+						solutionPanel.updatePanel(slotOrder[i], c);
 					}
 					
 					statusBar.setText("Total time: " + (eTime - sTime) + "ms");
