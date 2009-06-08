@@ -1,5 +1,7 @@
 package com.arm.fanucci;
 
+import com.arm.fanucci.ui.SolutionPanel;
+
 /**
  * Container class modelling the options available for the genetic algorithm
  * simulation.
@@ -32,12 +34,15 @@ public class SimulatorOptions {
 	private int maxIterations;
 	private int maxHands;
 	private int maxRepeatCount;
+	private int[] slotOrder;
 
 	/**
 	 * Default constructor.
 	 */
 	public SimulatorOptions() {
-		this(1024, 0.1f, 0.15f, 256, 4, 32);
+		this(1024, 0.1f, 0.15f, 256, 4, 32, new int[] { SolutionPanel.GAMBIT, 
+					SolutionPanel.MIND, SolutionPanel.BODY, 
+					SolutionPanel.SPIRIT, SolutionPanel.SIDEKICK });
 	}
 	
 	/**
@@ -54,7 +59,7 @@ public class SimulatorOptions {
 	 */
 	public SimulatorOptions(int populationSize, float elitismRate, 
 			float mutationRate, int maxIterations, int maxHands, 
-			int maxRepeatCount) {
+			int maxRepeatCount, int[] slotOrder) {
 		
 		this.populationSize = populationSize;
 		this.elitismRate = elitismRate;
@@ -62,6 +67,8 @@ public class SimulatorOptions {
 		this.maxIterations = maxIterations;
 		this.maxHands = maxHands;
 		this.maxRepeatCount = maxRepeatCount;
+		this.slotOrder = new int[slotOrder.length];
+		System.arraycopy(slotOrder, 0, this.slotOrder, 0, slotOrder.length);
 	}
 	
 	/**
@@ -121,6 +128,19 @@ public class SimulatorOptions {
 	}
 	
 	/**
+	 * Method used to get the order the slots should be filled in.  The 
+	 * constants for the array can be found in the <code>SolutionPanel</code>
+	 * class. 
+	 * 
+	 * @return The order of the slots to fill in.
+	 * 
+	 * @see com.arm.fanucci.ui.SolutionPanel
+	 */
+	public int[] getSolutionPanelOrder() {
+		return slotOrder;
+	}
+	
+	/**
 	 * Set the population size.
 	 * 
 	 * @param size The population size.
@@ -175,4 +195,19 @@ public class SimulatorOptions {
 	public void setMaxRepeatCount(int count) {
 		maxRepeatCount = count;
 	}
+	
+	/**
+	 * Method used to set the order the slots should be filled in.  The 
+	 * constants for the array can be found in the <code>SolutionPanel</code>
+	 * class. 
+	 * 
+	 * @param slotOrder The order of the slots to fill in.
+	 * 
+	 * @see com.arm.fanucci.ui.SolutionPanel
+	 */
+	public void setSolutionPanelOrder(int[] slotOrder) {
+		this.slotOrder = new int[slotOrder.length];
+		System.arraycopy(slotOrder, 0, this.slotOrder, 0, slotOrder.length);
+	}
+
 }
