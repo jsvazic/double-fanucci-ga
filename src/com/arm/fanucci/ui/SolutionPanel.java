@@ -129,8 +129,10 @@ public class SolutionPanel extends JPanel {
 					}
 
 					NumberFormat formatter = NumberFormat.getIntegerInstance();
-					border.setTitle(title + " - " + 
-							formatter.format(chromosome.getScore()));
+					double score = (chromosome.getScore() > 100.0) ? 
+							100.0 : chromosome.getScore();
+					
+					border.setTitle(title + " - " + formatter.format(score));
 
 					repaint();
 				}
