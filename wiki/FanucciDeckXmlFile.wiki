@@ -7,7 +7,16 @@ The following is an example of an XML file for use with the command-line interfa
 
 {{{
 <?xml version="1.0"?>
-<cards>
+<!--
+     For the order attribute, the values are:
+
+     0 = Fanucci Gambit
+     1 = Mind
+     2 = Body
+     3 = Spirit
+     4 = Sidekick
+-->
+<cards order="0,1,2,3,4" slots="5">
     <card suit="Bugs" value="0" />
     <card suit="Bugs" value="1" />
     <card suit="Bugs" value="2" />
