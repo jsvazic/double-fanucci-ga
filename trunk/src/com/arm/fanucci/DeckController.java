@@ -87,7 +87,7 @@ public class DeckController extends DefaultHandler {
 					for (int i = 0; i < arr.length; i++) {
 						arr[i] = list.get(i);
 					}
-					options.setSolutionPanelOrder(arr);
+					options.setSlotOrder(arr);
 				}
 			}
 		} else if ("card".equals(qName)) {
@@ -140,7 +140,7 @@ public class DeckController extends DefaultHandler {
 		Element cards = doc.createElement("cards");
 		cards.setAttribute("slots", String.valueOf(options.getMaxSlots()));
 
-		final int[] slotOrder = options.getSolutionPanelOrder();
+		final int[] slotOrder = options.getSlotOrder();
 		StringBuffer sb = new StringBuffer();
 		if (slotOrder.length > 0) {
 			sb.append(slotOrder[0]);

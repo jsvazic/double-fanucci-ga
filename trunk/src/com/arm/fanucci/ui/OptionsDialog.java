@@ -13,12 +13,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -46,6 +49,10 @@ public class OptionsDialog extends JDialog {
 	private JTextField iterationField;
 	private JComboBox setComboBox;
 	private JSpinner repeatSpinner;
+	private JLabel slotLabel;
+	private JList slotOrder;
+	private JButton upButton;
+	private JButton downButton;
 
 	/**
 	 * Default constructor.
@@ -78,7 +85,7 @@ public class OptionsDialog extends JDialog {
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				shutdown();
+				closeDialog();
 			}
 		});
 
@@ -158,14 +165,7 @@ public class OptionsDialog extends JDialog {
 
 		repeatSpinner = new JSpinner(new SpinnerNumberModel(options
 				.getMaxRepeatCount(), 0, 500, 1));
-
-		optionsPanel.add(popLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5,
-				GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(
-						5, 5, 1, 5), 1, 1));
-		optionsPanel.add(popSlider, new GridBagConstraints(0, 1, 1, 1, 0.5,
-				0.5, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-				new Insets(1, 5, 5, 5), 1, 1));
-
+	
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(3, 2, 5, 5));
 		panel.add(new JLabel("Number of Iterations"));
@@ -174,9 +174,29 @@ public class OptionsDialog extends JDialog {
 		panel.add(setComboBox);
 		panel.add(new JLabel("Local Maxima Count"));
 		panel.add(repeatSpinner);
-		optionsPanel.add(panel, new GridBagConstraints(1, 0, 1, 2, 0.5, 0.5,
-				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-				new Insets(5, 5, 5, 5), 1, 1));
+		
+		slotLabel = new JLabel("Slot Solution Order");
+		slotOrder = new JList(new SlotModel(options.getSlotOrder()));
+		upButton = new JButton("Up");
+		upButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				upPressed();
+			}
+		});
+		
+		downButton = new JButton("Down");
+		downButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				downPressed();
+			}
+		});
+		
+		optionsPanel.add(popLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5,
+				GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(
+						5, 5, 1, 5), 1, 1));
+		optionsPanel.add(popSlider, new GridBagConstraints(0, 1, 1, 1, 0.5,
+				0.5, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+				new Insets(1, 5, 5, 5), 1, 1));
 
 		optionsPanel.add(elitismLabel, new GridBagConstraints(0, 2, 1, 1, 0.5,
 				0.5, GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -185,13 +205,36 @@ public class OptionsDialog extends JDialog {
 				0.5, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
 				new Insets(1, 5, 5, 5), 1, 1));
 
-		optionsPanel.add(mutationLabel, new GridBagConstraints(1, 2, 1, 1, 0.5,
+		optionsPanel.add(mutationLabel, new GridBagConstraints(0, 4, 1, 1, 0.5,
 				0.5, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 				new Insets(5, 5, 1, 5), 1, 1));
-		optionsPanel.add(mutationSlider, new GridBagConstraints(1, 3, 1, 1,
+		optionsPanel.add(mutationSlider, new GridBagConstraints(0, 5, 1, 1,
 				0.5, 0.5, GridBagConstraints.NORTH,
 				GridBagConstraints.HORIZONTAL, new Insets(1, 5, 5, 5), 1, 1));
+				
+		optionsPanel.add(panel, new GridBagConstraints(1, 0, 2, 2, 0.5, 0.5,
+				GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+				new Insets(5, 5, 5, 5), 1, 1));
+		
+		optionsPanel.add(slotLabel, new GridBagConstraints(1, 2, 1, 1, 0.5, 0.5,
+				GridBagConstraints.WEST, GridBagConstraints.NONE,
+				new Insets(5, 5, 1, 5), 1, 1));
 
+		optionsPanel.add(new JScrollPane(slotOrder, 
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+				new GridBagConstraints(1, 3, 1, 3, 0.5, 0.5,
+				GridBagConstraints.WEST, GridBagConstraints.BOTH,
+				new Insets(1, 5, 5, 5), 1, 1));
+
+		optionsPanel.add(upButton, new GridBagConstraints(2, 3, 1, 1, 0.5, 0.5,
+				GridBagConstraints.SOUTH, GridBagConstraints.NONE,
+				new Insets(1, 1, 1, 1), 1, 1));
+		optionsPanel.add(downButton, new GridBagConstraints(2, 4, 1, 1, 0.5, 0.5,
+				GridBagConstraints.NORTH, GridBagConstraints.NONE,
+				new Insets(1, 1, 1, 1), 1, 1));
+		
+		
 		JPanel contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(10, 10));
 		contentPane.add(buttonPanel, BorderLayout.SOUTH);
@@ -199,6 +242,28 @@ public class OptionsDialog extends JDialog {
 
 		setContentPane(contentPane);
 		pack();
+	}
+
+	private void upPressed() {
+		int idx = slotOrder.getSelectedIndex();
+		if (idx <= 0) {
+			return;
+		}
+		
+		SlotModel model = (SlotModel) slotOrder.getModel();
+		model.swap(idx, idx - 1);
+		slotOrder.setSelectedIndex(idx - 1);
+	}
+
+	private void downPressed() {
+		int idx = slotOrder.getSelectedIndex();
+		if (idx < 0 || idx == slotOrder.getModel().getSize() - 1) {
+			return;
+		}
+		
+		SlotModel model = (SlotModel) slotOrder.getModel();
+		model.swap(idx, idx + 1);
+		slotOrder.setSelectedIndex(idx + 1);
 	}
 
 	/**
@@ -225,22 +290,88 @@ public class OptionsDialog extends JDialog {
 		}
 		options.setMutationRate(mutationSlider.getValue() / 100.0f);
 		options.setPopulationSize(popSlider.getValue());
-		shutdown();
+		
+		SlotModel model = (SlotModel) slotOrder.getModel();
+		options.setSlotOrder(model.getSlotOrder());
+		
+		closeDialog();
 	}
 
 	/**
 	 * Method called when the Cancel button is pressed.
 	 */
 	private void cancelPressed() {
-		shutdown();
+		closeDialog();
 	}
 
 	/**
 	 * Method called when the dialog is closed.
 	 */
-	private void shutdown() {
+	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+	
+	private class SlotModel extends DefaultListModel {
+		private static final long serialVersionUID = 1L;
+		
+		private static final String GAMBIT = "Fanucci Gambit";
+		private static final String MIND = "Mind";
+		private static final String BODY = "Body";
+		private static final String SPIRIT = "Spirit";
+		private static final String SIDEKICK = "Sidekick";
+
+		public SlotModel(int[] slotOrder) {
+			for (int slotId : slotOrder) {
+				addElement(getSlotName(slotId));
+			}
+		}
+		
+		public void swap(int idx1, int idx2) {
+			Object obj = elementAt(idx2);
+			
+			setElementAt(elementAt(idx1), idx2);
+			setElementAt(obj, idx1);
+		}
+		
+		public int[] getSlotOrder() {
+			int[] arr = new int[getSize()];
+			for (int i = 0; i < getSize(); i++) {
+				String str = (String) elementAt(i);
+				if (GAMBIT.equals(str)) {
+					arr[i] = SolutionPanel.GAMBIT;
+				} else if (MIND.equals(str)) {
+					arr[i] = SolutionPanel.MIND;
+				} else if (BODY.equals(str)) {
+					arr[i] = SolutionPanel.BODY;
+				} else if (SPIRIT.equals(str)) {
+					arr[i] = SolutionPanel.SPIRIT;
+				} else if (SIDEKICK.equals(str)) {
+					arr[i] = SolutionPanel.SIDEKICK;
+				} else {
+					arr[i] = -1;
+				}
+			}
+			
+			return arr;
+		}
+		
+		private String getSlotName(int slotId) {
+			switch (slotId) {
+				case SolutionPanel.GAMBIT:
+					return GAMBIT;
+				case SolutionPanel.MIND:
+					return MIND;
+				case SolutionPanel.BODY:
+					return BODY;
+				case SolutionPanel.SPIRIT:
+					return SPIRIT;
+				case SolutionPanel.SIDEKICK:
+					return SIDEKICK;
+				default:
+					return "Unknown Slot";				
+			}
+		}
 	}
 
 	/**

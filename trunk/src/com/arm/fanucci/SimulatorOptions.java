@@ -136,7 +136,7 @@ public class SimulatorOptions {
 	 * 
 	 * @see com.arm.fanucci.ui.SolutionPanel
 	 */
-	public int[] getSolutionPanelOrder() {
+	public int[] getSlotOrder() {
 		return slotOrder;
 	}
 	
@@ -205,7 +205,7 @@ public class SimulatorOptions {
 	 * 
 	 * @see com.arm.fanucci.ui.SolutionPanel
 	 */
-	public void setSolutionPanelOrder(int[] slotOrder) {
+	public void setSlotOrder(int[] slotOrder) {
 		this.slotOrder = new int[slotOrder.length];
 		System.arraycopy(slotOrder, 0, this.slotOrder, 0, slotOrder.length);
 	}
