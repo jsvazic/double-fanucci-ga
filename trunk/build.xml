@@ -66,10 +66,11 @@
 		<bottom>
 			<![CDATA[<i>Copyright &#169; 2009 John Svazic. All Rights Reserved.</i>]]>
             </bottom>
-	<fileset dir="${src.dir}">
-		<include name="**" />
-		<exclude name="**/*Test.*" />
-	</fileset>
+		<fileset dir="${src.dir}">
+			<include name="**" />
+			<exclude name="**/*Test.*" />
+			<exclude name="**/*.png" />
+		</fileset>
 </javadoc>
 </target>
 
