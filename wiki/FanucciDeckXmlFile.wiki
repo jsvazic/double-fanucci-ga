@@ -3,7 +3,7 @@
 
 = Introduction =
 
-The following is an example of an XML file for use with the command-line interface of YADFC.
+The following is an example of an XML file for use with the command-line interface of Yet Another Double Fanucci Calculator(tm).
 
 {{{
 <?xml version="1.0"?>
