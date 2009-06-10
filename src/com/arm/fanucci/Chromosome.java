@@ -85,12 +85,9 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	/**
-	 * Method used to mate this chromosome with another, producing an 
-	 * offspring.
-	 * 
-	 * @param mate The <code>Chromosome</code> to mate with.
-	 * 
-	 * @return The resulting <code>Chomosome</code> after mating.
+	 * Method used to mutate this <code>Chromosome</code>.  Mutation here 
+	 * means randomly removing one of the cards and replacing it with one that 
+	 * is not already in the set.
 	 */
 	public void mutate() {
 		// Randomly mutate a card by removing it from the set and replacing 
