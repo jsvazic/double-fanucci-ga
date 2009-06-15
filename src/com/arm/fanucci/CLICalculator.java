@@ -50,10 +50,6 @@ public class CLICalculator {
 		
 		// Print out the best hands available for the given deck.
 		for (Chromosome c : arr) {
-			if (c == null) {
-				break;
-			}
-
 			System.out.println(c);
 		}
 		

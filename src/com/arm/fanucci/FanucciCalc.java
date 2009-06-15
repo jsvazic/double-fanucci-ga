@@ -1,5 +1,8 @@
 package com.arm.fanucci;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +41,7 @@ public class FanucciCalc {
 			maxRepeatCount = maxIterations;
 		}
 		
-		Chromosome[] arr = new Chromosome[maxHands];
+		List<Chromosome> chromosomeList = new LinkedList<Chromosome>();
 		
 		for (int i = 0; i < maxHands && deck.size() > 0; i++) {
 			Card[] cardArr = deck.toArray(new Card[0]);
@@ -66,12 +69,14 @@ public class FanucciCalc {
 			
 			// Save the best hand so far and adjust the remaining cards for 
 			// the next hand.
-			arr[i] = population.getBestChromosome();
-			for (Card c : ((Chromosome) arr[i]).getCards()) {
+			Chromosome bestChromosome = population.getBestChromosome();
+			chromosomeList.add(bestChromosome);
+			for (Card c : bestChromosome.getCards()) {
 				deck.remove(c);
 			}
 		}
 		
-		return arr;
+		Collections.sort(chromosomeList);
+		return chromosomeList.toArray(new Chromosome[0]);
 	}
 }

@@ -359,9 +359,6 @@ public class MainFrame extends JFrame {
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
 						Chromosome c = (Chromosome) arr[i];
-						if (c == null) {
-							break;
-						}
 						solutionPanel.updatePanel(slotOrder[i], c);
 					}
 					
