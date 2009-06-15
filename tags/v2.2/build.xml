@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--    
+    Apache Ant build file for Yet Another Double Fanucci Calculator (YADFC).
+
+    Use this file to compile the YADFC codebase and create the final 
+    distributable application.  This file can also be used to generate the
+    Javadoc documents for the code for developer use.  There should be no
+    need to edit this file.
+-->
+
+<!--
+     To run YADFC, execute:
+    ant run
+    
+    To get a compiled version of YADFC, execute:
+    ant jar
+
+    To clean YADFC, execute:
+    ant clean
+
+    To generate Javadocs for YADFC, execute:
+    ant docs
+
+    See the individual targets below for more options.
+-->
+<project name="yadfc" default="dist" basedir=".">
+	<!-- Global properties for this build -->
+	<property file="yadfc.properties" />
+
+	<!-- The classpath used for compiling and running. -->
+	<path id="project.class.path">
+		<pathelement path="${build.dir}" />
+		<pathelement path="${etc.dir}" />
+	</path>
+
+
+	<!-- Target to initialize our directories as required. -->
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<!-- Target to compile the code. -->
+	<target name="compile" depends="init">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" compiler="javac1.5" source="1.5" debug="true" deprecation="on">
+			<classpath refid="project.class.path" />
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<!-- Target to create the various JAR files. -->
+	<target name="jar" depends="compile">
+		<jar destfile="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" basedir="${build.dir}" manifest="${etc.dir}/manifest.mf">
+			<fileset dir="${src.dir}" includes="**/*.png" />
+		</jar>
+	</target>
+
+	<!-- Target to generate the Javadocs. -->
+	<target name="docs" depends="compile">
+		<mkdir dir="${docs.dir}" />
+		<javadoc packagenames="com.arm.fanucci.*" defaultexcludes="yes" destdir="${docs.dir}/api" author="true" version="true" use="true" windowtitle="Yet Another Double Fanucci Calculator">
+			<classpath refid="project.class.path" />
+			<doctitle>
+				<![CDATA[<h1>Yet Another Double Fanucci Calculator</h1>]]>
+            </doctitle>
+		<bottom>
+			<![CDATA[<i>Copyright &#169; 2009 John Svazic. All Rights Reserved.</i>]]>
+            </bottom>
+		<fileset dir="${src.dir}">
+			<include name="**" />
+			<exclude name="**/*Test.*" />
+			<exclude name="**/*.png" />
+		</fileset>
+</javadoc>
+</target>
+
+<!-- Target to make the distributable which includes the final JAR file
+         and Javadocs. -->
+<target name="dist" depends="clean,jar">
+<delete>
+	<fileset dir="${build.dir}" includes="**/*Test.class" />
+</delete>
+
+<!-- Create our .jar file. -->
+<copy todir="${dist.dir}">
+	<fileset file="${dist.dir}/${ant.project.name}.jar" />
+</copy>
+</target>
+
+<target name="zip" depends="dist,docs">
+
+<!-- Zip the final Windows distributable. -->
+<zip destfile="${ant.project.name}-${yadfc.version}-bin.zip" basedir="${dist.dir}" />
+
+<delete dir="${build.dir}" />
+<delete dir="${dist.dir}" />
+<zip destfile="${ant.project.name}-${yadfc.version}-src.zip">
+	<zipfileset dir="." excludes="*.zip,.classpath,.project" />
+</zip>
+</target>
+
+<!-- Target to run YADFC. -->
+<target name="run" depends="dist">
+<java jar="${dist.dir}/${ant.project.name}-v${yadfc.version}.jar" fork="true" failonerror="true" />
+</target>
+
+<!-- Target to clean up all the copmiled artifacts. -->
+<target name="clean">
+<delete dir="${build.dir}" />
+<delete dir="${dist.dir}" />
+<delete dir="${docs.dir}" />
+<delete>
+	<fileset dir="." includes="${ant.project.name}-*.*" />
+</delete>
+</target>
+
+<!-- Target to build everything. -->
+<target name="all" depends="dist,zip" />
+</project>
