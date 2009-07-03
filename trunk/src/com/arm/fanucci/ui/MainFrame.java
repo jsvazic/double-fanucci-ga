@@ -30,10 +30,10 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.arm.fanucci.Chromosome;
 import com.arm.fanucci.Deck;
 import com.arm.fanucci.DeckController;
 import com.arm.fanucci.FanucciCalc;
-import com.arm.fanucci.Chromosome;
 import com.arm.fanucci.OptionsController;
 import com.arm.fanucci.SimulatorOptions;
 
@@ -48,20 +48,25 @@ public class MainFrame extends JFrame {
 	private SimulatorOptions simOptions;
 	private JPanel contentPane;
 	private String lastFileLocation;
+	private File lastFile;
 	private SolutionPanel solutionPanel;
 	private JLabel statusBar;
-	
+	private boolean macOS;
+
 	private static final String UI_CONFIG_FILE = "yadfc.dat";
+	private static final String TITLE_PREFIX = 
+			"Yet Another Double Fanucci Calculator(tm)";
 
 	/**
 	 * Default constructor.
 	 */
 	public MainFrame() {
-		super("Yet Another Double Fanucci Calculator(tm)");
+		super(TITLE_PREFIX);
+		this.macOS = (System.getProperty("mrj.version") != null);
 		simOptions = OptionsController.loadOptions();
 		init();
 	}
-	
+
 	/**
 	 * Helper method used to initialize the UI.
 	 */
@@ -70,51 +75,54 @@ public class MainFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		
+
 		JMenu simMenu = new JMenu("Simulator");
 		simMenu.setMnemonic(KeyEvent.VK_S);
-		
-		fileMenu.add(new JMenuItem(new LoadAction(this)));
-		fileMenu.add(new JMenuItem(new SaveAction(this)));
-		fileMenu.addSeparator();
-		fileMenu.add(new JMenuItem(new ExitAction()));
-		
+
+		fileMenu.add(new JMenuItem(new LoadAction()));
+		fileMenu.add(new JMenuItem(new SaveAction()));
+		fileMenu.add(new JMenuItem(new SaveAsAction()));
+		if (!macOS) {
+			fileMenu.addSeparator();
+			fileMenu.add(new JMenuItem(new ExitAction()));
+		}
+
 		simMenu.add(new JMenuItem(new RunAction()));
 		simMenu.addSeparator();
 		simMenu.add(new JMenuItem(new OptionsAction()));
-		
+
 		menuBar.add(fileMenu);
 		menuBar.add(simMenu);
-		
+
 		setJMenuBar(menuBar);
-		
-		cardPanel = new CardPanel();
+
+		cardPanel = new CardPanel(this);
 		solutionPanel = new SolutionPanel();
-		
+
 		statusBar = new JLabel(" ");
 		statusBar.setHorizontalAlignment(SwingConstants.RIGHT);
 		statusBar.setBorder(BorderFactory.createEtchedBorder());
-		
+
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(1, 1));
 		contentPane.add(cardPanel, BorderLayout.NORTH);
 		contentPane.add(new JScrollPane(solutionPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				BorderLayout.CENTER);
-		
+
 		contentPane.add(statusBar, BorderLayout.SOUTH);
-		
+
 		setContentPane(contentPane);
 		setSize(585, 630);
-		
+
 		// Center the frame.
-		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
-		Dimension screenSize = toolkit.getScreenSize(); 
-		int x = (screenSize.width - getWidth()) / 2; 
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		int x = (screenSize.width - getWidth()) / 2;
 		int y = (screenSize.height - getHeight()) / 2;
 		setLocation(x, y);
-		
+
 		// Try to load the settings
 		try {
 			loadDetails();
@@ -125,18 +133,19 @@ public class MainFrame extends JFrame {
 
 		addListeners();
 	}
-	
+
 	/**
 	 * Helper method used to add any associated listeners to the frame.
 	 */
 	private void addListeners() {
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				shutdown();
 			}
 		});
 	}
-	
+
 	/**
 	 * Method to retrieve the underlying <code>CardPanel</code> instance.
 	 * 
@@ -145,7 +154,7 @@ public class MainFrame extends JFrame {
 	public CardPanel getCardPanel() {
 		return cardPanel;
 	}
-	
+
 	/**
 	 * Method used to terminate the application.
 	 */
@@ -153,33 +162,35 @@ public class MainFrame extends JFrame {
 		try {
 			OptionsController.saveOptions(simOptions);
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, 
-					"Failed to save the options: " + ex.getMessage(),
-					"Error Saving Options", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Failed to save the options: "
+					+ ex.getMessage(), "Error Saving Options",
+					JOptionPane.ERROR_MESSAGE);
 		}
 
 		try {
 			saveDetails();
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, 
+			JOptionPane.showMessageDialog(this,
 					"Failed to save the UI settings: " + ex.getMessage(),
 					"Error Saving UI Settings", JOptionPane.ERROR_MESSAGE);
 		}
-	
+
 		dispose();
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Main method for executing the UI.
 	 * 
-	 * @param args Command line arguments (ignored).
+	 * @param args
+	 *            Command line arguments (ignored).
 	 * 
-	 * @throws Exception Thrown if there was an error bringing up the display.
+	 * @throws Exception
+	 *             Thrown if there was an error bringing up the display.
 	 */
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		JFrame frame = new MainFrame();		
+		JFrame frame = new MainFrame();
 		frame.setVisible(true);
 	}
 
@@ -190,50 +201,55 @@ public class MainFrame extends JFrame {
 	 */
 	private class LoadAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
-		
-		private MainFrame frame;
 
 		/**
 		 * Default constructor.
 		 * 
-		 * @param frame The parent frame used for the file chooser dialog.
+		 * @param frame
+		 *            The parent frame used for the file chooser dialog.
 		 */
-		public LoadAction(MainFrame frame) {
-			super("Open Deck");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, 
-				KeyEvent.CTRL_MASK));
-			
+		public LoadAction() {
+			super("Open Deck...");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O,
+					macOS ? KeyEvent.META_MASK : KeyEvent.CTRL_MASK));
+
 			putValue(MNEMONIC_KEY, KeyEvent.VK_O);
-			this.frame = frame;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser fc;
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			        "Double Fanucci Deck (*.dfd)", "dfd");
-			
+					"Double Fanucci Deck (*.dfd)", "dfd");
+
 			if (lastFileLocation != null) {
 				fc = new JFileChooser(lastFileLocation);
 			} else {
 				fc = new JFileChooser(System.getProperty("user.dir"));
 			}
-			
+
 			fc.setFileFilter(filter);
-			int retVal = fc.showOpenDialog(frame);
+			int retVal = fc.showOpenDialog(MainFrame.this);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File inFile = fc.getSelectedFile();
 				lastFileLocation = inFile.getParent();
 				try {
 					DeckController.importDeck(inFile, simOptions);
+					lastFile = inFile;
 					solutionPanel.resetPanels();
-					CardPanel cardPanel = frame.getCardPanel();
+					CardPanel cardPanel = MainFrame.this.getCardPanel();
 					int selectedIdx = cardPanel.getSelectedIndex();
 					cardPanel.setSelection(-1);
 					cardPanel.setSelection(selectedIdx);
+					
+					// Get the name of the file, minus the ".dfd" extension
+					String name = lastFile.getName().substring(0, 
+							lastFile.getName().length() - 4);
+					
+					MainFrame.this.setTitle(TITLE_PREFIX + " - " + name);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(frame, 
-							"Failed to load the deck:\n" + ex.getMessage(), 
+					JOptionPane.showMessageDialog(MainFrame.this,
+							"Failed to load the deck:\n" + ex.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -247,28 +263,67 @@ public class MainFrame extends JFrame {
 	 */
 	private class SaveAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
-		private JFrame frame;
-		
+
 		/**
 		 * Default constructor.
 		 * 
-		 * @param frame The parent frame used for the file chooser dialog.
+		 * @param frame
+		 *            The parent frame used for the file chooser dialog.
+		 * 
 		 */
-		public SaveAction(JFrame frame) {
+		public SaveAction() {
 			super("Save Deck");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, 
-				KeyEvent.CTRL_MASK));
-			
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
+					macOS ? KeyEvent.META_MASK : KeyEvent.CTRL_MASK));
 			putValue(MNEMONIC_KEY, KeyEvent.VK_S);
-			this.frame = frame;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (lastFile == null) {
+				new SaveAsAction().actionPerformed(e);
+			} else {
+				try {
+					DeckController.exportDeck(Deck.getInstance(), simOptions,
+							lastFile);
+					
+					String title = MainFrame.this.getTitle();
+					if (title.startsWith("*")) {
+						MainFrame.this.setTitle(title.substring(1));
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(MainFrame.this,
+							"Failed to save the deck:\n" + ex.getMessage(),
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Action related to the save-as action.
+	 * 
+	 * @author jsvazic
+	 */
+	private class SaveAsAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * Default constructor.
+		 * 
+		 * @param frame
+		 *            The parent frame used for the file chooser dialog.
+		 */
+		public SaveAsAction() {
+			super("Save Deck As...");
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser fc;
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			        "Double Fanucci Deck", "dfd");
-			
+					"Double Fanucci Deck", "dfd");
+
 			if (lastFileLocation != null) {
 				fc = new JFileChooser(lastFileLocation);
 			} else {
@@ -276,29 +331,50 @@ public class MainFrame extends JFrame {
 			}
 
 			fc.setFileFilter(filter);
-			int retVal = fc.showSaveDialog(frame);
+			int retVal = fc.showSaveDialog(MainFrame.this);
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File outFile = fc.getSelectedFile();
-				lastFileLocation = outFile.getParent();
 				
+				if (outFile.exists()) {
+					retVal = JOptionPane.showConfirmDialog(MainFrame.this, 
+							"File already exists!\nAre you sure you want " +
+							"to overwrite?", "Confirm Overwrite", 
+							JOptionPane.YES_NO_CANCEL_OPTION);
+					
+					if (retVal != JOptionPane.YES_OPTION) {
+						return;
+					}
+				}
+				
+				lastFileLocation = outFile.getParent();
+
 				// Make sure we have the proper extension on the file.
 				if (!outFile.getAbsolutePath().endsWith(".dfd")) {
 					outFile = new File(outFile.getAbsolutePath() + ".dfd");
 				}
-				
+
 				try {
-					DeckController.exportDeck(Deck.getInstance(), simOptions, 
+					DeckController.exportDeck(Deck.getInstance(), simOptions,
 							outFile);
+					
+					lastFile = outFile;
+					
+					// Get the name of the file, minus the ".dfd" extension
+					String name = lastFile.getName().substring(0, 
+							lastFile.getName().length() - 4);
+					
+					MainFrame.this.setTitle(TITLE_PREFIX + " - " + name);
+
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(frame, 
-							"Failed to save the deck:\n" + ex.getMessage(), 
+					JOptionPane.showMessageDialog(MainFrame.this,
+							"Failed to save the deck:\n" + ex.getMessage(),
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 			}
 		}
 	}
-	
+
 	/**
 	 * Action related to the exit action.
 	 * 
@@ -312,9 +388,9 @@ public class MainFrame extends JFrame {
 		 */
 		public ExitAction() {
 			super("Exit");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X, 
-				KeyEvent.CTRL_MASK));
-			
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,
+					KeyEvent.CTRL_MASK));
+
 			putValue(MNEMONIC_KEY, KeyEvent.VK_X);
 		}
 
@@ -323,7 +399,7 @@ public class MainFrame extends JFrame {
 			shutdown();
 		}
 	}
-	
+
 	/**
 	 * Action related to running the algorithm for the calculator.
 	 * 
@@ -337,12 +413,11 @@ public class MainFrame extends JFrame {
 		 */
 		public RunAction() {
 			super("Run");
-			putValue(ACCELERATOR_KEY, 
-					KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-	
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+
 			putValue(MNEMONIC_KEY, KeyEvent.VK_R);
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Runnable r = new Runnable() {
@@ -350,22 +425,21 @@ public class MainFrame extends JFrame {
 				public void run() {
 					long sTime = System.currentTimeMillis();
 					FanucciCalc calc = new FanucciCalc(simOptions);
-					Chromosome[] arr = calc.execute(
-							Deck.getInstance().getCardSet());
+					Chromosome[] arr = calc.execute(Deck.getInstance()
+							.getCardSet());
 					long eTime = System.currentTimeMillis();
-					
+
 					solutionPanel.resetPanels();
-					final int[] slotOrder = simOptions.getSlotOrder();
+					int[] slotOrder = simOptions.getSlotOrder();
 					// Print out the best hands available for the given deck.
 					for (int i = 0; i < arr.length; i++) {
-						Chromosome c = (Chromosome) arr[i];
-						solutionPanel.updatePanel(slotOrder[i], c);
+						solutionPanel.updatePanel(slotOrder[i], arr[i]);
 					}
-					
+
 					statusBar.setText("Total time: " + (eTime - sTime) + "ms");
-				}				
+				}
 			};
-			
+
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			Thread t = new Thread(r);
 			t.start();
@@ -391,65 +465,65 @@ public class MainFrame extends JFrame {
 		 */
 		public OptionsAction() {
 			super("Options");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_P, 
-				KeyEvent.CTRL_MASK));
-			
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_P,
+					macOS ? KeyEvent.META_MASK : KeyEvent.CTRL_MASK));
+
 			putValue(MNEMONIC_KEY, KeyEvent.VK_P);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			OptionsDialog dialog = new OptionsDialog(
-					MainFrame.this, simOptions);
-			
+			OptionsDialog dialog = new OptionsDialog(MainFrame.this,
+					simOptions);
+
 			// Center the dialog.
-			Toolkit toolkit = Toolkit.getDefaultToolkit(); 
-			Dimension screenSize = toolkit.getScreenSize(); 
-			int x = (screenSize.width - dialog.getWidth()) / 2; 
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			Dimension screenSize = toolkit.getScreenSize();
+			int x = (screenSize.width - dialog.getWidth()) / 2;
 			int y = (screenSize.height - dialog.getHeight()) / 2;
-			
+
 			dialog.setLocation(x, y);
 			dialog.setVisible(true);
 		}
 	}
-	
+
 	private void saveDetails() throws IOException {
-	    Properties props = new Properties();
-	    props.setProperty("State", String.valueOf(getExtendedState()));
-	    props.setProperty("X", String.valueOf(getX()));
-	    props.setProperty("Y", String.valueOf(getY()));
-	    props.setProperty("W", String.valueOf(getWidth()));
-	    props.setProperty("H", String.valueOf(getHeight()));
-	    props.setProperty("SFL", (lastFileLocation != null) ? 
-	    		lastFileLocation : System.getProperty("user.dir"));
-	    
-	    props.storeToXML(new FileOutputStream(UI_CONFIG_FILE), null);
+		Properties props = new Properties();
+		props.setProperty("State", String.valueOf(getExtendedState()));
+		props.setProperty("X", String.valueOf(getX()));
+		props.setProperty("Y", String.valueOf(getY()));
+		props.setProperty("W", String.valueOf(getWidth()));
+		props.setProperty("H", String.valueOf(getHeight()));
+		props.setProperty("SFL", (lastFileLocation != null) ? lastFileLocation
+				: System.getProperty("user.dir"));
+
+		props.storeToXML(new FileOutputStream(UI_CONFIG_FILE), null);
 	}
-	
+
 	private void loadDetails() throws IOException {
 		File file = new File(UI_CONFIG_FILE);
 		if (!file.exists() || !file.canRead()) {
 			return;
 		}
-	    Properties props = new Properties();
-	    props.loadFromXML(new FileInputStream(UI_CONFIG_FILE));
-	    int extendedState = Integer.parseInt(props.getProperty("State", 
-	    		String.valueOf(getExtendedState())));
-	    
-	    lastFileLocation = props.getProperty("SFL", 
-	    		System.getProperty("user.dir"));
-	    
-	    contentPane.repaint();
+		Properties props = new Properties();
+		props.loadFromXML(new FileInputStream(UI_CONFIG_FILE));
+		int extendedState = Integer.parseInt(props.getProperty("State",
+				String.valueOf(getExtendedState())));
 
-	    if (extendedState != JFrame.MAXIMIZED_BOTH) {
-	        setBounds(
-	            Integer.parseInt(props.getProperty("X", String.valueOf(getX()))),
-	            Integer.parseInt(props.getProperty("Y", String.valueOf(getY()))),
-	            Integer.parseInt(props.getProperty("W", String.valueOf(getWidth()))),
-	            Integer.parseInt(props.getProperty("H", String.valueOf(getHeight())))
-	        );
-	    } else {
-	        setExtendedState(JFrame.MAXIMIZED_BOTH);
-	    }
+		lastFileLocation = props.getProperty("SFL", System
+				.getProperty("user.dir"));
+
+		contentPane.repaint();
+
+		if (extendedState != JFrame.MAXIMIZED_BOTH) {
+			setBounds(Integer.parseInt(props.getProperty("X", String
+					.valueOf(getX()))), Integer.parseInt(props.getProperty("Y",
+					String.valueOf(getY()))), Integer.parseInt(props
+					.getProperty("W", String.valueOf(getWidth()))), Integer
+					.parseInt(props.getProperty("H", String
+							.valueOf(getHeight()))));
+		} else {
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 	}
 }

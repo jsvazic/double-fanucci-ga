@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,13 +59,15 @@ public class CardPanel extends JPanel implements IFanucci {
 	private CardLayout cardLayout;
 	private Deck deck;
 	private Map<String, JPanel> panelMap;
+	private JFrame mainFrame;
 
 	/**
 	 * Default constructor.
 	 */
-	public CardPanel() {
+	public CardPanel(JFrame frame) {
 		this.deck = Deck.getInstance();
 		this.panelMap = new HashMap<String, JPanel>(15);
+		this.mainFrame = frame;
 		init();
 	}
 	
@@ -219,6 +222,11 @@ public class CardPanel extends JPanel implements IFanucci {
 		JPanel panel = this.panelMap.get(suit);
 		boolean deSelect = false;
 		Card card = button.getCard();
+		
+		String title = mainFrame.getTitle();
+		if (!title.startsWith("*")) {
+			mainFrame.setTitle("*" + title);
+		}
 		
 		try {
 			if (button.isSelected()) {
