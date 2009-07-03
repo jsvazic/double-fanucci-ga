@@ -1,6 +1,11 @@
 package com.arm.fanucci;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -17,6 +22,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -114,7 +120,18 @@ public class DeckController extends DefaultHandler {
 		deck.reset();
 		
 		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-		parser.parse(f, new DeckController(deck, options));
+		
+		BufferedInputStream bis = new BufferedInputStream(
+				new FileInputStream(f));
+		try {
+			parser.parse(new InputSource(bis), new DeckController(deck, options));
+		} finally {
+			try {
+				bis.close();
+			} catch (IOException ex) {
+				// Safe to ignore.
+			}
+		}
 		
 		return deck;
 	}
@@ -162,6 +179,18 @@ public class DeckController extends DefaultHandler {
 		
 		// Export the document to the specified file.
 		Transformer trans = TransformerFactory.newInstance().newTransformer();
-		trans.transform(new DOMSource(doc), new StreamResult(f));
+		BufferedOutputStream bos = new BufferedOutputStream(
+				new FileOutputStream(f));
+	
+		try {
+			trans.transform(new DOMSource(doc), new StreamResult(bos));
+		} finally {
+			try {
+				bos.flush();
+				bos.close();
+			} catch (IOException ex) {
+				// Safe to ignore
+			}
+		}
 	}
 }
